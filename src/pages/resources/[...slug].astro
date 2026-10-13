@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import ResourcesIndex from '@/views/ResourcesIndex.astro';
+import ResourceDetail from '@/views/ResourceDetail.astro';
+
+export async function getStaticPaths() {
+  if (!siteConfig.pages.resources) return [];
+  const resources = await getCollection('resources');
+  if (resources.length === 0) return [];
+  return [{ params: { slug: undefined }, props: { resource: null } }, ...resources.map((r) => ({ params: { slug: r.id }, props: { resource: r } }))];
+}
+const { resource } = Astro.props;
+---
+{resource ? <ResourceDetail resource={resource} /> : <ResourcesIndex />}

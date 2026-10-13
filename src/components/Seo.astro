@@ -2,11 +2,13 @@
 import { siteConfig } from '@config';
 import { abs } from '@/lib/utils';
 import type { PageMeta } from '@/lib/seo';
+import { ogPages, ogSlug } from '@/lib/og-pages';
 
 interface Props { meta: PageMeta }
 const { meta } = Astro.props;
 const canonical = abs(meta.canonical);
-const og = abs(meta.ogImage ?? siteConfig.theme.ogImage);
+const generated = (await ogPages()).some((p) => p.path === meta.canonical) ? `/og/${ogSlug(meta.canonical)}.png` : undefined;
+const og = abs(meta.ogImage ?? generated ?? siteConfig.theme.ogImage);
 ---
 <title>{meta.title}</title>
 <meta name="description" content={meta.description} />

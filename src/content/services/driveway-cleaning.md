@@ -9,6 +9,7 @@ imageAlt: Half-cleaned concrete driveway showing the before and after contrast
 featured: true
 order: 2
 startingPrice: 149
+priceHigh: 300
 priceUnit: per driveway
 serviceType: Concrete pressure washing
 benefits:

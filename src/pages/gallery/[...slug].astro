@@ -1,0 +1,21 @@
+---
+/**
+ * /gallery/            → GalleryIndex (all projects)
+ * /gallery/<slug>/     → CaseStudy (only projects with a Markdown body)
+ */
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import GalleryIndex from '@/views/GalleryIndex.astro';
+import CaseStudy from '@/views/CaseStudy.astro';
+
+export async function getStaticPaths() {
+  if (!siteConfig.pages.gallery) return [];
+  const projects = await getCollection('projects');
+  return [
+    { params: { slug: undefined }, props: { project: null } },
+    ...projects.filter((p) => (p.body ?? '').trim().length > 0).map((p) => ({ params: { slug: p.id }, props: { project: p } })),
+  ];
+}
+const { project } = Astro.props;
+---
+{project ? <CaseStudy project={project} /> : <GalleryIndex />}

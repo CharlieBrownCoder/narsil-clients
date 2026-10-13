@@ -1,0 +1,29 @@
+---
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import ContactForm from '@/components/sections/ContactForm.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import * as S from '@/lib/schema';
+
+const { business, booking } = siteConfig;
+const meta = { title: buildTitle(`Schedule Service`), description: buildDescription(`Book ${business.name} online. Pick a time that works and we'll confirm by text. Or call ${business.phone}.`), canonical: '/book/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Schedule', path: '/book/' }];
+const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({ path: '/book/', title: meta.title, description: meta.description }), S.breadcrumbList('/book/', crumbs));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Online booking" title={booking.label} subtitle="Pick a time below. We confirm every booking by text before we head out." />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="section !pt-8">
+    <div class="container-x">
+      {booking.provider === 'embed' && booking.embedUrl ? (
+        <iframe src={booking.embedUrl} title={`${business.name} booking`} loading="lazy" class="w-full min-h-[720px] rounded-[var(--radius-brand)] border border-slate-200"></iframe>
+      ) : booking.provider === 'link' && booking.url ? (
+        <div class="max-w-xl"><p class="text-lg text-slate-600">Scheduling opens in our booking partner's site.</p><a href={booking.url} target="_blank" rel="noopener" data-cta="book-external" class="btn-primary mt-6">{booking.label} →</a></div>
+      ) : (
+        <div class="max-w-xl"><p class="text-slate-600">Booking isn't configured. Set <code>booking.provider</code> and <code>embedUrl</code> or <code>url</code> in <code>site.config.ts</code>, or request a quote below.</p><div class="mt-8"><ContactForm /></div></div>
+      )}
+    </div>
+  </section>
+</BaseLayout>

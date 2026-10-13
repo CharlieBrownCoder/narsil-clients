@@ -3,7 +3,8 @@ import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 interface Props { limit?: number; service?: string; title?: string }
 const { limit, service, title = 'Recent work' } = Astro.props;
-let projects = await getCollection('projects');
+let projects = (await getCollection('projects')).sort((a, b) => Number(b.data.featured) - Number(a.data.featured) || a.data.order - b.data.order);
+const hasStory = (p: (typeof projects)[number]) => (p.body ?? '').trim().length > 0;
 if (service) { const m = projects.filter((p) => p.data.service === service); if (m.length) projects = m; }
 if (limit) projects = projects.slice(0, limit);
 ---
@@ -20,9 +21,10 @@ if (limit) projects = projects.slice(0, limit);
               <div class="relative"><Image src={p.data.after} alt={`After: ${p.data.title}`} widths={[400, 800]} sizes="(min-width: 1024px) 20vw, 50vw" class="w-full aspect-[4/3] object-cover" /><span class="absolute top-2 left-2 text-xs font-bold bg-primary text-white px-2 py-0.5 rounded">After</span></div>
             </div>
             <figcaption class="p-4">
-              <p class="font-semibold text-secondary">{p.data.title}</p>
+              <p class="font-semibold text-secondary">{hasStory(p) ? <a href={`/gallery/${p.id}/`} class="hover:text-primary">{p.data.title}</a> : p.data.title}</p>
               <p class="text-sm text-slate-600 mt-1">{p.data.description}</p>
-              {p.data.location && <p class="text-xs text-slate-500 mt-2">{p.data.location}</p>}
+              {p.data.location && <p class="text-xs text-slate-500 mt-2">{p.data.locationSlug ? <a href={`/service-areas/${p.data.locationSlug}/`} class="hover:text-primary">{p.data.location}</a> : p.data.location}</p>}
+              {hasStory(p) && <a href={`/gallery/${p.id}/`} class="mt-2 inline-flex text-sm font-semibold text-primary">Read the case study →</a>}
             </figcaption>
           </figure>
         ))}

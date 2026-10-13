@@ -114,6 +114,18 @@ if (combosOn) {
   }
 }
 
+// calculator rules must point at real services
+if (existsSync(join(root, 'src/calculator.config.ts'))) {
+  const calc = readFileSync(join(root, 'src/calculator.config.ts'), 'utf8');
+  for (const m of calc.matchAll(/service:\s*'([^']+)'/g)) if (!services.some((s) => s.id === m[1])) err(`calculator rule references unknown service "${m[1]}"`);
+}
+// booking: provider set but no url
+if (/provider:\s*'link'/.test(config) && !/url:\s*'https?:/.test(config)) err("booking.provider is 'link' but booking.url is empty");
+if (/provider:\s*'embed'/.test(config) && !/embedUrl:\s*'https?:/.test(config)) err("booking.provider is 'embed' but booking.embedUrl is empty");
+// resources: file must exist in public/
+const resDir = join(root, 'src/content/resources');
+for (const r of readDir(resDir)) if (r.data.file && !existsSync(join(root, 'public', r.data.file))) err(`resource ${r.id}: file ${r.data.file} not found in public/`);
+
 const rating = config.match(/rating:\s*\{[^}]*count:\s*(\d+)/);
 if (rating && Number(rating[1]) === 0) err('trust.rating.count is 0; remove rating or set the real count');
 if (/available:\s*true/.test(config) && !/phoneE164:\s*'\+/.test(config)) err('emergency.available is true but no phoneE164 is set');

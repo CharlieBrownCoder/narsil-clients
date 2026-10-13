@@ -22,6 +22,10 @@ export type PageKey =
   | 'emergency'
   | 'licensesInsurance'
   | 'terms'
+  | 'pricingGuide'
+  | 'booking'
+  | 'resources'
+  | 'quoteCalculator'
   | 'financing'
   | 'careers'
   | 'privacyPolicy';
@@ -158,6 +162,25 @@ export interface SiteConfig {
     thankYouPath: string;
   };
 
+  /**
+   * Online booking. 'link' sends the Schedule button to an external scheduler
+   * (Housecall Pro, Jobber, Calendly, ServiceTitan...). 'embed' renders the
+   * provider's iframe on /book/. 'none' hides every Schedule button.
+   */
+  booking: {
+    provider: 'none' | 'link' | 'embed';
+    url?: string;
+    /** iframe src for provider 'embed' */
+    embedUrl?: string;
+    label: string; // "Schedule Service"
+  };
+
+  /** Pricing guide page copy. Prices themselves come from services' startingPrice / priceRange. */
+  pricing: {
+    intro: string;
+    disclaimer: string;
+  };
+
   /** Tracking IDs. Leave blank to disable. */
   tracking: {
     ga4?: string;
@@ -279,6 +302,10 @@ export const siteConfig: SiteConfig = {
     emergency: false,
     licensesInsurance: true,
     terms: true,
+    pricingGuide: true,
+    booking: false,
+    resources: true,
+    quoteCalculator: true,
     financing: false,
     careers: false,
     privacyPolicy: true,
@@ -311,6 +338,17 @@ export const siteConfig: SiteConfig = {
   forms: {
     formspreeId: '',
     thankYouPath: '/thank-you/',
+  },
+
+  booking: {
+    provider: 'none',
+    url: '',
+    label: 'Schedule Service',
+  },
+
+  pricing: {
+    intro: 'Every property is different, so these are typical ranges from recent jobs, not a quote. We confirm an exact price in writing before any work starts.',
+    disclaimer: 'Ranges reflect typical single-family homes in our service area. Final pricing depends on size, condition, access, and add-ons. Estimates are not binding until confirmed in a written quote.',
   },
 
   tracking: {

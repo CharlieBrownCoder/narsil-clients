@@ -1,0 +1,36 @@
+---
+import { siteConfig } from '@config';
+import { calculator } from '@/calculator.config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import QuoteCalculator from '@/components/QuoteCalculator.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Cta from '@/components/sections/Cta.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { getBusinessType } from '@/lib/business-types';
+import * as S from '@/lib/schema';
+
+const { business, pages } = siteConfig;
+const bt = getBusinessType(siteConfig.businessType);
+const meta = { title: buildTitle(`${bt.label} Cost Calculator`), description: buildDescription(`Get an instant ${bt.label.toLowerCase()} estimate for your ${business.address.city} home. Pick the service, enter the size, and see a typical price range before you call.`), canonical: '/quote-calculator/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Estimate', path: '/quote-calculator/' }];
+const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({ path: '/quote-calculator/', title: meta.title, description: meta.description }), S.breadcrumbList('/quote-calculator/', crumbs));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Instant estimate" title={`${bt.label} cost calculator`} subtitle="A range in ten seconds. A written quote in one business day." />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="section !pt-8">
+    <div class="container-x grid lg:grid-cols-5 gap-12">
+      <div class="lg:col-span-3">
+        {calculator.enabled && calculator.rules.length > 0 ? <QuoteCalculator /> : <p class="text-slate-600">Calculator disabled. Enable it and add rules in <code>src/calculator.config.ts</code>.</p>}
+      </div>
+      <aside class="lg:col-span-2 prose prose-site">
+        <h2>How this estimate works</h2>
+        <p>The range comes from our recent {business.address.city} jobs: a base charge for setup plus a rate per square foot or linear foot, adjusted for the details you tick.</p>
+        <p>It isn't a quote. Condition, access, and things we can only see on site move the final number, which is why every job gets a written price before we start.</p>
+        {pages.pricingGuide && <p>Prefer a table? See the <a href="/pricing/">pricing guide</a>.</p>}
+      </aside>
+    </div>
+  </section>
+  <Cta />
+</BaseLayout>

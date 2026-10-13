@@ -1,0 +1,112 @@
+---
+/**
+ * Instant estimate. Vanilla JS island (~2KB), no framework. Rules come from
+ * src/calculator.config.ts and are embedded as JSON. Shows a range, never a
+ * single price, and hands the inputs to Formspree as hidden fields.
+ */
+import { siteConfig } from '@config';
+import { calculator } from '@/calculator.config';
+import Icon from './Icon.astro';
+interface Props { onlyService?: string; compact?: boolean }
+const { onlyService, compact = false } = Astro.props;
+const rules = calculator.rules.filter((r) => !onlyService || r.service === onlyService);
+const { forms } = siteConfig;
+const action = forms.formspreeId ? `https://formspree.io/f/${forms.formspreeId}` : '#';
+const next = new URL(forms.thankYouPath, siteConfig.url).toString();
+const inputCls = 'w-full border border-slate-300 rounded-[var(--radius-brand)] px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none';
+const uid = `calc-${onlyService ?? 'all'}`;
+---
+{calculator.enabled && rules.length > 0 && (
+  <div class="card p-6 md:p-8" data-calculator id={uid}>
+    {!compact && <h2 class="text-2xl">{calculator.title}</h2>}
+    <div class="grid gap-4 mt-4">
+      <label class="grid gap-1 text-sm font-medium">Service
+        <select class={inputCls} data-field="service">{rules.map((r) => <option value={r.service}>{r.label}</option>)}</select>
+      </label>
+      <label class="grid gap-1 text-sm font-medium"><span data-unit-label>{rules[0].unitLabel}</span>
+        <div class="flex items-center gap-3">
+          <input type="range" data-field="units" min={rules[0].min} max={rules[0].max} step={rules[0].step} value={rules[0].default} class="flex-1 accent-primary" />
+          <output data-units-out class="w-20 text-right font-semibold tabular-nums">{rules[0].default}</output>
+        </div>
+      </label>
+      <fieldset class="grid gap-2" data-options><legend class="text-sm font-medium mb-1">Details</legend></fieldset>
+    </div>
+    <div class="mt-6 rounded-[var(--radius-brand)] bg-neutral p-5">
+      <p class="text-sm text-slate-500">Estimated range</p>
+      <p class="font-heading text-3xl font-bold text-secondary"><span data-low>$0</span> – <span data-high>$0</span></p>
+      <p class="mt-1 text-xs text-slate-500" data-note></p>
+    </div>
+    <p class="mt-3 text-xs text-slate-500">{calculator.disclaimer}</p>
+    <form method="POST" action={action} class="mt-6 grid gap-3 border-t border-slate-200 pt-6">
+      <p class="font-semibold text-secondary">Lock in this estimate with a free written quote</p>
+      <input type="hidden" name="_next" value={next} />
+      <input type="hidden" name="_subject" value={`Calculator quote request from ${siteConfig.url}`} />
+      <input type="text" name="_gotcha" class="hidden" tabindex="-1" autocomplete="off" />
+      <input type="hidden" name="estimate_service" data-h="service" />
+      <input type="hidden" name="estimate_units" data-h="units" />
+      <input type="hidden" name="estimate_options" data-h="options" />
+      <input type="hidden" name="estimate_range" data-h="range" />
+      <input type="hidden" name="source_page" value={Astro.url.pathname} />
+      <div class="grid sm:grid-cols-2 gap-3">
+        <label class="grid gap-1 text-sm font-medium">Name<input class={inputCls} name="name" type="text" required autocomplete="name" /></label>
+        <label class="grid gap-1 text-sm font-medium">Phone<input class={inputCls} name="phone" type="tel" required autocomplete="tel" /></label>
+      </div>
+      <label class="grid gap-1 text-sm font-medium">Address or ZIP<input class={inputCls} name="address" type="text" autocomplete="street-address" /></label>
+      <button type="submit" data-cta="calculator-quote" class="btn-primary" disabled={!forms.formspreeId}><Icon name="arrow" class="w-5 h-5" /> Request my written quote</button>
+      {!forms.formspreeId && <p class="text-xs text-slate-500 text-center">Form inactive: set forms.formspreeId in site.config.ts</p>}
+    </form>
+    <script type="application/json" data-rules set:html={JSON.stringify(rules)} />
+  </div>
+)}
+<script>
+  function initCalc(root: HTMLElement) {
+    const rules = JSON.parse(root.querySelector('[data-rules]')!.textContent || '[]') as any[];
+    const svc = root.querySelector<HTMLSelectElement>('[data-field="service"]')!;
+    const units = root.querySelector<HTMLInputElement>('[data-field="units"]')!;
+    const unitsOut = root.querySelector<HTMLOutputElement>('[data-units-out]')!;
+    const unitLabel = root.querySelector<HTMLElement>('[data-unit-label]')!;
+    const opts = root.querySelector<HTMLElement>('[data-options]')!;
+    const low = root.querySelector<HTMLElement>('[data-low]')!;
+    const high = root.querySelector<HTMLElement>('[data-high]')!;
+    const note = root.querySelector<HTMLElement>('[data-note]')!;
+    const h = (k: string) => root.querySelector<HTMLInputElement>(`[data-h="${k}"]`)!;
+    const money = (n: number) => '$' + Math.round(n / 5) * 5;
+    const rule = () => rules.find((r) => r.service === svc.value) || rules[0];
+
+    function renderOptions() {
+      const r = rule();
+      opts.querySelectorAll('label').forEach((l) => l.remove());
+      for (const o of r.options) {
+        const l = document.createElement('label');
+        l.className = 'flex items-center gap-2 text-sm';
+        l.innerHTML = `<input type="checkbox" value="${o.id}" class="accent-primary w-4 h-4"> ${o.label}`;
+        opts.appendChild(l);
+      }
+      units.min = r.min; units.max = r.max; units.step = r.step; units.value = r.default;
+      unitLabel.textContent = r.unitLabel;
+    }
+    function calc() {
+      const r = rule();
+      const u = Number(units.value);
+      let lo = r.base.low + u * r.perUnit.low;
+      let hi = r.base.high + u * r.perUnit.high;
+      const chosen: string[] = [];
+      opts.querySelectorAll<HTMLInputElement>('input:checked').forEach((c) => {
+        const o = r.options.find((x: any) => x.id === c.value);
+        if (!o) return;
+        chosen.push(o.label);
+        if (o.multiplier) { lo *= o.multiplier; hi *= o.multiplier; }
+        if (o.add) { lo += o.add; hi += o.add; }
+      });
+      unitsOut.textContent = u.toLocaleString();
+      low.textContent = money(lo); high.textContent = money(hi);
+      note.textContent = r.note || '';
+      h('service').value = r.label; h('units').value = `${u} ${r.unit}`; h('options').value = chosen.join(', ') || 'none'; h('range').value = `${money(lo)} – ${money(hi)}`;
+    }
+    svc.addEventListener('change', () => { renderOptions(); calc(); });
+    units.addEventListener('input', calc);
+    opts.addEventListener('change', calc);
+    renderOptions(); calc();
+  }
+  document.querySelectorAll<HTMLElement>('[data-calculator]').forEach(initCalc);
+</script>

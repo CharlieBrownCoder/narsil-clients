@@ -1,0 +1,66 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Cta from '@/components/sections/Cta.astro';
+import ContactForm from '@/components/sections/ContactForm.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { formatDate, abs } from '@/lib/utils';
+import * as S from '@/lib/schema';
+
+interface Props { project: CollectionEntry<'projects'> }
+const { project } = Astro.props;
+const { Content } = await render(project);
+const d = project.data;
+const { business } = siteConfig;
+const path = `/gallery/${project.id}/`;
+const og = (await getImage({ src: d.after, width: 1200, height: 630, format: 'jpg' })).src;
+const service = d.service ? (await getCollection('services')).find((s) => s.id === d.service) : undefined;
+const meta = { title: buildTitle(`${d.title}${d.location ? ` in ${d.location.split(',').pop()?.trim()}` : ''}`), description: buildDescription(`${d.description} A ${business.name} project${d.location ? ` in ${d.location}` : ''}: what we found, what we did, and the result.`), canonical: path, ogImage: og, type: 'article' as const };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Gallery', path: '/gallery/' }, { name: d.title, path }];
+const schema = S.graph(
+  S.localBusiness(),
+  S.webSite(),
+  S.webPage({ path, title: meta.title, description: meta.description, image: og, datePublished: d.date }),
+  S.breadcrumbList(path, crumbs),
+  {
+    '@type': 'Article',
+    '@id': `${abs(path)}#article`,
+    headline: d.title,
+    description: d.description,
+    image: abs(og),
+    ...(d.date ? { datePublished: d.date.toISOString() } : {}),
+    author: { '@id': S.ORG_ID },
+    publisher: { '@id': S.ORG_ID },
+    mainEntityOfPage: { '@id': `${abs(path)}#webpage` },
+    ...(service ? { about: { '@id': `${abs(`/services/${service.id}/`)}#service` } } : {}),
+  },
+);
+---
+<BaseLayout meta={meta} schema={schema}>
+  <article class="container-x py-12 md:py-16">
+    <Breadcrumbs crumbs={crumbs} />
+    <header class="mt-6 max-w-3xl">
+      <p class="eyebrow">Case study{service && <> · <a href={`/services/${service.id}/`} class="hover:underline">{service.data.shortTitle ?? service.data.title}</a></>}</p>
+      <h1 class="mt-2 !text-3xl md:!text-5xl">{d.title}</h1>
+      <p class="mt-4 text-lg text-slate-600">{d.description}</p>
+      <p class="mt-2 text-sm text-slate-500">{[d.location, d.date ? formatDate(d.date) : ''].filter(Boolean).join(' · ')}</p>
+    </header>
+    <div class:list={['mt-8 grid gap-4', d.before ? 'md:grid-cols-2' : '']}>
+      {d.before && <figure><Image src={d.before} alt={`Before: ${d.title}`} widths={[640, 1200]} sizes="(min-width: 768px) 50vw, 100vw" loading="eager" class="w-full rounded-[var(--radius-brand)]" /><figcaption class="mt-2 text-sm font-semibold text-slate-500">Before</figcaption></figure>}
+      <figure><Image src={d.after} alt={`After: ${d.title}`} widths={[640, 1200]} sizes="(min-width: 768px) 50vw, 100vw" loading="eager" class="w-full rounded-[var(--radius-brand)]" /><figcaption class="mt-2 text-sm font-semibold text-primary">After</figcaption></figure>
+    </div>
+    {d.stats.length > 0 && (
+      <dl class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+        {d.stats.map((s) => <div class="card p-4"><dt class="text-xs uppercase tracking-wide text-slate-500">{s.label}</dt><dd class="mt-1 font-heading font-bold text-secondary">{s.value}</dd></div>)}
+      </dl>
+    )}
+    <div class="mt-12 grid lg:grid-cols-3 gap-12">
+      <div class="lg:col-span-2 prose prose-site"><Content /></div>
+      <aside class="lg:sticky lg:top-24 self-start"><ContactForm service={d.service} compact /></aside>
+    </div>
+  </article>
+  <Cta title={service ? `Want the same result? Ask about ${service.data.shortTitle?.toLowerCase() ?? service.data.title.toLowerCase()}.` : undefined} />
+</BaseLayout>

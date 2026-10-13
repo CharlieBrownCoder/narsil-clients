@@ -12,7 +12,7 @@ import * as S from '@/lib/schema';
 
 const { business } = siteConfig;
 const bt = getBusinessType(siteConfig.businessType);
-const projects = await getCollection('projects');
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const meta = { title: buildTitle(`${bt.label} Before & After Gallery`), description: buildDescription(`See real ${bt.label.toLowerCase()} results from ${business.name} across ${business.address.city}, ${business.address.state}. Before and after photos from recent jobs.`), canonical: '/gallery/' };
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Gallery', path: '/gallery/' }];
 const schema = S.graph(S.localBusiness(), S.webSite(), S.webPage({ path: '/gallery/', title: meta.title, description: meta.description, type: 'CollectionPage' }), S.breadcrumbList('/gallery/', crumbs), S.imageGallery('/gallery/', meta.title, projects.map((p) => ({ url: p.data.after.src, caption: p.data.title }))));

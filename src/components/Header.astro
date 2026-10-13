@@ -2,7 +2,8 @@
 import { siteConfig } from '@config';
 import Icon from './Icon.astro';
 import { telHref } from '@/lib/utils';
-const { business, nav, pages, promo, theme } = siteConfig;
+const { business, nav, pages, promo, theme, booking } = siteConfig;
+const bookHref = booking.provider === 'link' ? booking.url : booking.provider === 'embed' && pages.booking ? '/book/' : undefined;
 const items = nav.filter((n) => !n.page || pages[n.page]);
 const current = Astro.url.pathname;
 ---
@@ -25,7 +26,7 @@ const current = Astro.url.pathname;
       <a href={telHref()} class="flex items-center gap-2 font-bold text-secondary hover:text-primary">
         <Icon name="phone" class="w-5 h-5 text-primary" /> {business.phone}
       </a>
-      {pages.contact && <a href="/contact/" data-cta="header-quote" class="btn-accent !py-2.5">Free Quote</a>}
+      {bookHref ? <a href={bookHref} data-cta="header-book" class="btn-accent !py-2.5" target={booking.provider === 'link' ? '_blank' : undefined} rel={booking.provider === 'link' ? 'noopener' : undefined}>{booking.label}</a> : pages.contact && <a href="/contact/" data-cta="header-quote" class="btn-accent !py-2.5">Free Quote</a>}
     </div>
     <button id="menu-btn" class="lg:hidden p-2 -mr-2 text-secondary" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
       <Icon name="menu" class="w-7 h-7" />

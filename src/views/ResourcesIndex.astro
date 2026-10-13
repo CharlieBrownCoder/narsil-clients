@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { getBusinessType } from '@/lib/business-types';
+import * as S from '@/lib/schema';
+
+const { business } = siteConfig;
+const bt = getBusinessType(siteConfig.businessType);
+const resources = (await getCollection('resources')).sort((a, b) => a.data.order - b.data.order);
+const meta = { title: buildTitle(`Free ${bt.label} Guides & Checklists`), description: buildDescription(`Downloadable checklists and homeowner guides from ${business.name}: ${resources.map((r) => r.data.title).join(', ')}.`), canonical: '/resources/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Resources', path: '/resources/' }];
+const schema = S.graph(S.localBusiness(), S.webSite(), S.webPage({ path: '/resources/', title: meta.title, description: meta.description, type: 'CollectionPage' }), S.breadcrumbList('/resources/', crumbs));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Free downloads" title="Guides & checklists" subtitle={`Practical, printable, written by the people who do the work in ${business.address.city}.`} />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="section !pt-8">
+    <div class="container-x grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {resources.map((r) => (
+        <a href={`/resources/${r.id}/`} class="card overflow-hidden group hover:border-primary">
+          {r.data.cover ? <Image src={r.data.cover} alt={r.data.title} widths={[400, 800]} sizes="(min-width:1024px) 33vw, 100vw" class="w-full aspect-[3/2] object-cover" /> : <div class="aspect-[3/2] bg-primary/10 flex items-center justify-center text-primary"><Icon name="check" class="w-12 h-12" /></div>}
+          <div class="p-5">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{r.data.fileType}{r.data.gated ? ' · free with email' : ' · free'}</p>
+            <h3 class="mt-1 group-hover:text-primary">{r.data.title}</h3>
+            <p class="mt-2 text-sm text-slate-600">{r.data.description}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+  <Cta />
+</BaseLayout>

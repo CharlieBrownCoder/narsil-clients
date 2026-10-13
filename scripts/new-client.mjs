@@ -5,7 +5,8 @@
  *   npm run new-client -- --name "Acme Roofing" --type roofing --city Austin --state TX
  *
  * What it does:
- *  - Deletes demo services, locations, posts, projects, faqs
+ *  - Deletes demo services, locations, posts, projects, resources, faqs, categories, team
+ *  - Disables the demo calculator rules (src/calculator.config.ts → enabled: false, rules: [])
  *  - Writes empty collections and one starter service + location
  *  - Rewrites the business basics in src/site.config.ts
  * It does NOT touch images, theme colors, or hosting config. Edit those by hand.
@@ -26,11 +27,11 @@ const q = (s) => `'${s.replace(/'/g, "\\'")}'`;
 const root = resolve(import.meta.dirname, '..');
 const content = resolve(root, 'src/content');
 
-for (const dir of ['services', 'locations', 'posts']) {
+for (const dir of ['services', 'locations', 'posts', 'projects', 'resources']) {
   rmSync(resolve(content, dir), { recursive: true, force: true });
   mkdirSync(resolve(content, dir), { recursive: true });
 }
-for (const f of ['projects.json', 'faqs.json', 'categories.json', 'team.json']) writeFileSync(resolve(content, f), '[]\n');
+for (const f of ['faqs.json', 'categories.json', 'team.json']) writeFileSync(resolve(content, f), '[]\n');
 
 writeFileSync(
   resolve(content, 'services/example-service.md'),
@@ -100,5 +101,10 @@ cfg = cfg.replace(/locations: \[[\s\S]*?\n    \],/, 'locations: [],');
 cfg = cfg.replace(/credentials: \[[\s\S]*?\n    \],/, 'credentials: [],');
 cfg = cfg.replace(/responseTimePromise: '[^']*'/, "responseTimePromise: ''");
 writeFileSync(cfgPath, head + cfg);
+
+const calcPath = resolve(root, 'src/calculator.config.ts');
+let calc = readFileSync(calcPath, 'utf8');
+calc = calc.replace(/enabled: true/, 'enabled: false').replace(/rules: \[[\s\S]*\n  \],\n\};/, 'rules: [],\n};');
+writeFileSync(calcPath, calc);
 
 console.log(`\nReset for ${name} (${type}) in ${city}, ${state}.\nNext:\n  1. Edit src/site.config.ts (url, phone, email, address, hours, sameAs, theme)\n  2. Replace public/images/*\n  3. Fill src/content/\n  4. npm run build\n`);

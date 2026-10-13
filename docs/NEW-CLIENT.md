@@ -29,6 +29,7 @@
 ## 3. Fonts (`public/fonts/`)
 - [ ] Variable latin woff2 for the heading and body family, named `<slug>.woff2` (see `public/fonts/README.md`)
 - [ ] `theme.fontHeading` / `theme.fontBody` match the family names exactly
+- [ ] Static TTFs in `public/fonts/og/` for generated share images (see `public/fonts/README.md`)
 
 ## 4. Images
 Source images live in `src/assets/images/` and are optimized at build (WebP, responsive sizes). Only three files stay in `public/`.
@@ -55,6 +56,11 @@ Upload originals at those sizes; the build handles compression and formats.
 - [ ] `team.json`: real names, roles, photos. Or set `pages.team: false`.
 - [ ] `categories.json` + `category` on each service when there are more than ~6 services.
 - [ ] Mark `emergency: true` on services offered 24/7.
+- [ ] `startingPrice` + `priceHigh` on services that should appear on `/pricing/`.
+- [ ] `src/calculator.config.ts`: real base and per-unit ranges per service, or leave `enabled: false`.
+- [ ] `projects/*.md`: 3+ before/after pairs; add a body to the best one to make it a case study.
+- [ ] `resources/*.md` + the file in `public/downloads/`, or set `pages.resources: false`.
+- [ ] `booking`: provider, URL or embed URL, or leave `none`.
 - [ ] `posts/`: 2+ posts with a `category` (article, seasonal-guide, how-to, pricing) or leave `pages.blog: false`.
 - [ ] Rewrite the About page copy in `src/views/About.astro`.
 - [ ] Run the `content-humanizer` agent over every file in `src/content/` and review the diff.

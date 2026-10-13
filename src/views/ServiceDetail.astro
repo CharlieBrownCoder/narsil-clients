@@ -13,6 +13,8 @@ import LocationGrid from '@/components/sections/LocationGrid.astro';
 import Faq from '@/components/sections/Faq.astro';
 import Cta from '@/components/sections/Cta.astro';
 import ContactForm from '@/components/sections/ContactForm.astro';
+import QuoteCalculator from '@/components/QuoteCalculator.astro';
+import { calculator } from '@/calculator.config';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Icon from '@/components/Icon.astro';
 import { serviceMeta } from '@/lib/seo';
@@ -33,6 +35,7 @@ const related = (await getCollection('services')).filter((s) => d.related.includ
 const cat = d.category ? (await getCollection('categories')).find((c) => c.id === d.category) : undefined;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }, ...(cat ? [{ name: cat.data.title, path: `/services/${cat.id}/` }] : []), { name: d.title, path }];
 const short = d.shortTitle ?? d.title;
+const hasCalc = pages.quoteCalculator && calculator.enabled && calculator.rules.some((r) => r.service === service.id);
 
 const schema = S.graph(
   S.localBusiness(),
@@ -73,6 +76,7 @@ const schema = S.graph(
       </aside>
     </div>
   </section>
+  {hasCalc && <section class="section bg-neutral"><div class="container-x max-w-3xl"><p class="eyebrow">Instant estimate</p><h2 class="mt-2 mb-6">What {short.toLowerCase()} costs</h2><QuoteCalculator onlyService={service.id} compact /></div></section>}
   <ProcessSteps steps={d.process} title={`Our ${short.toLowerCase()} process`} />
   {pages.gallery && <Gallery limit={3} service={service.id} title={`${short} results`} />}
   <Trustindex placement="compact" title="What customers say" />

@@ -8,7 +8,6 @@ import { enabledOptionalPages } from '@/lib/optional-pages';
 import About from '@/views/About.astro';
 import Contact from '@/views/Contact.astro';
 import Reviews from '@/views/Reviews.astro';
-import GalleryPage from '@/views/GalleryPage.astro';
 import FaqPage from '@/views/FaqPage.astro';
 import PrivacyPolicy from '@/views/PrivacyPolicy.astro';
 import ThankYou from '@/views/ThankYou.astro';
@@ -16,6 +15,9 @@ import Terms from '@/views/Terms.astro';
 import Team from '@/views/Team.astro';
 import Emergency from '@/views/Emergency.astro';
 import LicensesInsurance from '@/views/LicensesInsurance.astro';
+import PricingGuide from '@/views/PricingGuide.astro';
+import Booking from '@/views/Booking.astro';
+import QuoteCalculatorPage from '@/views/QuoteCalculatorPage.astro';
 
 export function getStaticPaths() {
   return enabledOptionalPages().map((page) => ({ params: { page } }));
@@ -25,7 +27,6 @@ const views: Record<string, any> = {
   about: About,
   contact: Contact,
   reviews: Reviews,
-  gallery: GalleryPage,
   faq: FaqPage,
   'privacy-policy': PrivacyPolicy,
   'thank-you': ThankYou,
@@ -33,6 +34,9 @@ const views: Record<string, any> = {
   team: Team,
   emergency: Emergency,
   'licenses-insurance': LicensesInsurance,
+  pricing: PricingGuide,
+  book: Booking,
+  'quote-calculator': QuoteCalculatorPage,
 };
 const View = views[Astro.params.page!];
 ---

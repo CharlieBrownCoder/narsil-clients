@@ -19,6 +19,11 @@ Every page type, what it is for, which query it targets, and what structured dat
 | About | `/about/` | brand, E-E-A-T | LocalBusiness (full), WebSite, AboutPage, BreadcrumbList | `src/views/About.astro` |
 | Contact | `/contact/` | "[brand] phone" | LocalBusiness (full), WebSite, ContactPage, BreadcrumbList | `src/views/Contact.astro` |
 | Reviews | `/reviews/` | "[brand] reviews" | LocalBusiness (full, with AggregateRating from `trust.rating`), WebSite, CollectionPage, BreadcrumbList. Reviews themselves render in the Trustindex widget. | `src/views/Reviews.astro` |
+| Case study | `/gallery/<slug>/` | "[service] [city] before and after" | LocalBusiness, WebSite, WebPage, BreadcrumbList, Article (about → Service) | `src/views/CaseStudy.astro`; only projects with a Markdown body |
+| Pricing guide | `/pricing/` | "[vertical] cost [city]" | LocalBusiness (full), WebSite, WebPage, BreadcrumbList, ItemList of Offer + PriceSpecification, FAQPage | `src/views/PricingGuide.astro`; rows from `startingPrice`/`priceHigh` |
+| Quote calculator | `/quote-calculator/` | "[vertical] cost calculator" | LocalBusiness (full), WebSite, WebPage, BreadcrumbList | `src/views/QuoteCalculatorPage.astro`; rules in `src/calculator.config.ts`; also embedded on matching service pages |
+| Booking | `/book/` | "schedule [brand]" | LocalBusiness (full), WebSite, WebPage, BreadcrumbList | `src/views/Booking.astro`; `booking.provider` link or embed |
+| Resources index + detail | `/resources/`, `/resources/<slug>/` | "[vertical] checklist" | LocalBusiness, WebSite, CollectionPage / WebPage + DigitalDocument, BreadcrumbList | `src/views/ResourcesIndex.astro`, `ResourceDetail.astro`; `gated: true` puts a Formspree form in front of the file |
 | Gallery | `/gallery/` | "[vertical] before and after" | LocalBusiness, WebSite, CollectionPage, BreadcrumbList, ImageGallery | `src/views/GalleryPage.astro` |
 | FAQ | `/faq/` | question queries | LocalBusiness, WebSite, FAQPage (page type) + FAQPage (entity), BreadcrumbList | `src/views/FaqPage.astro` |
 | Blog index | `/blog/` | topical authority | LocalBusiness, WebSite, CollectionPage, BreadcrumbList, Blog | `src/views/BlogIndex.astro` |
@@ -54,10 +59,11 @@ Ideas not yet built, by vertical:
 
 - **Financing** (roofing, HVAC, remodeling): `pages.financing` is reserved in the config.
 - **Careers** (any): `pages.careers` is reserved.
-- **Pricing guide**: aggregate `startingPrice` across services with an estimate disclaimer.
-- **Case studies**: extend projects with a Markdown body for story pages.
 - **Coupons / Specials**: the `promo` banner covers one offer; a dedicated page could list several.
-- **Quote calculator**: optional island, pricing rules in config, ranges only.
+
+## Social share images
+
+Every page listed in `src/lib/og-pages.ts` gets a generated 1200×630 PNG at `/og/<slug>.png` (satori + sharp, brand colors and fonts). Pages not listed, and all pages when `public/fonts/og/` has no TTFs, fall back to `theme.ogImage`. Posts, service pages, and case studies that set their own image use that instead.
 
 ## Internal linking map
 

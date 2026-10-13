@@ -1,0 +1,69 @@
+---
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import Faq from '@/components/sections/Faq.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { getBusinessType } from '@/lib/business-types';
+import { abs } from '@/lib/utils';
+import * as S from '@/lib/schema';
+
+const { business, pricing, pages } = siteConfig;
+const bt = getBusinessType(siteConfig.businessType);
+const services = (await getCollection('services')).filter((s) => s.data.startingPrice).sort((a, b) => a.data.order - b.data.order);
+const faqs = (await getCollection('faqs')).filter((f) => /price|cost|pay|quote/i.test(f.data.question)).map((f) => f.data);
+const money = (n: number) => `$${n.toLocaleString('en-US')}`;
+const meta = { title: buildTitle(`${bt.label} Prices in ${business.address.city}, ${business.address.state}`), description: buildDescription(`How much does ${bt.label.toLowerCase()} cost in ${business.address.city}? Typical ranges for ${services.map((s) => s.data.shortTitle ?? s.data.title).join(', ')} from ${business.name}, plus what moves the price.`), canonical: '/pricing/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Pricing', path: '/pricing/' }];
+const schema = S.graph(
+  S.localBusiness({ full: true }),
+  S.webSite(),
+  S.webPage({ path: '/pricing/', title: meta.title, description: meta.description }),
+  S.breadcrumbList('/pricing/', crumbs),
+  { '@type': 'ItemList', '@id': abs('/pricing/#list'), itemListElement: services.map((s, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Offer', name: s.data.title, url: abs(`/services/${s.id}/`), priceCurrency: 'USD', priceSpecification: { '@type': 'PriceSpecification', minPrice: s.data.startingPrice, ...(s.data.priceHigh ? { maxPrice: s.data.priceHigh } : {}), priceCurrency: 'USD' } } })) },
+  S.faqPage('/pricing/', faqs),
+);
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Pricing guide" title={`What ${bt.label.toLowerCase()} costs in ${business.address.city}`} subtitle={pricing.intro} />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="section !pt-8">
+    <div class="container-x">
+      <div class="card overflow-hidden">
+        <table class="w-full text-left">
+          <thead class="bg-neutral text-sm uppercase tracking-wide text-slate-500"><tr><th class="px-5 py-3">Service</th><th class="px-5 py-3">Typical range</th><th class="px-5 py-3 hidden md:table-cell">Unit</th><th class="px-5 py-3"></th></tr></thead>
+          <tbody class="divide-y divide-slate-200">
+            {services.map((s) => (
+              <tr>
+                <td class="px-5 py-4 font-semibold text-secondary">{s.data.title}</td>
+                <td class="px-5 py-4 font-heading font-bold text-primary whitespace-nowrap">{money(s.data.startingPrice!)}{s.data.priceHigh ? ` – ${money(s.data.priceHigh)}` : '+'}</td>
+                <td class="px-5 py-4 text-slate-600 hidden md:table-cell">{s.data.priceUnit}</td>
+                <td class="px-5 py-4 text-right"><a href={`/services/${s.id}/`} class="inline-flex items-center gap-1 text-sm font-semibold text-primary">Details <Icon name="arrow" class="w-4 h-4" /></a></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-4 text-sm text-slate-500">{pricing.disclaimer}</p>
+      {pages.quoteCalculator && <a href="/quote-calculator/" data-cta="pricing-calculator" class="btn-primary mt-6">Get an instant estimate</a>}
+    </div>
+  </section>
+  <section class="section bg-neutral">
+    <div class="container-x max-w-3xl prose prose-site">
+      <h2>What changes the price</h2>
+      <ul>
+        <li><strong>Size.</strong> Square footage or linear feet is the biggest factor on every service.</li>
+        <li><strong>Condition.</strong> Years of buildup, oil, rust, or moss need pre-treatment and extra passes.</li>
+        <li><strong>Access.</strong> Height, pitch, tight lots, and pool enclosures slow the crew down.</li>
+        <li><strong>Add-ons.</strong> Sealing, staining, gutter flushing, and window rinsing are cheaper bundled on one visit.</li>
+      </ul>
+      <p>Bundling two or more services on the same visit is the single best way to lower the total, because setup time is shared.</p>
+    </div>
+  </section>
+  <Faq faqs={faqs} title="Pricing questions" />
+  <Cta title="Want an exact number? It's free." />
+</BaseLayout>

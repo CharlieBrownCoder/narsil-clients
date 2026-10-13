@@ -8,6 +8,7 @@ image: ../../assets/images/service-roof.jpg
 imageAlt: Asphalt shingle roof half cleaned showing black streak removal
 order: 3
 startingPrice: 349
+priceHigh: 800
 priceUnit: per roof
 serviceType: Roof soft washing
 benefits:

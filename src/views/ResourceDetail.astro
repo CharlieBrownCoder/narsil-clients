@@ -1,0 +1,67 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Icon from '@/components/Icon.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { abs } from '@/lib/utils';
+import * as S from '@/lib/schema';
+
+interface Props { resource: CollectionEntry<'resources'> }
+const { resource } = Astro.props;
+const { Content } = await render(resource);
+const d = resource.data;
+const { business, forms } = siteConfig;
+const path = `/resources/${resource.id}/`;
+const fileUrl = abs(d.file);
+const service = d.service ? (await getCollection('services')).find((s) => s.id === d.service) : undefined;
+const meta = { title: buildTitle(d.title), description: buildDescription(d.description), canonical: path };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Resources', path: '/resources/' }, { name: d.title, path }];
+const schema = S.graph(
+  S.localBusiness(),
+  S.webSite(),
+  S.webPage({ path, title: meta.title, description: meta.description }),
+  S.breadcrumbList(path, crumbs),
+  { '@type': 'DigitalDocument', '@id': `${abs(path)}#doc`, name: d.title, description: d.description, encodingFormat: d.fileType === 'PDF' ? 'application/pdf' : undefined, url: fileUrl, publisher: { '@id': S.ORG_ID }, isAccessibleForFree: true },
+);
+const action = forms.formspreeId ? `https://formspree.io/f/${forms.formspreeId}` : '#';
+const inputCls = 'w-full border border-slate-300 rounded-[var(--radius-brand)] px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none';
+---
+<BaseLayout meta={meta} schema={schema}>
+  <section class="section">
+    <div class="container-x">
+      <Breadcrumbs crumbs={crumbs} />
+      <div class="mt-6 grid lg:grid-cols-5 gap-12">
+        <div class="lg:col-span-3">
+          <p class="eyebrow">{d.fileType} download</p>
+          <h1 class="mt-2 !text-3xl md:!text-5xl">{d.title}</h1>
+          <p class="mt-4 text-lg text-slate-600">{d.description}</p>
+          {d.cover && <Image src={d.cover} alt={d.title} widths={[640, 1200]} sizes="(min-width:1024px) 60vw, 100vw" class="mt-8 w-full rounded-[var(--radius-brand)]" />}
+          <div class="prose prose-site mt-8"><Content /></div>
+          {service && <p class="mt-6 text-slate-600">Related service: <a href={`/services/${service.id}/`} class="font-semibold text-primary hover:underline">{service.data.title}</a></p>}
+        </div>
+        <aside class="lg:col-span-2 lg:sticky lg:top-24 self-start">
+          {d.gated ? (
+            <form method="POST" action={action} class="card p-6 grid gap-4">
+              <input type="hidden" name="_next" value={fileUrl} />
+              <input type="hidden" name="_subject" value={`Download: ${d.title}`} />
+              <input type="hidden" name="resource" value={d.title} />
+              <input type="text" name="_gotcha" class="hidden" tabindex="-1" autocomplete="off" />
+              <h2 class="text-xl">Get the {d.fileType}</h2>
+              <label class="grid gap-1 text-sm font-medium">Name<input class={inputCls} name="name" type="text" required autocomplete="name" /></label>
+              <label class="grid gap-1 text-sm font-medium">Email<input class={inputCls} name="email" type="email" required autocomplete="email" /></label>
+              <button type="submit" data-cta="resource-download" class="btn-primary" disabled={!forms.formspreeId}><Icon name="arrow" class="w-5 h-5 rotate-90" /> Send me the {d.fileType}</button>
+              <p class="text-xs text-slate-500">{forms.formspreeId ? 'Opens the file right away. We may follow up once; no spam.' : 'Form inactive: set forms.formspreeId in site.config.ts'}</p>
+            </form>
+          ) : (
+            <div class="card p-6"><a href={d.file} download data-cta="resource-download" class="btn-primary w-full"><Icon name="arrow" class="w-5 h-5 rotate-90" /> Download {d.fileType}</a></div>
+          )}
+        </aside>
+      </div>
+    </div>
+  </section>
+  <Cta />
+</BaseLayout>

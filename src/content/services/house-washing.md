@@ -9,6 +9,7 @@ imageAlt: Technician soft washing the siding of a two-story brick home
 featured: true
 order: 1
 startingPrice: 199
+priceHigh: 550
 priceUnit: per home
 serviceType: Exterior house washing
 benefits:

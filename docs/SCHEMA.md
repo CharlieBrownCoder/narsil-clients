@@ -51,6 +51,7 @@ Override per client with `schemaTypeOverride` if a more specific type exists.
 | `branch(b)` | LocalBusiness subtype | one per `business.locations[]` entry, `parentOrganization` → org; the org lists them as `subOrganization` when there is more than one |
 | `person(m)` | Person | team members, `worksFor` → org |
 | `credentials()` | EducationalOccupationalCredential[] | from `business.credentials` (license and certification types) as `hasCredential` on the full org |
+| (inline in views) | Article (case studies), ItemList of Offer + PriceSpecification (pricing), DigitalDocument (resources) | small enough to live in the view; move into schema.ts if a second page needs them |
 | `graph(...things)` | wraps into `@context` + `@graph`, drops undefined | |
 
 ## areaServed

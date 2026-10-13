@@ -8,6 +8,7 @@ image: ../../assets/images/service-deck.jpg
 imageAlt: Cedar fence being cleaned, with weathered gray on one side and restored wood on the other
 order: 4
 startingPrice: 199
+priceHigh: 600
 priceUnit: per project
 serviceType: Wood deck and fence cleaning
 benefits:

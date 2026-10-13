@@ -5,13 +5,15 @@ export const OPTIONAL_PAGES: Record<string, PageKey | null> = {
   about: 'about',
   contact: 'contact',
   reviews: 'reviews',
-  gallery: 'gallery',
   faq: 'faq',
   'privacy-policy': 'privacyPolicy',
   terms: 'terms',
   team: 'team',
   emergency: 'emergency',
   'licenses-insurance': 'licensesInsurance',
+  pricing: 'pricingGuide',
+  book: 'booking',
+  'quote-calculator': 'quoteCalculator',
   'thank-you': null,
 };
 

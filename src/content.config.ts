@@ -32,6 +32,8 @@ const services = defineCollection({
     order: z.number().default(100),
     /** Starting price for schema Offer and UI. Omit to hide. */
     startingPrice: z.number().optional(),
+    /** Typical high end, shown on the pricing guide as a range. */
+    priceHigh: z.number().optional(),
     priceUnit: z.string().optional(), // "per visit", "per sq ft"
     benefits: z.array(z.string()).default([]),
     process: z.array(z.object({ title: z.string(), description: z.string() })).default([]),
@@ -91,18 +93,47 @@ const posts = defineCollection({
   }),
 });
 
+/**
+ * Projects: src/content/projects/<slug>.md
+ * Frontmatter alone = gallery card. Add a body (300+ words) and it also becomes a
+ * case-study page at /gallery/<slug>/ with Article schema.
+ */
 const projects = defineCollection({
-  loader: file('./src/content/projects.json'),
+  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: ({ image }: SchemaContext) => z.object({
-    id: z.string(),
     title: z.string(),
     description: z.string(),
     service: z.string().optional(),
+    /** Free text shown on the card, e.g. "Kings Ridge, Plano" */
     location: z.string().optional(),
-    /** Relative to projects.json, e.g. ../assets/images/project-1-before.jpg */
+    /** Location slug for internal linking to /service-areas/<slug>/ */
+    locationSlug: z.string().optional(),
     before: image().optional(),
     after: image(),
     date: z.coerce.date().optional(),
+    /** Case-study facts. Shown as a stat strip when present. */
+    stats: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
+    featured: z.boolean().default(false),
+    order: z.number().default(100),
+  }),
+});
+
+/**
+ * Downloadable resources: src/content/resources/<slug>.md
+ * The file lives in public/downloads/. gated:true puts a lead form in front of it.
+ */
+const resources = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/resources' }),
+  schema: ({ image }: SchemaContext) => z.object({
+    title: z.string(),
+    description: z.string(),
+    /** Path under public/, e.g. /downloads/spring-checklist.pdf */
+    file: z.string(),
+    fileType: z.string().default('PDF'),
+    gated: z.boolean().default(true),
+    cover: image().optional(),
+    service: z.string().optional(),
+    order: z.number().default(100),
   }),
 });
 
@@ -145,4 +176,4 @@ const faqs = defineCollection({
   }),
 });
 
-export const collections = { services, locations, posts, projects, faqs, categories, team };
+export const collections = { services, locations, posts, projects, resources, faqs, categories, team };
