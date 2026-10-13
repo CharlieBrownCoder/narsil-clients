@@ -40,6 +40,21 @@ Rewrite the sentence so it says something specific about this business instead.
 - **Bold labels in lists.** "**Quality:** we deliver quality." Write the
   sentence or cut the bullet.
 
+## The agency skeleton copy (don't reuse verbatim)
+
+The client's reference sites share one WordPress kit, and its copy repeats
+across dozens of unrelated businesses. Keep the section order; rewrite every
+one of these in the client's own words:
+
+- Title tag "City's Top Rated [Service] - 100% Satisfaction Guaranteed - Get a Fast Quote Here"
+- Headline "[City]'s Top Rated [Service]" with nothing to back it up. Keep the shape only when a real review count or award sits next to it.
+- "Get a Fast Quote" (fine as a button; don't make it the only CTA text on the page)
+- "What our neighbors are saying" / "Hear from our happy customers"
+- "Easy as 1-2-3" / "Our simple 3-step process"
+- "Risk-free guarantee" / "100% satisfaction guaranteed" without saying what happens when it isn't
+- "Ready to transform your [home]?" closer
+- "We're glad you're here. How can we help?"
+
 ## What to keep
 
 - First-person plural, present tense.

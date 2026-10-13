@@ -54,6 +54,13 @@ Every page type, what it is for, which query it targets, and what structured dat
 | `TrustBar` | `trust.logos[]` else `trust.badges[]` | under every hero |
 | `SectionDivider` | `theme.dividers` | hero bottom, CTA band top |
 | `ComparisonTable` | `trust.comparison.rows[]` | home and About, after Why Us |
+| `ServiceStrip` | `theme.serviceStrip` | icon tiles overlapping the home hero's bottom edge |
+| `ProcessSteps` | `process[]` (home), `process` on each service | home, service pages |
+| `GuaranteeBand` | `trust.guarantee` | home, after the comparison table |
+| `ClientLogos` | `trust.clients[]` | home, under the stat strip |
+| `OffersGrid` | `offers[]` | home after services, /pricing/ |
+| `PlanTiers` | `plans[]` | home after How it works, /pricing/ |
+| `StickyQuoteTab` | `theme.stickyQuoteTab` | every page, desktop only, off by default |
 | `ResponsePromise` | `business.responseTimePromise` | hero, quote form |
 | `EmergencyCta` | `business.emergency.available` | home, emergency services, /emergency/ |
 | `Credentials` | `business.credentials[]` | about, /licenses-insurance/, /team/ |

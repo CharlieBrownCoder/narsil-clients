@@ -1,0 +1,17 @@
+---
+/** "Trusted by" commercial client logos from trust.clients. Hidden when empty. */
+import { siteConfig } from '@config';
+const { clients } = siteConfig.trust;
+interface Props { title?: string }
+const { title = 'Trusted by' } = Astro.props;
+---
+{clients.length > 0 && (
+  <section class="py-10 bg-white border-y border-slate-200">
+    <div class="container-x">
+      <p class="text-center text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</p>
+      <ul class="mt-5 flex flex-wrap items-center justify-center gap-x-12 gap-y-5">
+        {clients.map((c) => <li><img src={c.src} alt={c.alt} height="40" width="140" class="h-8 md:h-10 w-auto grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition" loading="lazy" /></li>)}
+      </ul>
+    </div>
+  </section>
+)}

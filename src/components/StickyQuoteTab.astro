@@ -1,0 +1,8 @@
+---
+/** Desktop-only sticky quote tab on the right edge. theme.stickyQuoteTab. */
+import { siteConfig } from '@config';
+const show = siteConfig.theme.stickyQuoteTab && siteConfig.pages.contact;
+---
+{show && (
+  <a href="/contact/" data-cta="sticky-tab" class="hidden md:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-accent text-secondary font-bold text-sm tracking-wide px-3 py-4 rounded-l-[var(--radius-brand)] shadow-lg [writing-mode:vertical-rl] rotate-180 hover:brightness-95">Get a Free Quote</a>
+)}

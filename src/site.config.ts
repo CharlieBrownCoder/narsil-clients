@@ -157,12 +157,20 @@ export interface SiteConfig {
     heroStyle: 'photo' | 'cutout' | 'split' | 'centered';
     /** Quote form card inside the hero (desktop right column; stacked on mobile). */
     heroForm: boolean;
+    /** Photo treatment for photo/centered heroes: dark scrim, brand-color scrim, or a duotone tint in the primary color. */
+    heroScrim: 'dark' | 'brand' | 'duotone';
+    /** flat = normal buttons; sticker = hard offset shadow in the dark color (playful brands). */
+    buttonStyle: 'flat' | 'sticker';
     /** Display headings (h1, h2) in uppercase with tight tracking. Body and h3 unaffected. */
     headingCase: 'normal' | 'uppercase';
     /** Shaped edge between the hero and the next section, and above the CTA band. */
     dividers: 'none' | 'angle' | 'curve' | 'wave';
     /** Service cards show the service photo (needs `image` on each service) or an icon tile. */
     serviceCards: 'photo' | 'icon';
+    /** Row of service icon tiles overlapping the bottom edge of the home hero. */
+    serviceStrip: boolean;
+    /** Desktop-only sticky "Get a Quote" tab on the right edge. Off by default; one CTA per screen is the rule. */
+    stickyQuoteTab: boolean;
     logo: { src: string; alt: string; width: number; height: number };
     /** Default social share image (1200x630) */
     ogImage: string;
@@ -188,7 +196,25 @@ export interface SiteConfig {
     bullets: string[];
     /** checks = 2×2 checkmark list; pills = icon pill row (shorter labels work best) */
     bulletStyle: 'checks' | 'pills';
+    /** Microcopy under the CTA pair, e.g. "No obligation. Quotes in writing." Blank = hidden. */
+    ctaNote?: string;
   };
+
+  /** Home page "How it works" band. 3 steps. [] = hidden. */
+  process: Array<{ title: string; description: string }>;
+
+  /**
+   * Current specials. Rendered as coupon cards on the home page and /pricing/.
+   * [] = hidden. Put the expiry on the card; stale offers cost trust.
+   */
+  offers: Array<{ title: string; detail: string; code?: string; expires?: string; service?: string }>;
+
+  /**
+   * Recurring maintenance plans (window cleaning, lawn, pest, HVAC tune-ups,
+   * annual house wash). Rendered as tier cards on /pricing/ and the home page.
+   * [] = hidden.
+   */
+  plans: Array<{ name: string; price: string; period: string; description: string; features: string[]; highlight?: boolean }>;
 
   /** Lead capture via Formspree (https://formspree.io). Create one form per client. */
   forms: {
@@ -230,12 +256,16 @@ export interface SiteConfig {
   trust: {
     badges: Array<{ label: string; icon?: string }>;
     guarantees: string[];
+    /** Guarantee band on the home page. Blank title = hidden. Only promise what the contract says. */
+    guarantee?: { title: string; text: string };
     /** Aggregate rating used in schema and UI. Keep in sync with real reviews. */
     rating?: { value: number; count: number; source: string };
     /** Big-number strip under the hero, e.g. { value: "5,000+", label: "Homes cleaned" }. [] = hidden. Real numbers only. */
     stats: Array<{ value: string; label: string }>;
     /** Third-party badge images (BBB, Google Guaranteed, awards). Files in public/images/badges/. [] = hidden. */
     logos: Array<{ src: string; alt: string; href?: string }>;
+    /** "Trusted by" commercial client logos. Files in public/images/clients/. [] = hidden. Real clients only, with permission. */
+    clients: Array<{ src: string; alt: string }>;
     /**
      * "Us vs. typical competitor" table. true/false render as check/cross,
      * strings render as text. rows: [] hides the section. Only claim what is true.
@@ -377,9 +407,13 @@ export const siteConfig: SiteConfig = {
     radius: 'rounded',
     heroStyle: 'photo',
     heroForm: true,
+    heroScrim: 'dark',
+    buttonStyle: 'flat',
     headingCase: 'uppercase',
     dividers: 'angle',
     serviceCards: 'photo',
+    serviceStrip: true,
+    stickyQuoteTab: false,
     logo: { src: '/images/logo.svg', alt: 'ClearShine Pressure Washing', width: 180, height: 40 },
     ogImage: '/images/og-default.jpg',
   },
@@ -392,7 +426,25 @@ export const siteConfig: SiteConfig = {
     cutout: 'hero-cutout.png',
     bullets: [],
     bulletStyle: 'checks',
+    ctaNote: 'No obligation. Every quote in writing.',
   },
+
+  process: [
+    { title: 'Get a quote in minutes', description: 'Call or send a photo. Most quotes go out the same day, in writing, with no site visit needed.' },
+    { title: 'Pick a day', description: 'We confirm by text and show up in the window we gave you. You don’t need to be home.' },
+    { title: 'See the difference', description: 'Walk the property with the crew lead, or get before-and-after photos by text if you’re out.' },
+  ],
+
+  offers: [
+    { title: '$50 off house + driveway', detail: 'Book both on one visit and take $50 off the total.', code: 'BUNDLE50', expires: 'Ends Oct 31', service: 'house-washing' },
+    { title: 'Free gutter flush with any roof clean', detail: 'We flush the gutters after treating the roof, on us.', service: 'roof-cleaning' },
+  ],
+
+  plans: [
+    { name: 'Annual', price: '$299', period: 'per year', description: 'One full house wash each spring, scheduled for you.', features: ['House soft wash', 'Priority spring scheduling', '10% off add-ons'] },
+    { name: 'Twice a year', price: '$499', period: 'per year', description: 'Spring and fall visits keep algae from ever taking hold.', features: ['Two house washes', 'Driveway and walkway each visit', 'Priority scheduling', '15% off add-ons'], highlight: true },
+    { name: 'Quarterly', price: '$899', period: 'per year', description: 'For shaded lots and HOA-strict neighborhoods.', features: ['Four visits', 'House, driveway, and patio each visit', 'Gutter exterior each visit', '20% off add-ons'] },
+  ],
 
   forms: {
     formspreeId: '',
@@ -425,6 +477,7 @@ export const siteConfig: SiteConfig = {
       { label: 'Same-Week Scheduling', icon: 'calendar' },
     ],
     guarantees: ['100% satisfaction guarantee', 'Free, no-pressure quotes', 'Fully insured crews'],
+    guarantee: { title: 'The ClearShine Clean Guarantee', text: 'If any surface we cleaned isn’t what we promised, we come back and re-clean it free within 7 days. Written into every quote.' },
     rating: { value: 4.9, count: 212, source: 'Google' },
     stats: [
       { value: '212', label: '5-star Google reviews' },
@@ -438,6 +491,7 @@ export const siteConfig: SiteConfig = {
       { src: '/images/badges/bbb.svg', alt: 'BBB accredited business (placeholder)' },
       { src: '/images/badges/best-of.svg', alt: 'Best of Plano 2026 (placeholder)' },
     ],
+    clients: [],
     comparison: {
       competitorLabel: 'Typical pressure washer',
       rows: [

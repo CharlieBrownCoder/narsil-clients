@@ -7,6 +7,7 @@ import JsonLd from '@/components/JsonLd.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import MobileCallBar from '@/components/MobileCallBar.astro';
+import StickyQuoteTab from '@/components/StickyQuoteTab.astro';
 import type { PageMeta } from '@/lib/seo';
 
 interface Props {
@@ -25,7 +26,7 @@ const fontFaces = families
 const rootVars = `:root{--brand-primary:${t.primary};--brand-primary-dark:${t.primaryDark};--brand-secondary:${t.secondary};--brand-accent:${t.accent};--brand-neutral:${t.neutral};--brand-font-heading:"${t.fontHeading}";--brand-font-body:"${t.fontBody}";--brand-radius:${radius};}`;
 ---
 <!doctype html>
-<html lang="en" data-heading-case={t.headingCase}>
+<html lang="en" data-heading-case={t.headingCase} data-buttons={t.buttonStyle}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -49,5 +50,6 @@ const rootVars = `:root{--brand-primary:${t.primary};--brand-primary-dark:${t.pr
     </main>
     <Footer />
     <MobileCallBar />
+    <StickyQuoteTab />
   </body>
 </html>

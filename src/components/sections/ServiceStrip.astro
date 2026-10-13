@@ -1,0 +1,22 @@
+---
+/** Icon tiles for every service, overlapping the hero's bottom edge. theme.serviceStrip. */
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import Icon from '@/components/Icon.astro';
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order).slice(0, 6);
+const show = siteConfig.theme.serviceStrip && siteConfig.pages.services && services.length >= 3;
+---
+{show && (
+  <div class="relative z-10 container-x -mt-10 md:-mt-14 mb-8">
+    <ul class:list={['grid gap-3', services.length <= 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3 md:grid-cols-6']}>
+      {services.map((s) => (
+        <li>
+          <a href={`/services/${s.id}/`} class="card flex flex-col items-center gap-2 px-3 py-4 text-center hover:border-primary hover:-translate-y-0.5 transition-all">
+            <span class="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center"><Icon name={s.data.icon} class="w-6 h-6" /></span>
+            <span class="text-xs md:text-sm font-semibold text-secondary leading-tight">{s.data.shortTitle ?? s.data.title}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}

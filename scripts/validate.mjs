@@ -119,6 +119,8 @@ if (existsSync(join(root, 'src/calculator.config.ts'))) {
   const calc = readFileSync(join(root, 'src/calculator.config.ts'), 'utf8');
   for (const m of calc.matchAll(/service:\s*'([^']+)'/g)) if (!services.some((s) => s.id === m[1])) err(`calculator rule references unknown service "${m[1]}"`);
 }
+// offers must reference real services
+for (const m of config.matchAll(/service:\s*'([^']+)'\s*\}/g)) if (!services.some((s) => s.id === m[1])) err(`offer references unknown service "${m[1]}"`);
 // booking: provider set but no url
 if (/provider:\s*'link'/.test(config) && !/url:\s*'https?:/.test(config)) err("booking.provider is 'link' but booking.url is empty");
 if (/provider:\s*'embed'/.test(config) && !/embedUrl:\s*'https?:/.test(config)) err("booking.provider is 'embed' but booking.embedUrl is empty");

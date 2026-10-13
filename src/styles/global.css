@@ -40,6 +40,8 @@
   .btn-outline { @apply border-2 border-primary text-primary hover:bg-primary hover:text-white; }
   .btn-ghost { @apply border-2 border-white/60 text-white hover:bg-white hover:text-secondary; }
   .card { @apply bg-white border border-slate-200 shadow-sm; border-radius: var(--radius-brand); }
+  html[data-buttons="sticker"] .btn-primary, html[data-buttons="sticker"] .btn-accent { box-shadow: 4px 4px 0 0 var(--brand-secondary); transform: translate(0, 0); transition: transform 120ms, box-shadow 120ms; }
+  html[data-buttons="sticker"] .btn-primary:hover, html[data-buttons="sticker"] .btn-accent:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 var(--brand-secondary); }
   .prose-site { max-width: none; }
 }
 

@@ -22,6 +22,10 @@
 - [ ] `theme`: start from a preset (`node scripts/apply-preset.mjs <id>`), then adjust colors, fonts, radius, `heroStyle`, `heroForm`, `headingCase`, `dividers`, `serviceCards`
 - [ ] `hero`: headline in the "[City]'s Top-Rated *[Service]* Company" shape or the client's own, under 8 words; subheadline under 20 words; `image` (real job photo, 2000×1250) and optional `cutout` (transparent PNG of the owner or truck)
 - [ ] `trust.stats`: 2 to 4 real numbers (reviews, years, jobs). Blank if unverifiable.
+- [ ] `process`: three real steps in the client's words, or `[]`
+- [ ] `trust.guarantee`: the written guarantee, or blank
+- [ ] `trust.comparison.rows`: only claims that are true of this client AND typical of competitors
+- [ ] `offers` (with expiry) and `plans` (real prices) or `[]`
 - [ ] `trust.logos`: badge images the client actually holds (BBB, Google Guaranteed, awards) in `public/images/badges/`
 - [ ] `trust.badges`, `guarantees`, `rating` (must match real review count)
 - [ ] `tracking` IDs (GTM, or GA4 direct, plus Meta Pixel)

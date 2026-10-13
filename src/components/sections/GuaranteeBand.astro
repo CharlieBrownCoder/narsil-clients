@@ -1,0 +1,24 @@
+---
+/** Guarantee band from trust.guarantee. Hidden when the title is blank. */
+import { siteConfig } from '@config';
+import Icon from '@/components/Icon.astro';
+import { telHref } from '@/lib/utils';
+const g = siteConfig.trust.guarantee;
+const { business, pages } = siteConfig;
+---
+{g?.title && (
+  <section class="bg-secondary text-white">
+    <div class="container-x py-12 md:py-16 grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-10 items-center">
+      <span class="w-16 h-16 rounded-full bg-accent text-secondary flex items-center justify-center shrink-0"><Icon name="shield" class="w-9 h-9" /></span>
+      <div>
+        <p class="eyebrow !text-accent">Our guarantee</p>
+        <h2 class="mt-1 !text-white">{g.title}</h2>
+        <p class="mt-3 text-slate-200 max-w-2xl">{g.text}</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        {pages.contact && <a href="/contact/" data-cta="guarantee-quote" class="btn-accent">Get a Free Quote</a>}
+        <a href={telHref()} class="btn-ghost"><Icon name="phone" class="w-5 h-5" /> {business.phone}</a>
+      </div>
+    </div>
+  </section>
+)}

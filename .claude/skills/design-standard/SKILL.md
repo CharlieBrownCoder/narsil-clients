@@ -68,6 +68,13 @@ pattern. Build it unless `DESIGN.md` says otherwise:
 8. **Trust row** directly under the hero: badge logos or icon badges, then
    the stat strip when real numbers exist.
 9. **Section edge**: angled or curved divider into the next section.
+10. **A number inside the first 900 px**: review count with its source, years,
+    jobs, or an award. "Top rated" with no number is the tell of the weak
+    sites in the reference set.
+11. **One visual device per client** so sites built from the template don't
+    look alike: pick exactly one of duotone tint, sticker buttons, a
+    cutout, a shaped divider, a stat strip, or a mascot, and leave the rest
+    at defaults.
 
 What the reference set does that we deliberately don't: 2 MB+ pages, hero
 video, three competing CTAs in the header, review counts in the headline

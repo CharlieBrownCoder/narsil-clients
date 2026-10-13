@@ -41,18 +41,20 @@ const pad = compact ? 'py-14 md:py-20' : showForm ? 'py-16 md:py-24' : 'py-20 md
 const headingCls = `mt-3 ${dark ? '!text-white' : ''} ${compact ? '!text-3xl md:!text-5xl' : ''}`;
 const ratingLine = trust.rating ? `${trust.rating.value} stars from ${trust.rating.count}+ ${trust.rating.source} reviews` : '';
 ---
-<section class:list={['relative isolate overflow-hidden', dark ? 'bg-secondary text-white' : 'bg-neutral']} data-hero={layout}>
+<section class:list={['relative isolate overflow-hidden', dark ? (theme.heroScrim === 'brand' ? 'bg-primary-dark text-white' : 'bg-secondary text-white') : 'bg-neutral']} data-hero={layout}>
   {layout === 'photo' && image && (
     <>
       <Image src={image} alt={imageAlt} widths={[640, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
-      <div class="absolute inset-0 bg-gradient-to-r from-secondary via-secondary/85 to-secondary/30" aria-hidden="true"></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-secondary/70 via-transparent to-transparent" aria-hidden="true"></div>
+      {theme.heroScrim === 'duotone' && <div class="absolute inset-0 bg-primary mix-blend-color" aria-hidden="true"></div>}
+      <div class:list={['absolute inset-0 bg-gradient-to-r', theme.heroScrim === 'brand' ? 'from-primary-dark via-primary-dark/85 to-primary-dark/30' : 'from-secondary via-secondary/85 to-secondary/30']} aria-hidden="true"></div>
+      <div class:list={['absolute inset-0 bg-gradient-to-t via-transparent to-transparent', theme.heroScrim === 'brand' ? 'from-primary-dark/70' : 'from-secondary/70']} aria-hidden="true"></div>
     </>
   )}
   {layout === 'centered' && image && (
     <>
       <Image src={image} alt={imageAlt} widths={[640, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
-      <div class="absolute inset-0 bg-secondary/75" aria-hidden="true"></div>
+      {theme.heroScrim === 'duotone' && <div class="absolute inset-0 bg-primary mix-blend-color" aria-hidden="true"></div>}
+      <div class:list={['absolute inset-0', theme.heroScrim === 'brand' ? 'bg-primary-dark/75' : 'bg-secondary/75']} aria-hidden="true"></div>
     </>
   )}
   {layout === 'cutout' && (
@@ -74,10 +76,11 @@ const ratingLine = trust.rating ? `${trust.rating.value} stars from ${trust.rati
             {bullets.slice(0, 4).map((b) => <li class="flex items-center gap-2"><Icon name="check" class="w-5 h-5 text-accent shrink-0" />{b}</li>)}
           </ul>
         ) : null}
-        <div class:list={['mt-8 flex flex-wrap gap-3', layout === 'centered' && 'justify-center']}>
-          {pages.contact && <a href="/contact/" data-cta="hero-quote" class={dark ? 'btn-accent' : 'btn-primary'}>Get a Free Quote</a>}
-          <a href={telHref()} class={dark ? 'btn-ghost' : 'btn-outline'}><Icon name="phone" class="w-5 h-5" /> {business.phone}</a>
+        <div class:list={['mt-8 grid grid-cols-2 sm:flex sm:flex-wrap gap-3', layout === 'centered' && 'sm:justify-center']}>
+          {pages.contact && <a href="/contact/" data-cta="hero-quote" class:list={[dark ? 'btn-accent' : 'btn-primary', '!px-4 sm:!px-6']}>Get a Free Quote</a>}
+          <a href={telHref()} class:list={[dark ? 'btn-ghost' : 'btn-outline', '!px-4 sm:!px-6']}><Icon name="phone" class="w-5 h-5 shrink-0" /> <span class="sm:hidden">Call Now</span><span class="hidden sm:inline">{business.phone}</span></a>
         </div>
+        {siteConfig.hero.ctaNote && !compact && <p class:list={['mt-2 text-xs', dark ? 'text-slate-300' : 'text-slate-500', layout === 'centered' && 'text-center']}>{siteConfig.hero.ctaNote}</p>}
         <ResponsePromise class={`mt-4 ${layout === 'centered' ? 'justify-center' : ''}`} light={dark} />
         {ratingLine && !compact && <p class:list={['mt-3 flex items-center gap-2 text-sm', dark ? 'text-slate-200' : 'text-slate-600', layout === 'centered' && 'justify-center']}><Stars rating={trust.rating!.value} class="w-4 h-4" /> {ratingLine}</p>}
       </div>

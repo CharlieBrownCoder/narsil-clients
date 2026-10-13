@@ -4,6 +4,8 @@ import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
 import Faq from '@/components/sections/Faq.astro';
+import PlanTiers from '@/components/sections/PlanTiers.astro';
+import OffersGrid from '@/components/sections/OffersGrid.astro';
 import Cta from '@/components/sections/Cta.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Icon from '@/components/Icon.astro';
@@ -64,6 +66,8 @@ const schema = S.graph(
       <p>Bundling two or more services on the same visit is the single best way to lower the total, because setup time is shared.</p>
     </div>
   </section>
+  <PlanTiers />
+  <OffersGrid />
   <Faq faqs={faqs} title="Pricing questions" />
   <Cta title="Want an exact number? It's free." />
 </BaseLayout>

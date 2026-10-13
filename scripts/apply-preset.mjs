@@ -11,8 +11,8 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const src = readFileSync(resolve(root, 'src/theme-presets.ts'), 'utf8');
-const presets = [...src.matchAll(/\{ id: '([^']+)', label: '([^']+)', fits: \[([^\]]*)\], primary: '([^']+)', primaryDark: '([^']+)', secondary: '([^']+)', accent: '([^']+)', neutral: '([^']+)', fontHeading: '([^']+)', fontBody: '([^']+)', radius: '([^']+)', heroStyle: '([^']+)', headingCase: '([^']+)', dividers: '([^']+)' \}/g)]
-  .map((m) => ({ id: m[1], label: m[2], fits: m[3], primary: m[4], primaryDark: m[5], secondary: m[6], accent: m[7], neutral: m[8], fontHeading: m[9], fontBody: m[10], radius: m[11], heroStyle: m[12], headingCase: m[13], dividers: m[14] }));
+const presets = [...src.matchAll(/\{ id: '([^']+)', label: '([^']+)', fits: \[([^\]]*)\], primary: '([^']+)', primaryDark: '([^']+)', secondary: '([^']+)', accent: '([^']+)', neutral: '([^']+)', fontHeading: '([^']+)', fontBody: '([^']+)', radius: '([^']+)', heroStyle: '([^']+)', headingCase: '([^']+)', dividers: '([^']+)', heroScrim: '([^']+)', buttonStyle: '([^']+)' \}/g)]
+  .map((m) => ({ id: m[1], label: m[2], fits: m[3], primary: m[4], primaryDark: m[5], secondary: m[6], accent: m[7], neutral: m[8], fontHeading: m[9], fontBody: m[10], radius: m[11], heroStyle: m[12], headingCase: m[13], dividers: m[14], heroScrim: m[15], buttonStyle: m[16] }));
 
 const id = process.argv[2];
 if (!id) {
@@ -26,7 +26,7 @@ const cfgPath = resolve(root, 'src/site.config.ts');
 let cfg = readFileSync(cfgPath, 'utf8');
 const marker = cfg.indexOf('export const siteConfig');
 const head = cfg.slice(0, marker); let body = cfg.slice(marker);
-for (const k of ['primary', 'primaryDark', 'secondary', 'accent', 'neutral', 'fontHeading', 'fontBody', 'radius', 'heroStyle', 'headingCase', 'dividers']) {
+for (const k of ['primary', 'primaryDark', 'secondary', 'accent', 'neutral', 'fontHeading', 'fontBody', 'radius', 'heroStyle', 'headingCase', 'dividers', 'heroScrim', 'buttonStyle']) {
   const re = new RegExp(`(\\n\\s*${k}:\\s*)'[^']*'`);
   if (!re.test(body)) { console.warn(`theme key not found: ${k}`); continue; }
   body = body.replace(re, `$1'${p[k]}'`);

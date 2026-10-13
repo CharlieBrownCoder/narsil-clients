@@ -18,6 +18,12 @@ import ContactForm from '@/components/sections/ContactForm.astro';
 import { homeMeta } from '@/lib/seo';
 import { requireAsset, asset } from '@/lib/images';
 import StatsStrip from '@/components/sections/StatsStrip.astro';
+import ServiceStrip from '@/components/sections/ServiceStrip.astro';
+import ClientLogos from '@/components/sections/ClientLogos.astro';
+import ProcessSteps from '@/components/sections/ProcessSteps.astro';
+import GuaranteeBand from '@/components/sections/GuaranteeBand.astro';
+import OffersGrid from '@/components/sections/OffersGrid.astro';
+import PlanTiers from '@/components/sections/PlanTiers.astro';
 import { getBusinessType } from '@/lib/business-types';
 import * as S from '@/lib/schema';
 
@@ -51,12 +57,18 @@ const schema = S.graph(
     bullets={hero.bullets.length ? hero.bullets : trust.badges.map((b) => b.label)}
     form={theme.heroForm}
   />
+  <ServiceStrip />
   <TrustBar />
   <StatsStrip />
+  <ClientLogos />
   <EmergencyCta compact />
   {pages.services && <ServiceGrid intro={`Professional ${bt.label.toLowerCase()} services for homes and businesses in ${business.address.city} and surrounding communities.`} />}
+  <OffersGrid />
   <WhyUs />
+  <ProcessSteps steps={siteConfig.process} title="How it works" />
+  <PlanTiers />
   <ComparisonTable />
+  <GuaranteeBand />
   <TeamGrid limit={3} />
   {pages.gallery && <Gallery limit={3} />}
   <Trustindex placement="home" title="What our customers say" dark />
