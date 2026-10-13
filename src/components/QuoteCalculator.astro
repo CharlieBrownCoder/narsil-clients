@@ -10,7 +10,7 @@ import Icon from './Icon.astro';
 interface Props { onlyService?: string; compact?: boolean }
 const { onlyService, compact = false } = Astro.props;
 const rules = calculator.rules.filter((r) => !onlyService || r.service === onlyService);
-const { forms } = siteConfig;
+const { business, forms } = siteConfig;
 const action = forms.formspreeId ? `https://formspree.io/f/${forms.formspreeId}` : '#';
 const next = new URL(forms.thankYouPath, siteConfig.url).toString();
 const inputCls = 'w-full border border-slate-300 rounded-[var(--radius-brand)] px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none';
@@ -53,7 +53,7 @@ const uid = `calc-${onlyService ?? 'all'}`;
       </div>
       <label class="grid gap-1 text-sm font-medium">Address or ZIP<input class={inputCls} name="address" type="text" autocomplete="street-address" /></label>
       <button type="submit" data-cta="calculator-quote" class="btn-primary" disabled={!forms.formspreeId}><Icon name="arrow" class="w-5 h-5" /> Request my written quote</button>
-      {!forms.formspreeId && <p class="text-xs text-slate-500 text-center">Form inactive: set forms.formspreeId in site.config.ts</p>}
+      {!forms.formspreeId && <p class="text-xs text-slate-500 text-center">{`Online form coming soon. Call ${business.phone}${business.email ? ` or email ${business.email}` : ''} for a free quote.`}</p>}
     </form>
     <script type="application/json" data-rules set:html={JSON.stringify(rules)} />
   </div>

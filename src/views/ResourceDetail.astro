@@ -54,7 +54,7 @@ const inputCls = 'w-full border border-slate-300 rounded-[var(--radius-brand)] p
               <label class="grid gap-1 text-sm font-medium">Name<input class={inputCls} name="name" type="text" required autocomplete="name" /></label>
               <label class="grid gap-1 text-sm font-medium">Email<input class={inputCls} name="email" type="email" required autocomplete="email" /></label>
               <button type="submit" data-cta="resource-download" class="btn-primary" disabled={!forms.formspreeId}><Icon name="arrow" class="w-5 h-5 rotate-90" /> Send me the {d.fileType}</button>
-              <p class="text-xs text-slate-500">{forms.formspreeId ? 'Opens the file right away. We may follow up once; no spam.' : 'Form inactive: set forms.formspreeId in site.config.ts'}</p>
+              <p class="text-xs text-slate-500">{forms.formspreeId ? 'Opens the file right away. We may follow up once; no spam.' : `Online form coming soon. Call ${business.phone}${business.email ? ` or email ${business.email}` : ''} for a free quote.`}</p>
             </form>
           ) : (
             <div class="card p-6"><a href={d.file} download data-cta="resource-download" class="btn-primary w-full"><Icon name="arrow" class="w-5 h-5 rotate-90" /> Download {d.fileType}</a></div>

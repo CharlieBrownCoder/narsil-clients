@@ -10,7 +10,7 @@ import ResponsePromise from '@/components/ResponsePromise.astro';
 import Icon from '@/components/Icon.astro';
 interface Props { service?: string; city?: string; compact?: boolean }
 const { service, city, compact = false } = Astro.props;
-const { forms } = siteConfig;
+const { business, forms } = siteConfig;
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const action = forms.formspreeId ? `https://formspree.io/f/${forms.formspreeId}` : '#';
 const next = new URL(forms.thankYouPath, siteConfig.url).toString();
@@ -62,7 +62,7 @@ const inputCls = 'w-full border border-slate-300 rounded-[var(--radius-brand)] p
 
   <p data-error class="hidden text-sm text-red-600" role="alert"></p>
   <ResponsePromise class="justify-center" />
-  <p class="text-xs text-slate-500 text-center">{forms.formspreeId ? 'No spam, ever. We’ll reply within one business day.' : 'Form inactive: set forms.formspreeId in site.config.ts'}</p>
+  <p class="text-xs text-slate-500 text-center">{forms.formspreeId ? 'No spam, ever. We’ll reply within one business day.' : `Online form coming soon. Call ${business.phone}${business.email ? ` or email ${business.email}` : ''} for a free quote.`}</p>
 </form>
 
 <script>
