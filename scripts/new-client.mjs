@@ -100,6 +100,7 @@ cfg = cfg.replace(/(\n\s*subheadline:\s*)'[^']*'/, `$1'One sentence on what you 
 cfg = cfg.replace(/(\n\s*imageAlt:\s*)'[^']*'/, `$1'Describe the hero photo'`);
 cfg = cfg.replace(/stats: \[[\s\S]*?\n    \],/, 'stats: [],');
 cfg = cfg.replace(/logos: \[[\s\S]*?\n    \],/, 'logos: [],');
+cfg = cfg.replace(/rows: \[[\s\S]*?\n      \],/, 'rows: [],');
 cfg = cfg.replace(/rating: \{[^}]*\}/, 'rating: undefined');
 cfg = cfg.replace(/promo: \{ enabled: true/, 'promo: { enabled: false');
 cfg = cfg.replace(/locations: \[[\s\S]*?\n    \],/, 'locations: [],');

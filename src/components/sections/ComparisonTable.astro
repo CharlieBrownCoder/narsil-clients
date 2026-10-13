@@ -1,0 +1,42 @@
+---
+/**
+ * "Us vs. typical competitor" table from trust.comparison. The company column
+ * is highlighted. Hidden when rows is empty. Every row must be true.
+ */
+import { siteConfig } from '@config';
+import Icon from '@/components/Icon.astro';
+const { business, trust } = siteConfig;
+const { competitorLabel, rows } = trust.comparison;
+interface Props { title?: string }
+const { title = `Why ${business.address.city} homeowners choose ${business.name}` } = Astro.props;
+const cell = (v: boolean | string, us: boolean) =>
+  v === true ? { icon: 'check', text: '', cls: us ? 'text-white' : 'text-primary' } : v === false ? { icon: 'close', text: '', cls: us ? 'text-white/50' : 'text-slate-400' } : { icon: '', text: v, cls: us ? 'text-white' : 'text-slate-700' };
+---
+{rows.length > 0 && (
+  <section class="section">
+    <div class="container-x">
+      <p class="eyebrow">The difference</p>
+      <h2 class="mt-2">{title}</h2>
+      <div class="mt-10 card overflow-hidden">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="text-sm uppercase tracking-wide">
+              <th class="px-5 py-4 text-slate-500 bg-neutral w-1/2"></th>
+              <th class="px-5 py-4 bg-primary text-white font-heading text-base normal-case tracking-normal">{business.name}</th>
+              <th class="px-5 py-4 text-slate-500 bg-neutral">{competitorLabel}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            {rows.map((r) => { const u = cell(r.us, true); const t = cell(r.them, false); return (
+              <tr>
+                <td class="px-5 py-4 font-medium text-secondary">{r.label}</td>
+                <td class="px-5 py-4 bg-primary font-semibold"><span class:list={['inline-flex items-center gap-2', u.cls]}>{u.icon && <Icon name={u.icon} class="w-5 h-5" />}{u.text}<span class="sr-only">{r.us === true ? 'Yes' : r.us === false ? 'No' : ''}</span></span></td>
+                <td class="px-5 py-4"><span class:list={['inline-flex items-center gap-2', t.cls]}>{t.icon && <Icon name={t.icon} class="w-5 h-5" />}{t.text}<span class="sr-only">{r.them === true ? 'Yes' : r.them === false ? 'No' : ''}</span></span></td>
+              </tr>
+            ); })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+)}

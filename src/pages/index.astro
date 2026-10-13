@@ -8,6 +8,7 @@ import EmergencyCta from '@/components/sections/EmergencyCta.astro';
 import TeamGrid from '@/components/sections/TeamGrid.astro';
 import ServiceGrid from '@/components/sections/ServiceGrid.astro';
 import WhyUs from '@/components/sections/WhyUs.astro';
+import ComparisonTable from '@/components/sections/ComparisonTable.astro';
 import Trustindex from '@/components/Trustindex.astro';
 import Gallery from '@/components/sections/Gallery.astro';
 import LocationGrid from '@/components/sections/LocationGrid.astro';
@@ -55,6 +56,7 @@ const schema = S.graph(
   <EmergencyCta compact />
   {pages.services && <ServiceGrid intro={`Professional ${bt.label.toLowerCase()} services for homes and businesses in ${business.address.city} and surrounding communities.`} />}
   <WhyUs />
+  <ComparisonTable />
   <TeamGrid limit={3} />
   {pages.gallery && <Gallery limit={3} />}
   <Trustindex placement="home" title="What our customers say" dark />

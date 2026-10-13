@@ -186,6 +186,8 @@ export interface SiteConfig {
     cutout?: string;
     /** 2×2 checkmark bullets. [] = use trust.badges labels. */
     bullets: string[];
+    /** checks = 2×2 checkmark list; pills = icon pill row (shorter labels work best) */
+    bulletStyle: 'checks' | 'pills';
   };
 
   /** Lead capture via Formspree (https://formspree.io). Create one form per client. */
@@ -234,6 +236,11 @@ export interface SiteConfig {
     stats: Array<{ value: string; label: string }>;
     /** Third-party badge images (BBB, Google Guaranteed, awards). Files in public/images/badges/. [] = hidden. */
     logos: Array<{ src: string; alt: string; href?: string }>;
+    /**
+     * "Us vs. typical competitor" table. true/false render as check/cross,
+     * strings render as text. rows: [] hides the section. Only claim what is true.
+     */
+    comparison: { competitorLabel: string; rows: Array<{ label: string; us: boolean | string; them: boolean | string }> };
   };
 
   /**
@@ -384,6 +391,7 @@ export const siteConfig: SiteConfig = {
     imageAlt: 'ClearShine technician soft washing a two-story brick home in Plano',
     cutout: 'hero-cutout.png',
     bullets: [],
+    bulletStyle: 'checks',
   },
 
   forms: {
@@ -430,6 +438,17 @@ export const siteConfig: SiteConfig = {
       { src: '/images/badges/bbb.svg', alt: 'BBB accredited business (placeholder)' },
       { src: '/images/badges/best-of.svg', alt: 'Best of Plano 2026 (placeholder)' },
     ],
+    comparison: {
+      competitorLabel: 'Typical pressure washer',
+      rows: [
+        { label: 'Written quote before any work starts', us: true, them: 'Sometimes' },
+        { label: 'Soft wash on siding, roofs, and painted surfaces', us: true, them: false },
+        { label: 'Certificate of insurance on request', us: true, them: 'Ask' },
+        { label: 'Scheduling', us: 'Same week', them: '2 to 3 weeks' },
+        { label: 'Before and after photos sent after every job', us: true, them: false },
+        { label: 'Satisfaction guarantee', us: '100%, in writing', them: false },
+      ],
+    },
   },
 
   reviews: {

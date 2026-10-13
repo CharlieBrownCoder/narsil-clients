@@ -65,11 +65,15 @@ const ratingLine = trust.rating ? `${trust.rating.value} stars from ${trust.rati
         {eyebrow && <p class:list={['eyebrow', dark && '!text-accent']}>{eyebrow}</p>}
         <Headline text={title} as="h1" class={headingCls} />
         <p class:list={['mt-5 text-lg md:text-xl max-w-2xl', dark ? 'text-slate-200' : 'text-slate-600', layout === 'centered' && 'mx-auto']}>{subtitle}</p>
-        {showBullets && (
+        {showBullets && siteConfig.hero.bulletStyle === 'pills' ? (
+          <ul class:list={['mt-6 flex flex-wrap gap-2 text-sm font-semibold', layout === 'centered' && 'justify-center']}>
+            {bullets.slice(0, 4).map((b) => <li class:list={['inline-flex items-center gap-2 px-3 py-1.5 rounded-full border', dark ? 'border-white/25 bg-white/10 text-white' : 'border-slate-200 bg-white text-secondary']}><Icon name="check" class="w-4 h-4 text-accent shrink-0" />{b}</li>)}
+          </ul>
+        ) : showBullets ? (
           <ul class:list={['mt-6 grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm font-semibold max-w-xl', dark ? 'text-white' : 'text-secondary', layout === 'centered' && 'mx-auto text-left']}>
             {bullets.slice(0, 4).map((b) => <li class="flex items-center gap-2"><Icon name="check" class="w-5 h-5 text-accent shrink-0" />{b}</li>)}
           </ul>
-        )}
+        ) : null}
         <div class:list={['mt-8 flex flex-wrap gap-3', layout === 'centered' && 'justify-center']}>
           {pages.contact && <a href="/contact/" data-cta="hero-quote" class={dark ? 'btn-accent' : 'btn-primary'}>Get a Free Quote</a>}
           <a href={telHref()} class={dark ? 'btn-ghost' : 'btn-outline'}><Icon name="phone" class="w-5 h-5" /> {business.phone}</a>

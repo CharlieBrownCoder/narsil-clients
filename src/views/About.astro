@@ -4,6 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
 import TrustBar from '@/components/sections/TrustBar.astro';
 import WhyUs from '@/components/sections/WhyUs.astro';
+import ComparisonTable from '@/components/sections/ComparisonTable.astro';
 import TeamGrid from '@/components/sections/TeamGrid.astro';
 import Credentials from '@/components/sections/Credentials.astro';
 import Trustindex from '@/components/Trustindex.astro';
@@ -38,6 +39,7 @@ const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({
   <TeamGrid limit={6} />
   <Credentials />
   <WhyUs />
+  <ComparisonTable />
   <Trustindex placement="compact" title="What customers say" />
   <Cta />
 </BaseLayout>
