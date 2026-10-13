@@ -1,0 +1,77 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import TrustBar from '@/components/sections/TrustBar.astro';
+import ProcessSteps from '@/components/sections/ProcessSteps.astro';
+import Testimonials from '@/components/sections/Testimonials.astro';
+import Gallery from '@/components/sections/Gallery.astro';
+import LocationGrid from '@/components/sections/LocationGrid.astro';
+import Faq from '@/components/sections/Faq.astro';
+import Cta from '@/components/sections/Cta.astro';
+import ContactForm from '@/components/sections/ContactForm.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import { serviceMeta } from '@/lib/seo';
+import * as S from '@/lib/schema';
+
+interface Props { service: CollectionEntry<'services'> }
+const { service } = Astro.props;
+const { Content } = await render(service);
+const d = service.data;
+const { business, pages } = siteConfig;
+const path = `/services/${service.id}/`;
+const meta = { ...serviceMeta(d.title, d.excerpt, service.id), ...(d.seo?.title ? { title: d.seo.title } : {}), ...(d.seo?.description ? { description: d.seo.description } : {}), ogImage: d.image };
+const locations = (await getCollection('locations')).filter((l) => !l.data.services.length || l.data.services.includes(service.id));
+const collectionFaqs = (await getCollection('faqs')).filter((f) => f.data.category === service.id).map((f) => f.data);
+const faqs = [...d.faqs, ...collectionFaqs];
+const related = (await getCollection('services')).filter((s) => d.related.includes(s.id));
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }, { name: d.title, path }];
+const short = d.shortTitle ?? d.title;
+
+const schema = S.graph(
+  S.localBusiness(),
+  S.webSite(),
+  S.webPage({ path, title: meta.title, description: meta.description, type: 'ItemPage', image: d.image }),
+  S.breadcrumbList(path, crumbs),
+  S.service({ path, name: d.title, description: d.excerpt, serviceType: d.serviceType, image: d.image, startingPrice: d.startingPrice, priceUnit: d.priceUnit, areas: locations.map((l) => ({ city: l.data.city, state: l.data.state, cityUrl: l.data.cityUrl })) }),
+  S.faqPage(path, faqs),
+);
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow={`${business.address.city}, ${business.address.state}`} title={d.title} subtitle={d.excerpt} image={d.image} imageAlt={d.imageAlt ?? d.title} />
+  <TrustBar />
+  <div class="container-x pt-8"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="section !pt-8">
+    <div class="container-x grid lg:grid-cols-3 gap-12">
+      <article class="lg:col-span-2 prose prose-site">
+        <Content />
+        {d.benefits.length > 0 && (
+          <>
+            <h2>Why choose {business.name} for {short.toLowerCase()}</h2>
+            <ul class="!list-none !pl-0 grid sm:grid-cols-2 gap-3">
+              {d.benefits.map((b) => <li class="flex gap-2 !mt-0"><Icon name="check" class="w-5 h-5 text-primary shrink-0 mt-1" /><span>{b}</span></li>)}
+            </ul>
+          </>
+        )}
+      </article>
+      <aside class="space-y-6 lg:sticky lg:top-24 self-start">
+        {d.startingPrice && <div class="card p-5"><p class="text-sm text-slate-500">Starting at</p><p class="text-3xl font-heading font-bold text-secondary">${d.startingPrice} <span class="text-base font-normal text-slate-500">{d.priceUnit}</span></p></div>}
+        <ContactForm service={service.id} compact />
+        {related.length > 0 && (
+          <div class="card p-5">
+            <p class="font-semibold text-secondary">Related services</p>
+            <ul class="mt-3 space-y-2">{related.map((r) => <li><a href={`/services/${r.id}/`} class="text-primary font-medium hover:underline">{r.data.title}</a></li>)}</ul>
+          </div>
+        )}
+      </aside>
+    </div>
+  </section>
+  <ProcessSteps steps={d.process} title={`Our ${short.toLowerCase()} process`} />
+  {pages.gallery && <Gallery limit={3} service={service.id} title={`${short} results`} />}
+  <Testimonials service={service.id} />
+  {pages.serviceAreas && <LocationGrid serviceSlug={service.id} serviceName={short} title={`${short} near you`} />}
+  <Faq faqs={faqs} title={`${short} FAQs`} />
+  <Cta title={`Need ${short.toLowerCase()}? Let’s talk.`} />
+</BaseLayout>

@@ -1,0 +1,52 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { buildTitle } from '@/lib/seo';
+import { formatDate } from '@/lib/utils';
+import * as S from '@/lib/schema';
+
+interface Props { post: CollectionEntry<'posts'> }
+const { post } = Astro.props;
+const { Content } = await render(post);
+const d = post.data;
+const { business } = siteConfig;
+const path = `/blog/${post.id}/`;
+const meta = { title: d.seo?.title ?? buildTitle(d.title), description: d.seo?.description ?? d.description, canonical: path, ogImage: d.image, type: 'article' as const };
+const relatedService = d.service ? (await getCollection('services')).find((s) => s.id === d.service) : undefined;
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog/' }, { name: d.title, path }];
+const schema = S.graph(
+  S.localBusiness(),
+  S.webSite(),
+  S.webPage({ path, title: meta.title, description: meta.description, image: d.image, datePublished: d.pubDate, dateModified: d.updatedDate }),
+  S.breadcrumbList(path, crumbs),
+  S.blogPosting({ path, title: d.title, description: d.description, image: d.image, datePublished: d.pubDate, dateModified: d.updatedDate, author: d.author, tags: d.tags }),
+);
+---
+<BaseLayout meta={meta} schema={schema}>
+  <article class="container-x max-w-3xl py-12 md:py-16">
+    <Breadcrumbs crumbs={crumbs} />
+    <header class="mt-6">
+      <h1 class="!text-3xl md:!text-5xl">{d.title}</h1>
+      <p class="mt-4 text-sm text-slate-500">
+        <time datetime={d.pubDate.toISOString()}>{formatDate(d.pubDate)}</time>
+        {d.updatedDate && <> · Updated <time datetime={d.updatedDate.toISOString()}>{formatDate(d.updatedDate)}</time></>}
+        {d.author && <> · By {d.author}</>}
+      </p>
+    </header>
+    {d.image && <img src={d.image} alt={d.imageAlt ?? d.title} width="1200" height="630" class="mt-8 w-full rounded-[var(--radius-brand)]" />}
+    <div class="prose prose-site mt-10"><Content /></div>
+    {d.tags.length > 0 && <ul class="mt-8 flex flex-wrap gap-2">{d.tags.map((t) => <li class="text-xs font-medium bg-neutral border border-slate-200 px-3 py-1 rounded-full">{t}</li>)}</ul>}
+    {relatedService && (
+      <aside class="mt-12 card p-6 bg-neutral">
+        <p class="eyebrow">Related service</p>
+        <h3 class="mt-1"><a href={`/services/${relatedService.id}/`} class="hover:text-primary">{relatedService.data.title}</a></h3>
+        <p class="mt-2 text-slate-600">{relatedService.data.excerpt}</p>
+        <a href={`/services/${relatedService.id}/`} class="btn-primary mt-4">Learn more</a>
+      </aside>
+    )}
+  </article>
+  <Cta title={`Questions? ${business.name} is here to help.`} />
+</BaseLayout>

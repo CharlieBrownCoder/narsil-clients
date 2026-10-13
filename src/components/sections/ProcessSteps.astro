@@ -1,0 +1,21 @@
+---
+interface Props { title?: string; steps: { title: string; description: string }[] }
+const { title = 'How it works', steps } = Astro.props;
+---
+{steps.length > 0 && (
+  <section class="section">
+    <div class="container-x">
+      <p class="eyebrow">Simple process</p>
+      <h2 class="mt-2">{title}</h2>
+      <ol class="mt-10 grid md:grid-cols-3 gap-8">
+        {steps.map((s, i) => (
+          <li class="relative pl-16">
+            <span class="absolute left-0 top-0 w-12 h-12 rounded-full bg-primary text-white font-heading font-bold text-xl flex items-center justify-center">{i + 1}</span>
+            <h3 class="text-lg">{s.title}</h3>
+            <p class="mt-2 text-slate-600">{s.description}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+)}

@@ -1,0 +1,65 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import TrustBar from '@/components/sections/TrustBar.astro';
+import ServiceGrid from '@/components/sections/ServiceGrid.astro';
+import WhyUs from '@/components/sections/WhyUs.astro';
+import Testimonials from '@/components/sections/Testimonials.astro';
+import Faq from '@/components/sections/Faq.astro';
+import Cta from '@/components/sections/Cta.astro';
+import ContactForm from '@/components/sections/ContactForm.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { locationMeta } from '@/lib/seo';
+import { getBusinessType } from '@/lib/business-types';
+import * as S from '@/lib/schema';
+
+interface Props { location: CollectionEntry<'locations'> }
+const { location } = Astro.props;
+const { Content } = await render(location);
+const d = location.data;
+const { business, pages } = siteConfig;
+const bt = getBusinessType(siteConfig.businessType);
+const path = `/service-areas/${location.id}/`;
+const meta = { ...locationMeta(d.city, d.state, location.id, bt.label), ...(d.seo?.title ? { title: d.seo.title } : {}), ...(d.seo?.description ? { description: d.seo.description } : {}), ogImage: d.image };
+const services = (await getCollection('services')).filter((s) => !d.services.length || d.services.includes(s.id));
+const faqs = [
+  { question: `Do you offer ${bt.label.toLowerCase()} in ${d.city}, ${d.state}?`, answer: `Yes. ${business.name} serves all of ${d.city}${d.neighborhoods.length ? `, including ${d.neighborhoods.slice(0, 4).join(', ')}` : ''}. Call ${business.phone} to schedule.` },
+  { question: `How soon can you come out to ${d.city}?`, answer: `Most ${d.city} jobs are scheduled within a few days. Same-week availability is common outside of peak season.` },
+  ...(d.zips.length ? [{ question: `Which ${d.city} ZIP codes do you cover?`, answer: `We regularly work in ${d.zips.join(', ')}. If your ZIP isn’t listed, give us a call.` }] : []),
+];
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Service Areas', path: '/service-areas/' }, { name: `${d.city}, ${d.state}`, path }];
+const schema = S.graph(
+  S.localBusiness({ full: true, areas: [{ city: d.city, state: d.state, cityUrl: d.cityUrl }], services: services.map((s) => ({ name: s.data.title, url: pages.serviceAreaCombos ? `${path}${s.id}/` : `/services/${s.id}/` })) }),
+  S.webSite(),
+  S.webPage({ path, title: meta.title, description: meta.description, image: d.image }),
+  S.breadcrumbList(path, crumbs),
+  S.faqPage(path, faqs),
+);
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Service area" title={`${bt.label} in ${d.city}, ${d.state}`} subtitle={`${business.name} brings ${bt.label.toLowerCase()} to ${d.city} homes and businesses with fast scheduling and ${siteConfig.trust.guarantees[0]?.toLowerCase() ?? 'guaranteed results'}.`} image={d.image} imageAlt={`${bt.label} in ${d.city}, ${d.state}`} />
+  <TrustBar />
+  <div class="container-x pt-8"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="section !pt-8">
+    <div class="container-x grid lg:grid-cols-3 gap-12">
+      <article class="lg:col-span-2 prose prose-site">
+        <Content />
+        {d.neighborhoods.length > 0 && (
+          <>
+            <h2>{d.city} neighborhoods we serve</h2>
+            <p>{d.neighborhoods.join(' · ')}</p>
+          </>
+        )}
+        {d.zips.length > 0 && <p><strong>ZIP codes:</strong> {d.zips.join(', ')}</p>}
+      </article>
+      <aside class="lg:sticky lg:top-24 self-start"><ContactForm city={d.city} compact /></aside>
+    </div>
+  </section>
+  <ServiceGrid title={`${bt.label} services in ${d.city}`} only={services.map((s) => s.id)} citySlug={pages.serviceAreaCombos ? location.id : undefined} cityName={pages.serviceAreaCombos ? d.city : undefined} />
+  <WhyUs city={d.city} />
+  <Testimonials />
+  <Faq faqs={faqs} title={`${d.city} FAQs`} />
+  <Cta title={`Serving ${d.city}. Ready when you are.`} />
+</BaseLayout>

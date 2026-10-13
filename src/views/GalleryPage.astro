@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import Gallery from '@/components/sections/Gallery.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { getBusinessType } from '@/lib/business-types';
+import * as S from '@/lib/schema';
+
+const { business } = siteConfig;
+const bt = getBusinessType(siteConfig.businessType);
+const projects = await getCollection('projects');
+const meta = { title: buildTitle(`${bt.label} Before & After Gallery`), description: buildDescription(`See real ${bt.label.toLowerCase()} results from ${business.name} across ${business.address.city}, ${business.address.state}. Before and after photos from recent jobs.`), canonical: '/gallery/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Gallery', path: '/gallery/' }];
+const schema = S.graph(S.localBusiness(), S.webSite(), S.webPage({ path: '/gallery/', title: meta.title, description: meta.description, type: 'CollectionPage' }), S.breadcrumbList('/gallery/', crumbs), S.imageGallery('/gallery/', meta.title, projects.map((p) => ({ url: p.data.after, caption: p.data.title }))));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Our work" title="Before & After Gallery" subtitle={`Real results from real ${business.address.city} properties.`} />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <Gallery title="Recent projects" />
+  <Cta />
+</BaseLayout>

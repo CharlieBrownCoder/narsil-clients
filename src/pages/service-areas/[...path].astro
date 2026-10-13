@@ -1,0 +1,33 @@
+---
+/**
+ * /service-areas/                      → LocationsIndex
+ * /service-areas/<city>/               → LocationDetail
+ * /service-areas/<city>/<service>/     → ServiceLocation (combo, if enabled)
+ */
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import LocationsIndex from '@/views/LocationsIndex.astro';
+import LocationDetail from '@/views/LocationDetail.astro';
+import ServiceLocation from '@/views/ServiceLocation.astro';
+
+export async function getStaticPaths() {
+  if (!siteConfig.pages.serviceAreas) return [];
+  const locations = await getCollection('locations');
+  const services = await getCollection('services');
+  const paths: Array<{ params: { path: string | undefined }; props: Record<string, unknown> }> = [
+    { params: { path: undefined }, props: {} },
+  ];
+  for (const location of locations) {
+    paths.push({ params: { path: location.id }, props: { location } });
+    if (siteConfig.pages.serviceAreaCombos) {
+      for (const service of services) {
+        if (location.data.services.length && !location.data.services.includes(service.id)) continue;
+        paths.push({ params: { path: `${location.id}/${service.id}` }, props: { location, service } });
+      }
+    }
+  }
+  return paths;
+}
+const { location, service } = Astro.props as { location?: any; service?: any };
+---
+{location && service ? <ServiceLocation location={location} service={service} /> : location ? <LocationDetail location={location} /> : <LocationsIndex />}

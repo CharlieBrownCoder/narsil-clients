@@ -1,0 +1,27 @@
+---
+import { siteConfig } from '@config';
+import { abs } from '@/lib/utils';
+import type { PageMeta } from '@/lib/seo';
+
+interface Props { meta: PageMeta }
+const { meta } = Astro.props;
+const canonical = abs(meta.canonical);
+const og = abs(meta.ogImage ?? siteConfig.theme.ogImage);
+---
+<title>{meta.title}</title>
+<meta name="description" content={meta.description} />
+<link rel="canonical" href={canonical} />
+{meta.noindex ? <meta name="robots" content="noindex, follow" /> : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
+<meta property="og:type" content={meta.type ?? 'website'} />
+<meta property="og:site_name" content={siteConfig.business.name} />
+<meta property="og:title" content={meta.title} />
+<meta property="og:description" content={meta.description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={og} />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={meta.title} />
+<meta name="twitter:description" content={meta.description} />
+<meta name="twitter:image" content={og} />
+<meta name="geo.region" content={`${siteConfig.business.address.country}-${siteConfig.business.address.state}`} />
+<meta name="geo.placename" content={siteConfig.business.address.city} />

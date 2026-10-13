@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from '@/components/Icon.astro';
+interface Props { title?: string; intro?: string; limit?: number; only?: string[]; citySlug?: string; cityName?: string; }
+const { title = 'Our Services', intro, limit, only, citySlug, cityName } = Astro.props;
+let services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+if (only?.length) services = services.filter((s) => only.includes(s.id));
+if (limit) services = services.slice(0, limit);
+const href = (id: string) => (citySlug ? `/service-areas/${citySlug}/${id}/` : `/services/${id}/`);
+---
+<section class="section">
+  <div class="container-x">
+    <div class="max-w-2xl">
+      <p class="eyebrow">What we do</p>
+      <h2 class="mt-2">{title}</h2>
+      {intro && <p class="mt-4 text-lg text-slate-600">{intro}</p>}
+    </div>
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {services.map((s) => (
+        <a href={href(s.id)} class="card p-6 group hover:border-primary hover:shadow-md transition-all flex flex-col">
+          <span class="w-12 h-12 rounded-[var(--radius-brand)] bg-primary/10 text-primary flex items-center justify-center"><Icon name={s.data.icon} class="w-6 h-6" /></span>
+          <h3 class="mt-5 group-hover:text-primary">{s.data.shortTitle ?? s.data.title}{cityName && ` in ${cityName}`}</h3>
+          <p class="mt-2 text-slate-600 flex-1">{s.data.excerpt}</p>
+          <span class="mt-4 inline-flex items-center gap-1 font-semibold text-primary">Learn more <Icon name="arrow" class="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

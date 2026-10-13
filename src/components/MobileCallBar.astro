@@ -1,0 +1,10 @@
+---
+import { siteConfig } from '@config';
+import Icon from './Icon.astro';
+import { telHref } from '@/lib/utils';
+---
+<div class="md:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-2 gap-px bg-slate-200 border-t border-slate-200">
+  <a href={telHref()} class="bg-primary text-white font-semibold flex items-center justify-center gap-2 py-3.5"><Icon name="phone" class="w-5 h-5" /> Call Now</a>
+  <a href={siteConfig.pages.contact ? '/contact/' : '#quote'} class="bg-accent text-secondary font-semibold flex items-center justify-center gap-2 py-3.5">Free Quote</a>
+</div>
+<div class="md:hidden h-14" aria-hidden="true"></div>

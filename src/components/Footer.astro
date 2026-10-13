@@ -1,0 +1,61 @@
+---
+import { siteConfig } from '@config';
+import { getCollection } from 'astro:content';
+import Icon from './Icon.astro';
+import { telHref } from '@/lib/utils';
+const { business, pages, nav } = siteConfig;
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const locations = pages.serviceAreas ? (await getCollection('locations')).sort((a, b) => a.data.order - b.data.order) : [];
+const year = new Date().getFullYear();
+const a = business.address;
+---
+<footer class="bg-secondary text-slate-300 mt-auto">
+  <div class="container-x py-14 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+    <div>
+      <p class="font-heading text-xl font-bold text-white">{business.name}</p>
+      <p class="mt-3 text-sm leading-relaxed">{business.tagline}</p>
+      <ul class="mt-5 space-y-2 text-sm">
+        <li><a href={telHref()} class="flex items-center gap-2 hover:text-white"><Icon name="phone" class="w-4 h-4" />{business.phone}</a></li>
+        <li><a href={`mailto:${business.email}`} class="flex items-center gap-2 hover:text-white"><Icon name="mail" class="w-4 h-4" />{business.email}</a></li>
+        <li class="flex items-start gap-2"><Icon name="pin" class="w-4 h-4 mt-0.5" /><address class="not-italic">{a.showStreet && a.street && <>{a.street}<br /></>}{a.city}, {a.state} {a.zip}</address></li>
+      </ul>
+      {business.licenseNumber && <p class="mt-3 text-xs text-slate-400">License #{business.licenseNumber}</p>}
+    </div>
+    {pages.services && (
+      <div>
+        <p class="font-semibold text-white">Services</p>
+        <ul class="mt-4 space-y-2 text-sm">
+          {services.map((s) => <li><a href={`/services/${s.id}/`} class="hover:text-white">{s.data.shortTitle ?? s.data.title}</a></li>)}
+        </ul>
+      </div>
+    )}
+    {pages.serviceAreas && locations.length > 0 && (
+      <div>
+        <p class="font-semibold text-white">Service Areas</p>
+        <ul class="mt-4 space-y-2 text-sm">
+          {locations.slice(0, 10).map((l) => <li><a href={`/service-areas/${l.id}/`} class="hover:text-white">{l.data.city}, {l.data.state}</a></li>)}
+          {locations.length > 10 && <li><a href="/service-areas/" class="text-accent hover:underline">All service areas →</a></li>}
+        </ul>
+      </div>
+    )}
+    <div>
+      <p class="font-semibold text-white">Hours</p>
+      <ul class="mt-4 space-y-1 text-sm">
+        {business.hours.map((h) => <li>{h.days.length > 2 ? `${h.days[0].slice(0,3)}–${h.days[h.days.length-1].slice(0,3)}` : h.days.map(d=>d.slice(0,3)).join(', ')}: {h.opens}–{h.closes}</li>)}
+      </ul>
+      <p class="font-semibold text-white mt-6">Company</p>
+      <ul class="mt-3 space-y-2 text-sm">
+        {nav.filter((n) => !n.page || pages[n.page]).map((n) => <li><a href={n.href} class="hover:text-white">{n.label}</a></li>)}
+        {pages.privacyPolicy && <li><a href="/privacy-policy/" class="hover:text-white">Privacy Policy</a></li>}
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="container-x py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+      <p>© {year} {business.legalName ?? business.name}. All rights reserved.</p>
+      <div class="flex gap-4">
+        {business.sameAs.map((u) => <a href={u} rel="noopener nofollow" target="_blank" class="hover:text-white">{new URL(u).hostname.replace('www.', '').split('.')[0]}</a>)}
+      </div>
+    </div>
+  </div>
+</footer>

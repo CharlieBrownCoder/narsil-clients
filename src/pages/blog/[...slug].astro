@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import BlogIndex from '@/views/BlogIndex.astro';
+import BlogPost from '@/views/BlogPost.astro';
+
+export async function getStaticPaths() {
+  if (!siteConfig.pages.blog) return [];
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return [{ params: { slug: undefined }, props: { post: null } }, ...posts.map((p) => ({ params: { slug: p.id }, props: { post: p } }))];
+}
+const { post } = Astro.props;
+---
+{post ? <BlogPost post={post} /> : <BlogIndex />}

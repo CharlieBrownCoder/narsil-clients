@@ -1,0 +1,81 @@
+---
+/**
+ * Service × City combo page, e.g. /service-areas/plano/house-washing/
+ * These pages rank for "[service] in [city]" queries. To avoid thin content,
+ * each location's `serviceNotes[serviceSlug]` is rendered as a unique paragraph.
+ * If no note exists, the page still builds but you should add one before launch.
+ */
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import TrustBar from '@/components/sections/TrustBar.astro';
+import ProcessSteps from '@/components/sections/ProcessSteps.astro';
+import Testimonials from '@/components/sections/Testimonials.astro';
+import Gallery from '@/components/sections/Gallery.astro';
+import Faq from '@/components/sections/Faq.astro';
+import Cta from '@/components/sections/Cta.astro';
+import ContactForm from '@/components/sections/ContactForm.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import { comboMeta } from '@/lib/seo';
+import * as S from '@/lib/schema';
+
+interface Props { location: CollectionEntry<'locations'>; service: CollectionEntry<'services'> }
+const { location, service } = Astro.props;
+const L = location.data;
+const Sv = service.data;
+const { business, pages } = siteConfig;
+const short = Sv.shortTitle ?? Sv.title;
+const path = `/service-areas/${location.id}/${service.id}/`;
+const meta = { ...comboMeta(short, L.city, L.state, location.id, service.id), ogImage: Sv.image };
+const note = L.serviceNotes[service.id];
+const otherServices = (await getCollection('services')).filter((s) => s.id !== service.id && (!L.services.length || L.services.includes(s.id)));
+const faqs = [
+  { question: `How much does ${short.toLowerCase()} cost in ${L.city}?`, answer: Sv.startingPrice ? `${short} in ${L.city} starts at $${Sv.startingPrice} ${Sv.priceUnit ?? ''}. Final pricing depends on size and condition. Every quote is free and written.` : `Pricing depends on the size and condition of the job. ${business.name} provides free, written quotes for every ${L.city} customer.` },
+  { question: `Is ${business.name} insured to work in ${L.city}?`, answer: `Yes. We carry full liability insurance on every ${short.toLowerCase()} job in ${L.city} and across ${L.state}.` },
+  ...Sv.faqs.slice(0, 3),
+];
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Service Areas', path: '/service-areas/' }, { name: `${L.city}, ${L.state}`, path: `/service-areas/${location.id}/` }, { name: short, path }];
+const schema = S.graph(
+  S.localBusiness(),
+  S.webSite(),
+  S.webPage({ path, title: meta.title, description: meta.description, type: 'ItemPage', image: Sv.image }),
+  S.breadcrumbList(path, crumbs),
+  S.service({ path, name: `${Sv.title} in ${L.city}, ${L.state}`, description: meta.description, serviceType: Sv.serviceType ?? Sv.title, image: Sv.image, startingPrice: Sv.startingPrice, priceUnit: Sv.priceUnit, areas: [{ city: L.city, state: L.state, cityUrl: L.cityUrl }] }),
+  S.faqPage(path, faqs),
+);
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow={`${L.city}, ${L.state}`} title={`${short} in ${L.city}, ${L.state}`} subtitle={Sv.excerpt} image={Sv.image} imageAlt={`${short} in ${L.city}`} />
+  <TrustBar />
+  <div class="container-x pt-8"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="section !pt-8">
+    <div class="container-x grid lg:grid-cols-3 gap-12">
+      <article class="lg:col-span-2 prose prose-site">
+        <h2>Professional {short.toLowerCase()} for {L.city} homeowners</h2>
+        {note ? <p set:html={note} /> : <p>{business.name} provides {short.toLowerCase()} throughout {L.city}{L.neighborhoods.length ? `, including ${L.neighborhoods.slice(0, 3).join(', ')}` : ''}. Our crews know the area, show up on time, and leave your property looking its best.</p>}
+        <p>{Sv.excerpt} Based nearby in {business.address.city}, we can usually get to {L.city} jobs within days, not weeks.</p>
+        {Sv.benefits.length > 0 && (
+          <>
+            <h2>What you get</h2>
+            <ul class="!list-none !pl-0 grid sm:grid-cols-2 gap-3">{Sv.benefits.map((b) => <li class="flex gap-2 !mt-0"><Icon name="check" class="w-5 h-5 text-primary shrink-0 mt-1" /><span>{b}</span></li>)}</ul>
+          </>
+        )}
+        {otherServices.length > 0 && (
+          <>
+            <h2>Other services in {L.city}</h2>
+            <ul>{otherServices.map((s) => <li><a href={`/service-areas/${location.id}/${s.id}/`}>{s.data.shortTitle ?? s.data.title} in {L.city}</a></li>)}</ul>
+          </>
+        )}
+        <p>Learn more about our <a href={`/services/${service.id}/`}>{short.toLowerCase()} service</a> or see everything we do in <a href={`/service-areas/${location.id}/`}>{L.city}</a>.</p>
+      </article>
+      <aside class="lg:sticky lg:top-24 self-start"><ContactForm service={service.id} city={L.city} compact /></aside>
+    </div>
+  </section>
+  <ProcessSteps steps={Sv.process} title={`How ${short.toLowerCase()} works in ${L.city}`} />
+  {pages.gallery && <Gallery limit={3} service={service.id} title={`Recent ${short.toLowerCase()} work`} />}
+  <Testimonials service={service.id} />
+  <Faq faqs={faqs} title={`${short} in ${L.city}: FAQs`} />
+  <Cta title={`${short} in ${L.city}? Get a free quote today.`} />
+</BaseLayout>

@@ -1,0 +1,10 @@
+---
+import { siteConfig } from '@config';
+import Icon from '@/components/Icon.astro';
+const { badges } = siteConfig.trust;
+---
+<section class="border-y border-slate-200 bg-white">
+  <ul class="container-x py-5 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm font-semibold text-secondary">
+    {badges.map((b) => <li class="flex items-center gap-2 justify-center"><Icon name={b.icon ?? 'check'} class="w-5 h-5 text-primary shrink-0" />{b.label}</li>)}
+  </ul>
+</section>

@@ -1,0 +1,54 @@
+---
+import '@/styles/global.css';
+import { siteConfig } from '@config';
+import Seo from '@/components/Seo.astro';
+import Tracking from '@/components/Tracking.astro';
+import JsonLd from '@/components/JsonLd.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import MobileCallBar from '@/components/MobileCallBar.astro';
+import type { PageMeta } from '@/lib/seo';
+
+interface Props {
+  meta: PageMeta;
+  /** Composed JSON-LD graph for this page. */
+  schema?: Record<string, unknown>;
+}
+const { meta, schema } = Astro.props;
+const t = siteConfig.theme;
+const radius = { sharp: '0px', rounded: '0.75rem', pill: '9999px' }[t.radius];
+const fontsParam = [t.fontHeading, t.fontBody]
+  .filter((f, i, a) => a.indexOf(f) === i)
+  .map((f) => `family=${encodeURIComponent(f).replace(/%20/g, '+')}:wght@400;500;600;700;800`)
+  .join('&');
+const rootVars = `:root{--brand-primary:${t.primary};--brand-primary-dark:${t.primaryDark};--brand-secondary:${t.secondary};--brand-accent:${t.accent};--brand-neutral:${t.neutral};--brand-font-heading:"${t.fontHeading}";--brand-font-body:"${t.fontBody}";--brand-radius:${radius};}`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content={t.primary} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?${fontsParam}&display=swap`} />
+    <style set:html={rootVars} />
+    <Seo meta={meta} />
+    {schema && <JsonLd data={schema} />}
+    <Tracking />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    {siteConfig.tracking.gtm && (
+      <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${siteConfig.tracking.gtm}`} height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    )}
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 btn-primary">Skip to content</a>
+    <Header />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+    <MobileCallBar />
+  </body>
+</html>

@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+interface Props { limit?: number; service?: string; title?: string }
+const { limit, service, title = 'Recent work' } = Astro.props;
+let projects = await getCollection('projects');
+if (service) { const m = projects.filter((p) => p.data.service === service); if (m.length) projects = m; }
+if (limit) projects = projects.slice(0, limit);
+---
+{projects.length > 0 && (
+  <section class="section">
+    <div class="container-x">
+      <p class="eyebrow">Before & after</p>
+      <h2 class="mt-2">{title}</h2>
+      <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((p) => (
+          <figure class="card overflow-hidden">
+            <div class:list={['grid', p.data.before ? 'grid-cols-2' : 'grid-cols-1']}>
+              {p.data.before && <div class="relative"><img src={p.data.before} alt={`Before: ${p.data.title}`} loading="lazy" width="400" height="300" class="w-full aspect-[4/3] object-cover" /><span class="absolute top-2 left-2 text-xs font-bold bg-secondary/80 text-white px-2 py-0.5 rounded">Before</span></div>}
+              <div class="relative"><img src={p.data.after} alt={`After: ${p.data.title}`} loading="lazy" width="400" height="300" class="w-full aspect-[4/3] object-cover" /><span class="absolute top-2 left-2 text-xs font-bold bg-primary text-white px-2 py-0.5 rounded">After</span></div>
+            </div>
+            <figcaption class="p-4">
+              <p class="font-semibold text-secondary">{p.data.title}</p>
+              <p class="text-sm text-slate-600 mt-1">{p.data.description}</p>
+              {p.data.location && <p class="text-xs text-slate-500 mt-2">{p.data.location}</p>}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+)}

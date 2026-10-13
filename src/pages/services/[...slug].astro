@@ -1,0 +1,22 @@
+---
+/**
+ * /services/            → ServicesIndex
+ * /services/<slug>/     → ServiceDetail
+ * Built only when siteConfig.pages.services is true.
+ */
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import ServicesIndex from '@/views/ServicesIndex.astro';
+import ServiceDetail from '@/views/ServiceDetail.astro';
+
+export async function getStaticPaths() {
+  if (!siteConfig.pages.services) return [];
+  const services = await getCollection('services');
+  return [
+    { params: { slug: undefined }, props: { service: null } },
+    ...services.map((s) => ({ params: { slug: s.id }, props: { service: s } })),
+  ];
+}
+const { service } = Astro.props;
+---
+{service ? <ServiceDetail service={service} /> : <ServicesIndex />}

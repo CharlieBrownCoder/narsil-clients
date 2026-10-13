@@ -1,0 +1,9 @@
+[
+  { "id": "f1", "question": "Are you licensed and insured?", "answer": "Yes. ClearShine carries full general liability insurance, and we're happy to provide a certificate of insurance for HOAs or property managers.", "category": "general", "order": 1 },
+  { "id": "f2", "question": "How do I get a quote?", "answer": "Call us, or fill out the quote form with your address and a photo or two. Most residential quotes are returned the same day without a site visit.", "category": "general", "order": 2 },
+  { "id": "f3", "question": "Do I need to be home during the service?", "answer": "No. We just need access to exterior water spigots and any gates unlocked. We'll text you before we arrive and send photos when we finish.", "category": "general", "order": 3 },
+  { "id": "f4", "question": "What areas do you serve?", "answer": "We're based in Plano and serve Frisco, McKinney, Allen, and most of Collin County within about 30 miles. If you're outside that radius, call us anyway.", "category": "general", "order": 4 },
+  { "id": "f5", "question": "Do you use my water?", "answer": "Yes, we connect to your exterior spigot. A typical house wash uses about the same water as two or three loads of laundry.", "category": "general", "order": 5 },
+  { "id": "f6", "question": "What payment methods do you accept?", "answer": "Cash, check, Zelle, and all major credit cards. Payment is due when the job is complete and you're satisfied with the result.", "category": "general", "order": 6 },
+  { "id": "f7", "question": "Can you wash a house with lead paint?", "answer": "Homes built before 1978 with peeling paint need special handling. Tell us the age of the home when you request a quote and we'll advise.", "category": "house-washing", "order": 10 }
+]

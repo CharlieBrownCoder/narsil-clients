@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import Icon from '@/components/Icon.astro';
+import { getBusinessType } from '@/lib/business-types';
+interface Props { title?: string; limit?: number; serviceSlug?: string; serviceName?: string }
+const bt = getBusinessType(siteConfig.businessType);
+const { title = `${bt.label} across the area`, limit, serviceSlug, serviceName } = Astro.props;
+let locations = (await getCollection('locations')).sort((a, b) => Number(b.data.primary) - Number(a.data.primary) || a.data.order - b.data.order);
+if (serviceSlug) locations = locations.filter((l) => !l.data.services.length || l.data.services.includes(serviceSlug));
+if (limit) locations = locations.slice(0, limit);
+const href = (id: string) => (serviceSlug && siteConfig.pages.serviceAreaCombos ? `/service-areas/${id}/${serviceSlug}/` : `/service-areas/${id}/`);
+---
+{locations.length > 0 && (
+  <section class="section bg-neutral">
+    <div class="container-x">
+      <p class="eyebrow">Service areas</p>
+      <h2 class="mt-2">{title}</h2>
+      <p class="mt-4 text-lg text-slate-600 max-w-2xl">Based in {siteConfig.business.address.city}{siteConfig.business.serviceRadiusMiles && `, serving homes and businesses within ${siteConfig.business.serviceRadiusMiles} miles`}.</p>
+      <ul class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {locations.map((l) => (
+          <li><a href={href(l.id)} class="card px-4 py-3 flex items-center gap-2 font-medium hover:border-primary hover:text-primary"><Icon name="pin" class="w-4 h-4 text-primary shrink-0" />{serviceName ? `${serviceName} in ${l.data.city}` : `${l.data.city}, ${l.data.state}`}</a></li>
+        ))}
+      </ul>
+      {limit && <a href="/service-areas/" class="mt-6 inline-flex items-center gap-1 font-semibold text-primary">View all service areas <Icon name="arrow" class="w-4 h-4" /></a>}
+    </div>
+  </section>
+)}

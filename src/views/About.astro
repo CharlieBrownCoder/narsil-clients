@@ -1,0 +1,38 @@
+---
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import TrustBar from '@/components/sections/TrustBar.astro';
+import WhyUs from '@/components/sections/WhyUs.astro';
+import Testimonials from '@/components/sections/Testimonials.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { getBusinessType } from '@/lib/business-types';
+import * as S from '@/lib/schema';
+
+const { business } = siteConfig;
+const bt = getBusinessType(siteConfig.businessType);
+const years = business.foundingYear ? new Date().getFullYear() - business.foundingYear : undefined;
+const meta = { title: buildTitle(`About ${business.name}`), description: buildDescription(`Meet the team behind ${business.name}, a locally owned ${bt.noun} serving ${business.address.city}, ${business.address.state}${years ? ` since ${business.foundingYear}` : ''}.`), canonical: '/about/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }];
+const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({ path: '/about/', title: meta.title, description: meta.description, type: 'AboutPage' }), S.breadcrumbList('/about/', crumbs));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Our story" title={`About ${business.name}`} subtitle={business.tagline} image="/images/about.jpg" imageAlt={`The ${business.name} team`} />
+  <TrustBar />
+  <div class="container-x pt-8"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="section !pt-8">
+    <div class="container-x max-w-3xl prose prose-site">
+      <h2>Locally owned. Locally trusted.</h2>
+      <p>{business.description}</p>
+      {years && <p>{business.name} was founded in {business.foundingYear}. {years} years later, we’re still a local, owner-operated {bt.noun}, and we still answer the phone ourselves.</p>}
+      <h2>What we stand for</h2>
+      <ul>{siteConfig.trust.guarantees.map((g) => <li>{g}</li>)}</ul>
+      <p><em>Edit this page in <code>src/views/About.astro</code> to add your team, photos, and story. A real story with real names and photos is one of the strongest trust signals you can add.</em></p>
+    </div>
+  </section>
+  <WhyUs />
+  <Testimonials />
+  <Cta />
+</BaseLayout>

@@ -1,0 +1,38 @@
+---
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ContactForm from '@/components/sections/ContactForm.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { telHref } from '@/lib/utils';
+import * as S from '@/lib/schema';
+
+const { business } = siteConfig;
+const a = business.address;
+const meta = { title: buildTitle(`Contact ${business.name} | Free Quotes`), description: buildDescription(`Call ${business.phone} or request a free quote online. ${business.name} serves ${a.city}, ${a.state} and surrounding areas.`), canonical: '/contact/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact/' }];
+const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({ path: '/contact/', title: meta.title, description: meta.description, type: 'ContactPage' }), S.breadcrumbList('/contact/', crumbs));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <section class="section bg-neutral">
+    <div class="container-x">
+      <Breadcrumbs crumbs={crumbs} class="mb-6" />
+      <div class="grid lg:grid-cols-5 gap-12">
+        <div class="lg:col-span-2">
+          <p class="eyebrow">Contact us</p>
+          <h1 class="mt-2 !text-4xl md:!text-5xl">Get a free quote</h1>
+          <p class="mt-4 text-lg text-slate-600">Fill out the form or reach us directly. We respond fast.</p>
+          <ul class="mt-8 space-y-5">
+            <li class="flex gap-3"><Icon name="phone" class="w-6 h-6 text-primary shrink-0" /><div><p class="font-semibold">Phone</p><a href={telHref()} class="text-primary hover:underline">{business.phone}</a></div></li>
+            <li class="flex gap-3"><Icon name="mail" class="w-6 h-6 text-primary shrink-0" /><div><p class="font-semibold">Email</p><a href={`mailto:${business.email}`} class="text-primary hover:underline">{business.email}</a></div></li>
+            <li class="flex gap-3"><Icon name="pin" class="w-6 h-6 text-primary shrink-0" /><div><p class="font-semibold">{a.showStreet ? 'Address' : 'Based in'}</p><address class="not-italic text-slate-600">{a.showStreet && a.street && <>{a.street}<br /></>}{a.city}, {a.state} {a.zip}</address></div></li>
+            <li class="flex gap-3"><Icon name="clock" class="w-6 h-6 text-primary shrink-0" /><div><p class="font-semibold">Hours</p><ul class="text-slate-600">{business.hours.map((h) => <li>{h.days.length > 2 ? `${h.days[0]}–${h.days[h.days.length - 1]}` : h.days.join(', ')}: {h.opens}–{h.closes}</li>)}</ul></div></li>
+          </ul>
+        </div>
+        <div class="lg:col-span-3"><ContactForm /></div>
+      </div>
+    </div>
+  </section>
+  {business.mapEmbedUrl && <section class="container-x pb-16"><iframe src={business.mapEmbedUrl} title={`Map of ${business.name}`} loading="lazy" class="w-full h-96 rounded-[var(--radius-brand)] border border-slate-200" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></section>}
+</BaseLayout>

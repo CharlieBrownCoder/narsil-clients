@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import Faq from '@/components/sections/Faq.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { getBusinessType } from '@/lib/business-types';
+import * as S from '@/lib/schema';
+
+const { business } = siteConfig;
+const bt = getBusinessType(siteConfig.businessType);
+const all = (await getCollection('faqs')).sort((a, b) => a.data.order - b.data.order).map((f) => f.data);
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const general = all.filter((f) => f.category === 'general');
+const meta = { title: buildTitle(`${bt.label} FAQs`), description: buildDescription(`Answers to the most common ${bt.label.toLowerCase()} questions from ${business.address.city} homeowners: pricing, scheduling, safety, and more.`), canonical: '/faq/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'FAQ', path: '/faq/' }];
+const schema = S.graph(S.localBusiness(), S.webSite(), S.webPage({ path: '/faq/', title: meta.title, description: meta.description, type: 'FAQPage' }), S.breadcrumbList('/faq/', crumbs), S.faqPage('/faq/', [...general, ...services.flatMap((s) => [...s.data.faqs, ...all.filter((f) => f.category === s.id)])]));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact title="Frequently Asked Questions" subtitle={`Everything you want to know before hiring a ${bt.noun}.`} />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <Faq faqs={general} title="General questions" />
+  {services.map((s) => { const f = [...s.data.faqs, ...all.filter((x) => x.category === s.id)]; return f.length ? <Faq faqs={f} title={`${s.data.shortTitle ?? s.data.title} questions`} /> : null; })}
+  <Cta />
+</BaseLayout>

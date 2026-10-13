@@ -1,0 +1,31 @@
+---
+/**
+ * Router for optional single pages. A page is only built when enabled in
+ * siteConfig.pages. To add one: create a view in src/views/, add a row to
+ * src/lib/optional-pages.ts, and map it below.
+ */
+import { enabledOptionalPages } from '@/lib/optional-pages';
+import About from '@/views/About.astro';
+import Contact from '@/views/Contact.astro';
+import Reviews from '@/views/Reviews.astro';
+import GalleryPage from '@/views/GalleryPage.astro';
+import FaqPage from '@/views/FaqPage.astro';
+import PrivacyPolicy from '@/views/PrivacyPolicy.astro';
+import ThankYou from '@/views/ThankYou.astro';
+
+export function getStaticPaths() {
+  return enabledOptionalPages().map((page) => ({ params: { page } }));
+}
+
+const views: Record<string, any> = {
+  about: About,
+  contact: Contact,
+  reviews: Reviews,
+  gallery: GalleryPage,
+  faq: FaqPage,
+  'privacy-policy': PrivacyPolicy,
+  'thank-you': ThankYou,
+};
+const View = views[Astro.params.page!];
+---
+<View />

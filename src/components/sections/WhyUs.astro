@@ -1,0 +1,37 @@
+---
+import { siteConfig } from '@config';
+import Icon from '@/components/Icon.astro';
+import { getBusinessType } from '@/lib/business-types';
+const { business, trust } = siteConfig;
+const bt = getBusinessType(siteConfig.businessType);
+interface Props { city?: string }
+const { city = business.address.city } = Astro.props;
+const years = business.foundingYear ? new Date().getFullYear() - business.foundingYear : undefined;
+const points = [
+  { icon: 'users', title: 'Locally owned and operated', text: `We live and work in ${city}. When you call, you talk to someone who knows your neighborhood.` },
+  { icon: 'shield', title: business.insured ? 'Licensed, bonded, and insured' : 'Trained, professional crews', text: 'Your property is protected and our team is trained to the highest standard.' },
+  { icon: 'dollar', title: 'Upfront, honest pricing', text: 'No surprises. You get a clear written quote before any work starts.' },
+  { icon: 'check', title: trust.guarantees[0] ?? 'Satisfaction guaranteed', text: `If you’re not happy, we make it right. That’s how a ${bt.noun} should operate.` },
+];
+---
+<section class="section bg-neutral">
+  <div class="container-x grid lg:grid-cols-5 gap-12 items-start">
+    <div class="lg:col-span-2">
+      <p class="eyebrow">Why choose us</p>
+      <h2 class="mt-2">The {city} {bt.noun} homeowners recommend</h2>
+      {years && <p class="mt-4 text-lg text-slate-600">Over {years} years of experience and {trust.rating?.count ?? 'hundreds of'} happy customers across the area.</p>}
+      <ul class="mt-6 space-y-2">
+        {trust.guarantees.map((g) => <li class="flex items-center gap-2 font-medium"><Icon name="check" class="w-5 h-5 text-primary" />{g}</li>)}
+      </ul>
+    </div>
+    <div class="lg:col-span-3 grid sm:grid-cols-2 gap-6">
+      {points.map((p) => (
+        <div class="card p-6">
+          <Icon name={p.icon} class="w-8 h-8 text-primary" />
+          <h3 class="mt-4 text-lg">{p.title}</h3>
+          <p class="mt-2 text-slate-600">{p.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

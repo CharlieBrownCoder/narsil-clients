@@ -1,0 +1,48 @@
+---
+import { siteConfig } from '@config';
+import Icon from './Icon.astro';
+import { telHref } from '@/lib/utils';
+const { business, nav, pages, promo, theme } = siteConfig;
+const items = nav.filter((n) => !n.page || pages[n.page]);
+const current = Astro.url.pathname;
+---
+{promo?.enabled && (
+  <div class="bg-accent text-secondary text-sm font-semibold text-center py-2 px-4">
+    {promo.href ? <a href={promo.href} class="hover:underline">{promo.text} →</a> : promo.text}
+  </div>
+)}
+<header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
+  <div class="container-x flex items-center justify-between h-18 py-3 gap-6">
+    <a href="/" class="flex items-center shrink-0" aria-label={`${business.name} home`}>
+      <img src={theme.logo.src} alt={theme.logo.alt} width={theme.logo.width} height={theme.logo.height} class="h-9 w-auto" />
+    </a>
+    <nav class="hidden lg:flex items-center gap-7" aria-label="Primary">
+      {items.map((n) => (
+        <a href={n.href} class:list={['font-medium text-slate-700 hover:text-primary', current.startsWith(n.href) && 'text-primary']} aria-current={current.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>
+      ))}
+    </nav>
+    <div class="hidden md:flex items-center gap-3">
+      <a href={telHref()} class="flex items-center gap-2 font-bold text-secondary hover:text-primary">
+        <Icon name="phone" class="w-5 h-5 text-primary" /> {business.phone}
+      </a>
+      {pages.contact && <a href="/contact/" class="btn-accent !py-2.5">Free Quote</a>}
+    </div>
+    <button id="menu-btn" class="lg:hidden p-2 -mr-2 text-secondary" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+      <Icon name="menu" class="w-7 h-7" />
+    </button>
+  </div>
+  <div id="mobile-nav" class="hidden lg:hidden border-t border-slate-200 bg-white">
+    <nav class="container-x py-4 flex flex-col gap-1" aria-label="Mobile">
+      {items.map((n) => <a href={n.href} class="py-2.5 font-medium text-slate-800 hover:text-primary border-b border-slate-100">{n.label}</a>)}
+      <a href={telHref()} class="btn-primary mt-4"><Icon name="phone" class="w-5 h-5" /> Call {business.phone}</a>
+    </nav>
+  </div>
+</header>
+<script>
+  const btn = document.getElementById('menu-btn');
+  const nav = document.getElementById('mobile-nav');
+  btn?.addEventListener('click', () => {
+    const open = nav?.classList.toggle('hidden') === false;
+    btn.setAttribute('aria-expanded', String(open));
+  });
+</script>

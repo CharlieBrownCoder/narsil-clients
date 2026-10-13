@@ -1,0 +1,20 @@
+---
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import { telHref } from '@/lib/utils';
+const { business } = siteConfig;
+const meta = { title: `Thanks! | ${business.name}`, description: 'We received your request.', canonical: '/thank-you/', noindex: true };
+---
+<BaseLayout meta={meta}>
+  <section class="container-x py-28 text-center max-w-xl">
+    <span class="mx-auto w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center"><Icon name="check" class="w-8 h-8" /></span>
+    <h1 class="mt-6">Request received</h1>
+    <p class="mt-4 text-lg text-slate-600">Thanks for reaching out. Someone from {business.name} will contact you shortly. Need us sooner?</p>
+    <a href={telHref()} class="btn-primary mt-8"><Icon name="phone" class="w-5 h-5" /> Call {business.phone}</a>
+  </section>
+  <script is:inline>
+    if (window.gtag) gtag('event', 'generate_lead', { event_category: 'form', event_label: 'quote' });
+    if (window.fbq) fbq('track', 'Lead');
+  </script>
+</BaseLayout>

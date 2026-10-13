@@ -1,0 +1,20 @@
+---
+import { siteConfig } from '@config';
+import Icon from '@/components/Icon.astro';
+import { telHref } from '@/lib/utils';
+interface Props { title?: string; text?: string }
+const { business, pages } = siteConfig;
+const { title = 'Ready for a free quote?', text = `Call ${business.phone} or send us a message. We respond fast, usually within the hour during business hours.` } = Astro.props;
+---
+<section class="bg-primary text-white">
+  <div class="container-x py-14 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+    <div class="max-w-2xl">
+      <h2 class="!text-white">{title}</h2>
+      <p class="mt-3 text-lg text-white/85">{text}</p>
+    </div>
+    <div class="flex flex-wrap gap-3 shrink-0">
+      <a href={telHref()} class="btn-accent"><Icon name="phone" class="w-5 h-5" /> {business.phone}</a>
+      {pages.contact && <a href="/contact/" class="btn-ghost">Request a Quote</a>}
+    </div>
+  </div>
+</section>
