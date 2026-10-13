@@ -147,11 +147,45 @@ export interface SiteConfig {
     fontBody: string;
     /** "sharp" | "rounded" | "pill" */
     radius: 'sharp' | 'rounded' | 'pill';
-    /** Hero layout variant */
-    heroStyle: 'split' | 'centered' | 'image-bg';
+    /**
+     * Hero layout.
+     *  photo    full-bleed photo with a dark scrim, copy left. The look most trade sites use.
+     *  cutout   solid brand background, copy left, transparent-PNG person/truck right.
+     *  split    light background, copy left, framed photo right.
+     *  centered copy centered; over the photo with a scrim when hero.image is set.
+     */
+    heroStyle: 'photo' | 'cutout' | 'split' | 'centered';
+    /** Quote form card inside the hero (desktop right column; stacked on mobile). */
+    heroForm: boolean;
+    /** Display headings (h1, h2) in uppercase with tight tracking. Body and h3 unaffected. */
+    headingCase: 'normal' | 'uppercase';
+    /** Shaped edge between the hero and the next section, and above the CTA band. */
+    dividers: 'none' | 'angle' | 'curve' | 'wave';
+    /** Service cards show the service photo (needs `image` on each service) or an icon tile. */
+    serviceCards: 'photo' | 'icon';
     logo: { src: string; alt: string; width: number; height: number };
     /** Default social share image (1200x630) */
     ogImage: string;
+  };
+
+  /**
+   * Home page hero. Headline supports *accent* markup: the words between
+   * asterisks render in the accent color. Images are file names inside
+   * src/assets/images/ and are optimized at build.
+   */
+  hero: {
+    /** Small line above the headline. Blank = "[Vertical] in [City], [ST]". */
+    eyebrow?: string;
+    /** e.g. "Plano's Top-Rated *Pressure Washing* Company" */
+    headline: string;
+    subheadline: string;
+    /** Background / side photo, e.g. "hero.jpg" */
+    image: string;
+    imageAlt: string;
+    /** Transparent PNG of a person or truck for the cutout style, e.g. "hero-cutout.png" */
+    cutout?: string;
+    /** 2×2 checkmark bullets. [] = use trust.badges labels. */
+    bullets: string[];
   };
 
   /** Lead capture via Formspree (https://formspree.io). Create one form per client. */
@@ -196,6 +230,10 @@ export interface SiteConfig {
     guarantees: string[];
     /** Aggregate rating used in schema and UI. Keep in sync with real reviews. */
     rating?: { value: number; count: number; source: string };
+    /** Big-number strip under the hero, e.g. { value: "5,000+", label: "Homes cleaned" }. [] = hidden. Real numbers only. */
+    stats: Array<{ value: string; label: string }>;
+    /** Third-party badge images (BBB, Google Guaranteed, awards). Files in public/images/badges/. [] = hidden. */
+    logos: Array<{ src: string; alt: string; href?: string }>;
   };
 
   /**
@@ -330,9 +368,22 @@ export const siteConfig: SiteConfig = {
     fontHeading: 'Plus Jakarta Sans',
     fontBody: 'Inter',
     radius: 'rounded',
-    heroStyle: 'split',
+    heroStyle: 'photo',
+    heroForm: true,
+    headingCase: 'uppercase',
+    dividers: 'angle',
+    serviceCards: 'photo',
     logo: { src: '/images/logo.svg', alt: 'ClearShine Pressure Washing', width: 180, height: 40 },
     ogImage: '/images/og-default.jpg',
+  },
+
+  hero: {
+    headline: 'Plano’s Top-Rated *Pressure Washing* Company',
+    subheadline: 'Soft washing, driveways, roofs, and decks. Insured crews and a written quote before we start.',
+    image: 'hero.jpg',
+    imageAlt: 'ClearShine technician soft washing a two-story brick home in Plano',
+    cutout: 'hero-cutout.png',
+    bullets: [],
   },
 
   forms: {
@@ -367,6 +418,18 @@ export const siteConfig: SiteConfig = {
     ],
     guarantees: ['100% satisfaction guarantee', 'Free, no-pressure quotes', 'Fully insured crews'],
     rating: { value: 4.9, count: 212, source: 'Google' },
+    stats: [
+      { value: '212', label: '5-star Google reviews' },
+      { value: '10+', label: 'Years in Plano' },
+      { value: '3,400+', label: 'Homes washed' },
+      { value: '100%', label: 'Satisfaction guarantee' },
+    ],
+    logos: [
+      { src: '/images/badges/google-rating.svg', alt: '4.9 stars on Google' },
+      { src: '/images/badges/licensed-insured.svg', alt: 'Licensed and insured' },
+      { src: '/images/badges/bbb.svg', alt: 'BBB accredited business (placeholder)' },
+      { src: '/images/badges/best-of.svg', alt: 'Best of Plano 2026 (placeholder)' },
+    ],
   },
 
   reviews: {

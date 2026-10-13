@@ -1,0 +1,19 @@
+---
+/** Big-number strip from trust.stats. Hidden when empty. Numbers must be real. */
+import { siteConfig } from '@config';
+const { stats } = siteConfig.trust;
+interface Props { dark?: boolean }
+const { dark = true } = Astro.props;
+---
+{stats.length > 0 && (
+  <section class:list={[dark ? 'bg-primary text-white' : 'bg-white border-y border-slate-200 text-secondary']}>
+    <dl class="container-x py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      {stats.slice(0, 4).map((s) => (
+        <div>
+          <dd class:list={['font-heading text-3xl md:text-4xl font-extrabold tabular-nums', dark ? 'text-white' : 'text-primary']}>{s.value}</dd>
+          <dt class:list={['mt-1 text-sm font-medium', dark ? 'text-white/80' : 'text-slate-600']}>{s.label}</dt>
+        </div>
+      ))}
+    </dl>
+  </section>
+)}

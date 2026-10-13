@@ -1,13 +1,15 @@
 ---
 import { siteConfig } from '@config';
 import Icon from '@/components/Icon.astro';
+import SectionDivider from '@/components/SectionDivider.astro';
 import { telHref } from '@/lib/utils';
-interface Props { title?: string; text?: string }
+interface Props { title?: string; text?: string; prevBg?: string }
 const { business, pages } = siteConfig;
-const { title = 'Ready for a free quote?', text = `Call ${business.phone} or send us a message. We respond fast, usually within the hour during business hours.` } = Astro.props;
+const { title = 'Ready for a free quote?', text = `Call ${business.phone} or send us a message. We respond fast, usually within the hour during business hours.`, prevBg = '#ffffff' } = Astro.props;
 ---
-<section class="bg-primary text-white">
-  <div class="container-x py-14 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+<section class="relative bg-primary text-white">
+  <SectionDivider position="top" fill={prevBg} />
+  <div class="container-x py-14 pt-20 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
     <div class="max-w-2xl">
       <h2 class="!text-white">{title}</h2>
       <p class="mt-3 text-lg text-white/85">{text}</p>

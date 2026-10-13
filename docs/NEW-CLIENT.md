@@ -19,7 +19,10 @@
 - [ ] `business.credentials[]`: license numbers, insurance carrier, certifications, memberships. Nothing unverifiable.
 - [ ] `tracking.searchConsoleVerification` once the property is added
 - [ ] `pages` toggles
-- [ ] `theme` colors, fonts, radius, heroStyle
+- [ ] `theme`: start from a preset (`node scripts/apply-preset.mjs <id>`), then adjust colors, fonts, radius, `heroStyle`, `heroForm`, `headingCase`, `dividers`, `serviceCards`
+- [ ] `hero`: headline in the "[City]'s Top-Rated *[Service]* Company" shape or the client's own, under 8 words; subheadline under 20 words; `image` (real job photo, 2000×1250) and optional `cutout` (transparent PNG of the owner or truck)
+- [ ] `trust.stats`: 2 to 4 real numbers (reviews, years, jobs). Blank if unverifiable.
+- [ ] `trust.logos`: badge images the client actually holds (BBB, Google Guaranteed, awards) in `public/images/badges/`
 - [ ] `trust.badges`, `guarantees`, `rating` (must match real review count)
 - [ ] `tracking` IDs (GTM, or GA4 direct, plus Meta Pixel)
 - [ ] `forms.formspreeId` (create the form at formspree.io, set the notification email there)
@@ -39,7 +42,9 @@ Source images live in `src/assets/images/` and are optimized at build (WebP, res
 | `logo.svg` | `public/images/` | ~180×40 | header |
 | `og-default.jpg` | `public/images/` | 1200×630 | social share default |
 | `favicon.svg` | `public/` | square | tab icon |
-| `hero.jpg` | `src/assets/images/` | 1600×1200 | home hero |
+| `hero.jpg` | `src/assets/images/` | 2000×1250 | home hero (full-bleed; keep the subject right of center so copy sits on the left) |
+| `hero-cutout.png` | `src/assets/images/` | ~900×1100, transparent | cutout hero style only |
+| `badges/*.svg\|png` | `public/images/badges/` | ~200×60 | trust logo row |
 | `about.jpg` | `src/assets/images/` | 1600×1200 | about hero |
 | `service-<slug>.jpg` | `src/assets/images/` | 1600×1200 | service pages (`image: ../../assets/images/...` in frontmatter) |
 | `project-N-before/after.jpg` | `src/assets/images/` | 800×600 | gallery (`../assets/images/...` in projects.json) |

@@ -1,0 +1,7 @@
+---
+/** Renders a headline with *accent* markup → <span class="text-accent">. */
+interface Props { text: string; as?: 'h1' | 'h2' | 'p'; class?: string }
+const { text, as: Tag = 'h1', class: cls = '' } = Astro.props;
+const parts = text.split(/(\*[^*]+\*)/g).filter(Boolean);
+---
+<Tag class={cls}>{parts.map((p) => (p.startsWith('*') && p.endsWith('*') ? <span class="text-accent">{p.slice(1, -1)}</span> : p))}</Tag>

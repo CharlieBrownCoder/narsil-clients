@@ -54,6 +54,7 @@ src/
     seo.ts                ← title/description builders
     optional-pages.ts     ← which single pages exist
   content/                ← Markdown + JSON content collections
+  theme-presets.ts        ← palettes + layout combos distilled from reference sites
   components/Trustindex.astro ← review widget, one ID per placement
   pages/                  ← routes (thin, delegate to views)
   views/                  ← full-page templates
@@ -64,9 +65,11 @@ docs/
   SCHEMA.md               ← how structured data is composed
   NEW-CLIENT.md           ← launch checklist
   TOOLING.md              ← what's vendored in .claude/, from where, and what was skipped
+  DESIGN-REFERENCE.md     ← pattern catalog from 32 reference sites
 scripts/
   new-client.mjs          ← content reset
   theme-from-design-system.mjs ← theme tokens from the ui-ux-pro-max generator
+  apply-preset.mjs        ← apply a named preset to site.config.ts
 ```
 
 ## Page types
@@ -96,7 +99,21 @@ Every page emits a single `@graph` with the `LocalBusiness` subtype for the vert
 
 ## Theming
 
-`theme` in the config sets brand colors, font families, corner radius, hero layout, logo, and OG image. Colors map to Tailwind utilities `bg-primary`, `text-accent`, etc. Fonts are self-hosted: drop `<slug>.woff2` in `public/fonts/` (see the README there). `.claude/skills/design-standard/` is the floor every page must pass; `DESIGN.md` is the per-client spec.
+`theme` in the config sets brand colors, font families, corner radius, and five layout switches:
+
+| Key | Values | What it changes |
+| --- | --- | --- |
+| `heroStyle` | `photo` (default), `cutout`, `split`, `centered` | full-bleed photo with scrim; brand background with a cut-out person or truck; light split; centered copy |
+| `heroForm` | true/false | quote card inside the hero on desktop |
+| `headingCase` | `uppercase`, `normal` | h1/h2 only |
+| `dividers` | `angle`, `curve`, `wave`, `none` | shaped edge under the hero and above the CTA band |
+| `serviceCards` | `photo`, `icon` | service photo cards or icon tiles |
+
+The `hero` block holds the home headline (with `*accent*` markup for the highlighted words), subheadline, image, optional cutout PNG, and checkmark bullets. `trust.stats` renders a big-number strip and `trust.logos` a badge row under the hero; both hidden when empty.
+
+Nine presets distilled from the reference sites live in `src/theme-presets.ts`. List them with `node scripts/apply-preset.mjs` and apply one with `node scripts/apply-preset.mjs navy-orange`. See `docs/DESIGN-REFERENCE.md` for where each pattern came from.
+
+Colors map to Tailwind utilities `bg-primary`, `text-accent`, etc. Fonts are self-hosted: drop `<slug>.woff2` in `public/fonts/` (see the README there). `.claude/skills/design-standard/` is the floor every page must pass; `DESIGN.md` is the per-client spec.
 
 ## Forms and reviews
 

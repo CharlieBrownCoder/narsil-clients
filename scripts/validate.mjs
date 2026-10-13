@@ -85,7 +85,7 @@ for (const file of pages) {
 
   for (const m of html.matchAll(/\bhref="(\/[^"]*)"/g)) {
     const href = m[1];
-    if (href.startsWith('//')) continue;
+    if (href.startsWith('//') || href.startsWith('/fonts/')) continue;
     if (!resolvesTo(href)) err(`${rel}: broken internal link ${href}`);
   }
 }
@@ -125,6 +125,18 @@ if (/provider:\s*'embed'/.test(config) && !/embedUrl:\s*'https?:/.test(config)) 
 // resources: file must exist in public/
 const resDir = join(root, 'src/content/resources');
 for (const r of readDir(resDir)) if (r.data.file && !existsSync(join(root, 'public', r.data.file))) err(`resource ${r.id}: file ${r.data.file} not found in public/`);
+
+// self-hosted font files must exist for the configured families
+const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+for (const key of ['fontHeading', 'fontBody']) {
+  const m = config.match(new RegExp(`\\n\\s*${key}:\\s*'([^']+)'`));
+  if (m && !existsSync(join(root, 'public/fonts', `${slug(m[1])}.woff2`))) err(`${key} "${m[1]}" has no file at public/fonts/${slug(m[1])}.woff2 (see public/fonts/README.md)`);
+}
+// hero assets and badge logos must exist
+const heroImg = config.match(/\n\s*image:\s*'([^']+)'/); if (heroImg && !existsSync(join(root, 'src/assets/images', heroImg[1]))) err(`hero.image "${heroImg[1]}" not found in src/assets/images/`);
+const cut = config.match(/\n\s*cutout:\s*'([^']+)'/); if (cut && !existsSync(join(root, 'src/assets/images', cut[1]))) err(`hero.cutout "${cut[1]}" not found in src/assets/images/`);
+for (const m of config.matchAll(/src:\s*'(\/images\/badges\/[^']+)'/g)) if (!existsSync(join(root, 'public', m[1]))) err(`trust.logos file ${m[1]} not found in public/`);
+const headline = config.match(/\n\s*headline:\s*'([^']*)'/); if (headline && (headline[1].split('*').length - 1) % 2) err('hero.headline has an unmatched * accent marker');
 
 const rating = config.match(/rating:\s*\{[^}]*count:\s*(\d+)/);
 if (rating && Number(rating[1]) === 0) err('trust.rating.count is 0; remove rating or set the real count');

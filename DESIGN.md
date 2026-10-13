@@ -26,7 +26,10 @@ client. Replace it per client; `gstack /design-consultation` can generate it.
 | heading font | Plus Jakarta Sans 700/800 | h1 to h3 |
 | body font | Inter 400/500/600 | everything else |
 | radius | rounded (0.75rem) | buttons, cards, images |
-| hero | split | image right, copy left |
+| hero | photo + form | full-bleed job photo, dark scrim, copy left, quote card right |
+| headings | uppercase | h1/h2 only |
+| dividers | angle | hero bottom and CTA band top |
+| service cards | photo | service image + icon chip |
 
 ## Type scale
 

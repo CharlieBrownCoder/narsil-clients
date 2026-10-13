@@ -1,0 +1,25 @@
+---
+/**
+ * Shaped edge between two sections. Rendered as an absolutely positioned SVG
+ * at the bottom (or top) of the parent, filled with the NEXT section's color.
+ * Parent must be `relative`. Shape comes from theme.dividers unless overridden.
+ */
+import { siteConfig } from '@config';
+interface Props { shape?: 'none' | 'angle' | 'curve' | 'wave'; fill?: string; position?: 'bottom' | 'top'; flip?: boolean }
+const { shape = siteConfig.theme.dividers, fill = '#ffffff', position = 'bottom', flip = false } = Astro.props;
+const paths: Record<string, string> = {
+  angle: 'M0,64 L1440,0 L1440,64 Z',
+  curve: 'M0,64 C480,0 960,0 1440,64 L1440,64 L0,64 Z',
+  wave: 'M0,32 C240,64 480,0 720,32 C960,64 1200,0 1440,32 L1440,64 L0,64 Z',
+};
+const d = paths[shape];
+---
+{d && (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 1440 64"
+    preserveAspectRatio="none"
+    class:list={['absolute left-0 w-full h-8 md:h-14 pointer-events-none', position === 'bottom' ? 'bottom-0' : 'top-0 rotate-180', flip && 'scale-x-[-1]']}
+    style={`color:${fill}`}
+  ><path d={d} fill="currentColor" /></svg>
+)}

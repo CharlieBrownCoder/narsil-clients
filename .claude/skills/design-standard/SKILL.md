@@ -35,8 +35,9 @@ em dashes as a *rule* (the humanizer skill handles dashes in copy).
    self-hosted with `font-display: swap` and size-adjusted fallbacks.
 4. **One primary CTA per screen.** It is the phone number on mobile and the
    quote form on desktop. Same label everywhere: "Get a Free Quote".
-5. **Hero: headline two lines max at 390px, subtext 20 words max, CTA visible
-   without scrolling, no more than four text elements.**
+5. **Hero: headline two lines max at 1366px and three at 390px, subtext 20
+   words max, CTA visible without scrolling, no more than four text elements
+   plus the bullet grid.**
 6. **Contrast measured on the render:** body 4.5:1, large text and controls
    3:1, including text over images (use a local scrim, never a full overlay).
 7. **Identical-card grids are the refuse list's first item.** The service grid
@@ -46,6 +47,31 @@ em dashes as a *rule* (the humanizer skill handles dashes in copy).
    real photos. Badges without a fact behind them are removed.
 9. **Mobile is designed, not shrunk.** Check every page at 390px. The sticky
    call bar must not cover content or the form submit button.
+
+## The trade-site pattern (from docs/DESIGN-REFERENCE.md)
+
+The client's reference set of 32 sites converges on one above-the-fold
+pattern. Build it unless `DESIGN.md` says otherwise:
+
+1. **Eyebrow**: "[Vertical] in [City], [ST]" in the accent color, small caps.
+2. **Headline**: "[City]'s Top-Rated *[Service]* Company" or "[Region]'s Best
+   [Service]", 4 to 8 words, one phrase in the accent color, uppercase heavy
+   sans when `headingCase: uppercase`. Two lines at 1366, three at 390 max.
+3. **Subheadline**: one sentence, under 20 words, says what and the guarantee.
+4. **Four checkmark bullets** in a 2×2 grid (licensed & insured, guarantee,
+   pricing promise, scheduling promise).
+5. **Two CTAs**: filled accent "Get a Free Quote" + outlined phone number.
+   Same pair on mobile, stacked, with the sticky call bar below.
+6. **Response promise and the star line** under the CTAs.
+7. **Quote card** on the right at desktop when `heroForm: true`; otherwise
+   the photo carries the right half.
+8. **Trust row** directly under the hero: badge logos or icon badges, then
+   the stat strip when real numbers exist.
+9. **Section edge**: angled or curved divider into the next section.
+
+What the reference set does that we deliberately don't: 2 MB+ pages, hero
+video, three competing CTAs in the header, review counts in the headline
+that go stale, and uppercase body copy.
 
 ## Review procedure
 

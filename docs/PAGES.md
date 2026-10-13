@@ -49,6 +49,10 @@ Every page type, what it is for, which query it targets, and what structured dat
 
 | Component | Source | Where |
 | --- | --- | --- |
+| `Hero` | `hero.*`, `theme.heroStyle/heroForm` | home (full), every inner page (compact) |
+| `StatsStrip` | `trust.stats[]` | under the home hero |
+| `TrustBar` | `trust.logos[]` else `trust.badges[]` | under every hero |
+| `SectionDivider` | `theme.dividers` | hero bottom, CTA band top |
 | `ResponsePromise` | `business.responseTimePromise` | hero, quote form |
 | `EmergencyCta` | `business.emergency.available` | home, emergency services, /emergency/ |
 | `Credentials` | `business.credentials[]` | about, /licenses-insurance/, /team/ |

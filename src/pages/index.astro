@@ -15,11 +15,12 @@ import Faq from '@/components/sections/Faq.astro';
 import Cta from '@/components/sections/Cta.astro';
 import ContactForm from '@/components/sections/ContactForm.astro';
 import { homeMeta } from '@/lib/seo';
-import heroImage from '@/assets/images/hero.jpg';
+import { requireAsset, asset } from '@/lib/images';
+import StatsStrip from '@/components/sections/StatsStrip.astro';
 import { getBusinessType } from '@/lib/business-types';
 import * as S from '@/lib/schema';
 
-const { business, pages } = siteConfig;
+const { business, pages, hero, trust, theme } = siteConfig;
 const bt = getBusinessType(siteConfig.businessType);
 const meta = homeMeta();
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
@@ -40,13 +41,17 @@ const schema = S.graph(
 ---
 <BaseLayout meta={meta} schema={schema}>
   <Hero
-    eyebrow={`${bt.label} in ${business.address.city}, ${business.address.state}`}
-    title={business.tagline}
-    subtitle={bt.defaultTagline}
-    image={heroImage}
-    imageAlt={`${business.name} crew at work in ${business.address.city}`}
+    eyebrow={hero.eyebrow || `${bt.label} in ${business.address.city}, ${business.address.state}`}
+    title={hero.headline}
+    subtitle={hero.subheadline}
+    image={requireAsset(hero.image)}
+    imageAlt={hero.imageAlt}
+    cutout={asset(hero.cutout)}
+    bullets={hero.bullets.length ? hero.bullets : trust.badges.map((b) => b.label)}
+    form={theme.heroForm}
   />
   <TrustBar />
+  <StatsStrip />
   <EmergencyCta compact />
   {pages.services && <ServiceGrid intro={`Professional ${bt.label.toLowerCase()} services for homes and businesses in ${business.address.city} and surrounding communities.`} />}
   <WhyUs />

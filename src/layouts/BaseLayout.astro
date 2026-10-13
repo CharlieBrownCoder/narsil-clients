@@ -25,7 +25,7 @@ const fontFaces = families
 const rootVars = `:root{--brand-primary:${t.primary};--brand-primary-dark:${t.primaryDark};--brand-secondary:${t.secondary};--brand-accent:${t.accent};--brand-neutral:${t.neutral};--brand-font-heading:"${t.fontHeading}";--brand-font-body:"${t.fontBody}";--brand-radius:${radius};}`;
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" data-heading-case={t.headingCase}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

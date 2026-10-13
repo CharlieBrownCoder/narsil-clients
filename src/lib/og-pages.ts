@@ -27,7 +27,7 @@ async function buildOgPages(): Promise<OgPage[]> {
   const { business, pages } = siteConfig;
   const bt = getBusinessType(siteConfig.businessType);
   const city = `${business.address.city}, ${business.address.state}`;
-  const list: OgPage[] = [{ slug: 'home', path: '/', title: business.tagline, subtitle: `${bt.label} · ${city}` }];
+  const list: OgPage[] = [{ slug: 'home', path: '/', title: siteConfig.hero.headline.replace(/\*/g, ''), subtitle: `${bt.label} · ${city}` }];
   const add = (path: string, title: string, subtitle?: string) => list.push({ slug: ogSlug(path), path, title, subtitle });
 
   if (pages.services) {

@@ -42,7 +42,7 @@ const darken = (h, pct) => {
 const styleId = ds.style?.id ?? '';
 const radius = /brutal|flat|swiss|editorial|industrial/.test(styleId) ? 'sharp' : /soft|clay|neumorph|glass|playful|bubbly/.test(styleId) ? 'pill' : 'rounded';
 const pattern = (ds.pattern?.name ?? '').toLowerCase();
-const heroStyle = /hero-centric|hero \+|visual|immersive/.test(pattern) ? 'image-bg' : /trust|conversion|lead|proof|form/.test(pattern) ? 'split' : 'centered';
+const heroStyle = /hero-centric|hero \+|visual|immersive/.test(pattern) ? 'photo' : /trust|conversion|lead|proof|form/.test(pattern) ? 'photo' : 'centered';
 
 const theme = {
   primary: ds.colors.primary,
