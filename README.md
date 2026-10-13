@@ -37,7 +37,7 @@ npm run test       # check + build + validate (what CI runs)
 6. Fill `src/content/` (services, locations, posts, projects, faqs), then run the `content-humanizer` agent over it.
 7. `npm run check && npm run build`, deploy to Vercel, submit the sitemap in Google Search Console.
 
-Full checklist: [docs/NEW-CLIENT.md](docs/NEW-CLIENT.md).
+Full checklist: [docs/NEW-CLIENT.md](docs/NEW-CLIENT.md). Intake form and kickoff prompt: [docs/KICKOFF.md](docs/KICKOFF.md).
 
 ## Project layout
 

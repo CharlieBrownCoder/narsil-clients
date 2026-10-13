@@ -2,7 +2,8 @@
 
 Astro 7 + Tailwind 4 static site, deployed to Vercel. One config file per client
 (`src/site.config.ts`) drives pages, schema, theme, forms, and tracking. Content
-is Markdown and JSON under `src/content/`. Read `README.md` first, then
+is Markdown and JSON under `src/content/`. New client: `docs/KICKOFF.md` has the
+intake form and the paste-in prompt. Read `README.md` first, then
 `docs/PAGES.md` and `docs/SCHEMA.md` when touching routes or structured data.
 
 ## Commands
