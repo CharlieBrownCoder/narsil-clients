@@ -5,7 +5,7 @@ import ContactForm from '@/components/sections/ContactForm.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Icon from '@/components/Icon.astro';
 import { buildTitle, buildDescription } from '@/lib/seo';
-import { telHref } from '@/lib/utils';
+import { telHref, formatTime } from '@/lib/utils';
 import * as S from '@/lib/schema';
 
 const { business } = siteConfig;
@@ -26,9 +26,9 @@ const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({
           <p class="mt-4 text-lg text-slate-600">Fill out the form or reach us directly. We respond fast.</p>
           <ul class="mt-8 space-y-5">
             <li class="flex gap-3"><Icon name="phone" class="w-6 h-6 text-primary shrink-0" /><div><p class="font-semibold">Phone</p><a href={telHref()} class="text-primary hover:underline">{business.phone}</a></div></li>
-            <li class="flex gap-3"><Icon name="mail" class="w-6 h-6 text-primary shrink-0" /><div><p class="font-semibold">Email</p><a href={`mailto:${business.email}`} class="text-primary hover:underline">{business.email}</a></div></li>
+            {business.email && <li class="flex gap-3"><Icon name="mail" class="w-6 h-6 text-primary shrink-0" /><div><p class="font-semibold">Email</p><a href={`mailto:${business.email}`} class="text-primary hover:underline">{business.email}</a></div></li>}
             <li class="flex gap-3"><Icon name="pin" class="w-6 h-6 text-primary shrink-0" /><div><p class="font-semibold">{a.showStreet ? 'Address' : 'Based in'}</p><address class="not-italic text-slate-600">{a.showStreet && a.street && <>{a.street}<br /></>}{a.city}, {a.state} {a.zip}</address></div></li>
-            <li class="flex gap-3"><Icon name="clock" class="w-6 h-6 text-primary shrink-0" /><div><p class="font-semibold">Hours</p><ul class="text-slate-600">{business.hours.map((h) => <li>{h.days.length > 2 ? `${h.days[0]}–${h.days[h.days.length - 1]}` : h.days.join(', ')}: {h.opens}–{h.closes}</li>)}</ul></div></li>
+            <li class="flex gap-3"><Icon name="clock" class="w-6 h-6 text-primary shrink-0" /><div><p class="font-semibold">Hours</p><ul class="text-slate-600">{business.hours.map((h) => <li>{h.days.length > 2 ? `${h.days[0]}–${h.days[h.days.length - 1]}` : h.days.join(', ')}: {formatTime(h.opens)}–{formatTime(h.closes)}</li>)}</ul></div></li>
           </ul>
           {branches.length > 0 && (
             <div class="mt-8">

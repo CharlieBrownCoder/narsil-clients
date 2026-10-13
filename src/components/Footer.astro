@@ -3,7 +3,7 @@ import { siteConfig } from '@config';
 import { getCollection } from 'astro:content';
 import Icon from './Icon.astro';
 import Trustindex from './Trustindex.astro';
-import { telHref } from '@/lib/utils';
+import { telHref, formatTime } from '@/lib/utils';
 const { business, pages, nav } = siteConfig;
 const branches = pages.locations ? business.locations : [];
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
@@ -18,7 +18,7 @@ const a = business.address;
       <p class="mt-3 text-sm leading-relaxed">{business.tagline}</p>
       <ul class="mt-5 space-y-2 text-sm">
         <li><a href={telHref()} class="flex items-center gap-2 hover:text-white"><Icon name="phone" class="w-4 h-4" />{business.phone}</a></li>
-        <li><a href={`mailto:${business.email}`} class="flex items-center gap-2 hover:text-white"><Icon name="mail" class="w-4 h-4" />{business.email}</a></li>
+        {business.email && <li><a href={`mailto:${business.email}`} class="flex items-center gap-2 hover:text-white"><Icon name="mail" class="w-4 h-4" />{business.email}</a></li>}
         <li class="flex items-start gap-2"><Icon name="pin" class="w-4 h-4 mt-0.5" /><address class="not-italic">{a.showStreet && a.street && <>{a.street}<br /></>}{a.city}, {a.state} {a.zip}</address></li>
       </ul>
       {business.licenseNumber && <p class="mt-3 text-xs text-slate-400">License #{business.licenseNumber}</p>}
@@ -44,7 +44,7 @@ const a = business.address;
     <div>
       <p class="font-semibold text-white">Hours</p>
       <ul class="mt-4 space-y-1 text-sm">
-        {business.hours.map((h) => <li>{h.days.length > 2 ? `${h.days[0].slice(0,3)}–${h.days[h.days.length-1].slice(0,3)}` : h.days.map(d=>d.slice(0,3)).join(', ')}: {h.opens}–{h.closes}</li>)}
+        {business.hours.map((h) => <li>{h.days.length > 2 ? `${h.days[0].slice(0,3)}–${h.days[h.days.length-1].slice(0,3)}` : h.days.map(d=>d.slice(0,3)).join(', ')}: {formatTime(h.opens)}–{formatTime(h.closes)}</li>)}
       </ul>
       {branches.length > 1 && <><p class="font-semibold text-white mt-6">Locations</p><ul class="mt-3 space-y-2 text-sm">{branches.map((b) => <li><a href={`/locations/${b.slug}/`} class="hover:text-white">{b.city}, {b.state}</a></li>)}</ul></>}
       <p class="font-semibold text-white mt-6">Company</p>

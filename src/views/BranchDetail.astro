@@ -1,4 +1,5 @@
 ---
+import { formatTime } from '@/lib/utils';
 import { getCollection } from 'astro:content';
 import { siteConfig, type Branch } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
@@ -29,7 +30,7 @@ const crumbs = [{ name: 'Home', path: '/' }, { name: 'Locations', path: '/locati
 const schema = S.graph(S.localBusiness(), S.webSite(), S.webPage({ path, title: meta.title, description: meta.description }), S.breadcrumbList(path, crumbs), S.branch(b));
 ---
 <BaseLayout meta={meta} schema={schema}>
-  <Hero compact eyebrow="Location" title={b.name} subtitle={`${bt.label} from our ${b.city} office. Walk-ins welcome during business hours.`} />
+  <Hero compact eyebrow="Location" title={b.name} subtitle={`${bt.label} from our ${b.city} office.`} />
   <TrustBar />
   <div class="container-x pt-8"><Breadcrumbs crumbs={crumbs} /></div>
   <section class="section !pt-8">
@@ -43,7 +44,7 @@ const schema = S.graph(S.localBusiness(), S.webSite(), S.webPage({ path, title: 
           </div>
           <div class="card p-5">
             <p class="font-semibold flex items-center gap-2"><Icon name="clock" class="w-5 h-5 text-primary" /> Hours</p>
-            <ul class="mt-2 text-slate-600 text-sm">{hours.map((h) => <li>{h.days.length > 2 ? `${h.days[0]}–${h.days[h.days.length - 1]}` : h.days.join(', ')}: {h.opens}–{h.closes}</li>)}</ul>
+            <ul class="mt-2 text-slate-600 text-sm">{hours.map((h) => <li>{h.days.length > 2 ? `${h.days[0]}–${h.days[h.days.length - 1]}` : h.days.join(', ')}: {formatTime(h.opens)}–{formatTime(h.closes)}</li>)}</ul>
             <a href={tel} class="mt-3 inline-flex items-center gap-2 font-semibold text-primary"><Icon name="phone" class="w-4 h-4" /> {phone}</a>
           </div>
         </div>

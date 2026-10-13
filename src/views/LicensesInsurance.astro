@@ -20,7 +20,7 @@ const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({
   <section class="section">
     <div class="container-x max-w-3xl prose prose-site">
       <h2>Certificate of insurance</h2>
-      <p>HOAs, property managers, and commercial clients can request a current certificate of insurance naming them as certificate holder. Email <a href={`mailto:${business.email}`}>{business.email}</a> with the property address and we'll send it the same business day.</p>
+      <p>HOAs, property managers, and commercial clients can request a current certificate of insurance naming them as certificate holder. {business.email ? <>Email <a href={`mailto:${business.email}`}>{business.email}</a></> : <>Call {business.phone}</>} with the property address and we'll send it the same business day.</p>
       <h2>Our guarantees</h2>
       <ul>{trust.guarantees.map((g) => <li>{g}</li>)}</ul>
       {siteConfig.pages.terms && <p>Full details are in our <a href="/terms/">terms and conditions</a>.</p>}

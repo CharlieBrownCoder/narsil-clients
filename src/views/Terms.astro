@@ -18,7 +18,7 @@ const meta = { title: `Terms & Conditions | ${business.name}`, description: `Ter
     <h2>Guarantee</h2>
     <ul>{siteConfig.trust.guarantees.map((g) => <li>{g}</li>)}</ul>
     <h2>Contact</h2>
-    <p>Questions about these terms: <a href={`mailto:${business.email}`}>{business.email}</a> or {business.phone}.</p>
+    <p>Questions about these terms: {business.email ? <><a href={`mailto:${business.email}`}>{business.email}</a> or </> : null}{business.phone}.</p>
     <p><em>Starter terms. Have them reviewed for your state before launch.</em></p>
   </article>
 </BaseLayout>
