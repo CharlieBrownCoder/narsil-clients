@@ -1,38 +1,96 @@
 ---
+/**
+ * Quote form. forms.steps = 2 splits it into "the job" then "you", with a
+ * progress bar and a Next button. Progressive: without JS both steps render
+ * and the form submits normally. Posts to Formspree.
+ */
 import { siteConfig } from '@config';
 import { getCollection } from 'astro:content';
 import ResponsePromise from '@/components/ResponsePromise.astro';
+import Icon from '@/components/Icon.astro';
 interface Props { service?: string; city?: string; compact?: boolean }
 const { service, city, compact = false } = Astro.props;
 const { forms } = siteConfig;
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const action = forms.formspreeId ? `https://formspree.io/f/${forms.formspreeId}` : '#';
 const next = new URL(forms.thankYouPath, siteConfig.url).toString();
+const two = forms.steps === 2;
 const inputCls = 'w-full border border-slate-300 rounded-[var(--radius-brand)] px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none';
 ---
-<form id="quote" method="POST" action={action} class="card p-6 md:p-8 grid gap-4">
+<form method="POST" action={action} class="card p-6 md:p-8 grid gap-4" data-quote-form data-steps={forms.steps} novalidate={two ? true : undefined}>
   <input type="hidden" name="_next" value={next} />
   <input type="hidden" name="_subject" value={`New quote request from ${siteConfig.url}`} />
   <input type="text" name="_gotcha" class="hidden" tabindex="-1" autocomplete="off" />
   {!compact && <h2 class="text-2xl">Request a free quote</h2>}
-  <div class="grid sm:grid-cols-2 gap-4">
-    <label class="grid gap-1 text-sm font-medium">Name<input class={inputCls} name="name" type="text" required autocomplete="name" /></label>
-    <label class="grid gap-1 text-sm font-medium">Phone<input class={inputCls} name="phone" type="tel" required autocomplete="tel" /></label>
-  </div>
-  <label class="grid gap-1 text-sm font-medium">Email<input class={inputCls} name="email" type="email" autocomplete="email" /></label>
-  <div class="grid sm:grid-cols-2 gap-4">
-    <label class="grid gap-1 text-sm font-medium">Service
-      <select class={inputCls} name="service">
-        <option value="">Select a service</option>
-        {services.map((s) => <option value={s.data.title} selected={s.id === service}>{s.data.title}</option>)}
-        <option value="Other">Other</option>
-      </select>
-    </label>
-    <label class="grid gap-1 text-sm font-medium">City / ZIP<input class={inputCls} name="city" type="text" value={city ?? ''} autocomplete="address-level2" /></label>
-  </div>
-  <label class="grid gap-1 text-sm font-medium">Tell us about the job<textarea class={inputCls} name="message" rows={compact ? 3 : 4}></textarea></label>
-  <input type="hidden" name="source_page" value={Astro.url.pathname} />
-  <button type="submit" class="btn-primary w-full" disabled={!forms.formspreeId}>Get My Free Quote</button>
+
+  {two && (
+    <div data-progress class="grid gap-1" aria-hidden="true">
+      <div class="flex justify-between text-xs font-semibold text-slate-500"><span data-step-label>Step 1 of 2: the job</span><span data-step-pct>50%</span></div>
+      <div class="h-1.5 rounded-full bg-slate-200 overflow-hidden"><div data-step-bar class="h-full bg-primary transition-all" style="width:50%"></div></div>
+    </div>
+  )}
+
+  <fieldset data-step="1" class="grid gap-4 border-0 p-0 m-0 min-w-0">
+    <legend class="sr-only">About the job</legend>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <label class="grid gap-1 text-sm font-medium">Service
+        <select class={inputCls} name="service" required>
+          <option value="">Select a service</option>
+          {services.map((s) => <option value={s.data.title} selected={s.id === service}>{s.data.title}</option>)}
+          <option value="Other">Other</option>
+        </select>
+      </label>
+      <label class="grid gap-1 text-sm font-medium">City / ZIP<input class={inputCls} name="city" type="text" value={city ?? ''} required autocomplete="address-level2" /></label>
+    </div>
+    <label class="grid gap-1 text-sm font-medium">Tell us about the job<textarea class={inputCls} name="message" rows={compact ? 3 : 4} placeholder="Size, surfaces, anything we should know"></textarea></label>
+    {two && <button type="button" data-next class="btn-primary w-full">Next: your details <Icon name="arrow" class="w-5 h-5" /></button>}
+  </fieldset>
+
+  <fieldset data-step="2" class="grid gap-4 border-0 p-0 m-0 min-w-0">
+    <legend class="sr-only">Your details</legend>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <label class="grid gap-1 text-sm font-medium">Name<input class={inputCls} name="name" type="text" required autocomplete="name" /></label>
+      <label class="grid gap-1 text-sm font-medium">Phone<input class={inputCls} name="phone" type="tel" required autocomplete="tel" /></label>
+    </div>
+    <label class="grid gap-1 text-sm font-medium">Email<input class={inputCls} name="email" type="email" autocomplete="email" /></label>
+    <input type="hidden" name="source_page" value={Astro.url.pathname} />
+    <div class="grid gap-2">
+      <button type="submit" data-cta="quote-form" class="btn-primary w-full" disabled={!forms.formspreeId}>Get My Free Quote</button>
+      {two && <button type="button" data-back class="text-sm font-medium text-slate-500 hover:text-primary justify-self-center">← Back</button>}
+    </div>
+  </fieldset>
+
+  <p data-error class="hidden text-sm text-red-600" role="alert"></p>
   <ResponsePromise class="justify-center" />
   <p class="text-xs text-slate-500 text-center">{forms.formspreeId ? 'No spam, ever. We’ll reply within one business day.' : 'Form inactive: set forms.formspreeId in site.config.ts'}</p>
 </form>
+
+<script>
+  function init(form: HTMLFormElement) {
+    if (form.dataset.steps !== '2') return;
+    const s1 = form.querySelector<HTMLFieldSetElement>('[data-step="1"]')!;
+    const s2 = form.querySelector<HTMLFieldSetElement>('[data-step="2"]')!;
+    const bar = form.querySelector<HTMLElement>('[data-step-bar]')!;
+    const label = form.querySelector<HTMLElement>('[data-step-label]')!;
+    const pct = form.querySelector<HTMLElement>('[data-step-pct]')!;
+    const err = form.querySelector<HTMLElement>('[data-error]')!;
+    const show = (n: 1 | 2) => {
+      s1.hidden = n !== 1; s2.hidden = n !== 2;
+      bar.style.width = n === 1 ? '50%' : '100%';
+      label.textContent = n === 1 ? 'Step 1 of 2: the job' : 'Step 2 of 2: your details';
+      pct.textContent = n === 1 ? '50%' : '100%';
+      err.classList.add('hidden');
+      if (n === 2) s2.querySelector<HTMLInputElement>('input')?.focus();
+    };
+    const valid = (fs: HTMLFieldSetElement) => {
+      const bad = [...fs.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select, textarea')].find((el) => !el.checkValidity());
+      if (bad) { err.textContent = bad.validationMessage || 'Please fill in the highlighted field.'; err.classList.remove('hidden'); bad.focus(); return false; }
+      return true;
+    };
+    form.querySelector('[data-next]')?.addEventListener('click', () => { if (valid(s1)) show(2); });
+    form.querySelector('[data-back]')?.addEventListener('click', () => show(1));
+    form.addEventListener('submit', (e) => { if (!valid(s1)) { e.preventDefault(); show(1); } else if (!valid(s2)) { e.preventDefault(); } });
+    show(1);
+  }
+  document.querySelectorAll<HTMLFormElement>('[data-quote-form]').forEach(init);
+</script>

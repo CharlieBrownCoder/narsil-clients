@@ -176,7 +176,7 @@ CTA colors are read from the live DOM; dominant and dark colors from the reviewe
 | Review count + stars near the CTA | hero stars line, `Trustindex` | already built |
 | Before/after grid, case studies | `Gallery`, `/gallery/<slug>/` | already built |
 | Service areas list / map | `LocationGrid`, branches | already built |
-| Two-step quote form with progress bar | not built | candidate for a later pass |
+| Two-step quote form with progress bar | `forms.steps: 2` | built this pass |
 | Cloud-shaped and mountain-shaped edges | not built | add as `dividers` shapes if a client wants one |
 | Mascot / illustrated services | content, not template | commission per client |
 

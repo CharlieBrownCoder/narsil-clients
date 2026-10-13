@@ -222,6 +222,12 @@ export interface SiteConfig {
     formspreeId: string;
     /** Where Formspree redirects after submit (set as _next). */
     thankYouPath: string;
+    /**
+     * 1 = all fields at once. 2 = step one asks about the job (service, city,
+     * details), step two asks for contact details, with a progress bar.
+     * Two steps convert better on mobile; without JS both steps just show.
+     */
+    steps: 1 | 2;
   };
 
   /**
@@ -449,6 +455,7 @@ export const siteConfig: SiteConfig = {
   forms: {
     formspreeId: '',
     thankYouPath: '/thank-you/',
+    steps: 2,
   },
 
   booking: {
