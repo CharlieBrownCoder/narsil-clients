@@ -3,7 +3,7 @@ title: Commercial Pressure Washing
 shortTitle: Commercial
 excerpt: Storefronts, parking lots, dumpster pads, and building exteriors cleaned on your schedule, including nights and weekends.
 icon: building
-image: /images/service-commercial.jpg
+image: ../../assets/images/service-commercial.jpg
 imageAlt: Crew pressure washing a retail storefront sidewalk at dawn
 order: 5
 serviceType: Commercial pressure washing

@@ -17,10 +17,11 @@ interface Props {
 const { meta, schema } = Astro.props;
 const t = siteConfig.theme;
 const radius = { sharp: '0px', rounded: '0.75rem', pill: '9999px' }[t.radius];
-const fontsParam = [t.fontHeading, t.fontBody]
-  .filter((f, i, a) => a.indexOf(f) === i)
-  .map((f) => `family=${encodeURIComponent(f).replace(/%20/g, '+')}:wght@400;500;600;700;800`)
-  .join('&');
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+const families = [...new Set([t.fontHeading, t.fontBody])];
+const fontFaces = families
+  .map((f) => `@font-face{font-family:"${f}";font-style:normal;font-weight:100 900;font-display:swap;src:url(/fonts/${slug(f)}.woff2) format("woff2")}`)
+  .join('');
 const rootVars = `:root{--brand-primary:${t.primary};--brand-primary-dark:${t.primaryDark};--brand-secondary:${t.secondary};--brand-accent:${t.accent};--brand-neutral:${t.neutral};--brand-font-heading:"${t.fontHeading}";--brand-font-body:"${t.fontBody}";--brand-radius:${radius};}`;
 ---
 <!doctype html>
@@ -31,10 +32,8 @@ const rootVars = `:root{--brand-primary:${t.primary};--brand-primary-dark:${t.pr
     <meta name="theme-color" content={t.primary} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?${fontsParam}&display=swap`} />
-    <style set:html={rootVars} />
+    {families.map((f) => <link rel="preload" href={`/fonts/${slug(f)}.woff2`} as="font" type="font/woff2" crossorigin />)}
+    <style set:html={fontFaces + rootVars} />
     <Seo meta={meta} />
     {schema && <JsonLd data={schema} />}
     <Tracking />

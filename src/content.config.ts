@@ -1,4 +1,4 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, type SchemaContext } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob, file } from 'astro/loaders';
 
@@ -15,13 +15,14 @@ const faq = z.object({ question: z.string(), answer: z.string() });
 /** One file per service: src/content/services/<slug>.md */
 const services = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/services' }),
-  schema: z.object({
+  schema: ({ image }: SchemaContext) => z.object({
     title: z.string(),
     /** Short name for nav/cards, e.g. "House Washing" */
     shortTitle: z.string().optional(),
     excerpt: z.string(),
     icon: z.string().default('spark'),
-    image: z.string().optional(),
+    /** Relative to this file, e.g. ../../assets/images/service-x.jpg. Optimized at build. */
+    image: image().optional(),
     imageAlt: z.string().optional(),
     featured: z.boolean().default(false),
     order: z.number().default(100),
@@ -41,7 +42,7 @@ const services = defineCollection({
 /** One file per city/town: src/content/locations/<slug>.md */
 const locations = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/locations' }),
-  schema: z.object({
+  schema: ({ image }: SchemaContext) => z.object({
     city: z.string(),
     state: z.string(),
     /** Primary = the home base, listed first and gets extra schema weight */
@@ -51,7 +52,7 @@ const locations = defineCollection({
     landmarks: z.array(z.string()).default([]),
     geo: z.object({ lat: z.number(), lng: z.number() }).optional(),
     /** Wikipedia / official city URL for schema sameAs on the City entity */
-    cityUrl: z.string().url().optional(),
+    cityUrl: z.url().optional(),
     /** Restrict services for this city. Empty = all services. */
     services: z.array(z.string()).default([]),
     /**
@@ -59,7 +60,7 @@ const locations = defineCollection({
      * genuinely unique. Strongly recommended if serviceAreaCombos is enabled.
      */
     serviceNotes: z.record(z.string(), z.string()).default({}),
-    image: z.string().optional(),
+    image: image().optional(),
     order: z.number().default(100),
     seo,
   }),
@@ -68,13 +69,13 @@ const locations = defineCollection({
 /** Blog posts: src/content/posts/<slug>.md */
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/posts' }),
-  schema: z.object({
+  schema: ({ image }: SchemaContext) => z.object({
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     author: z.string().optional(),
-    image: z.string().optional(),
+    image: image().optional(),
     imageAlt: z.string().optional(),
     tags: z.array(z.string()).default([]),
     /** Related service slug for internal linking */
@@ -84,31 +85,17 @@ const posts = defineCollection({
   }),
 });
 
-const testimonials = defineCollection({
-  loader: file('./src/content/testimonials.json'),
-  schema: z.object({
-    id: z.string(),
-    name: z.string(),
-    location: z.string().optional(),
-    rating: z.number().min(1).max(5),
-    text: z.string(),
-    date: z.coerce.date(),
-    service: z.string().optional(),
-    source: z.string().default('Google'),
-    featured: z.boolean().default(false),
-  }),
-});
-
 const projects = defineCollection({
   loader: file('./src/content/projects.json'),
-  schema: z.object({
+  schema: ({ image }: SchemaContext) => z.object({
     id: z.string(),
     title: z.string(),
     description: z.string(),
     service: z.string().optional(),
     location: z.string().optional(),
-    before: z.string().optional(),
-    after: z.string(),
+    /** Relative to projects.json, e.g. ../assets/images/project-1-before.jpg */
+    before: image().optional(),
+    after: image(),
     date: z.coerce.date().optional(),
   }),
 });
@@ -125,4 +112,4 @@ const faqs = defineCollection({
   }),
 });
 
-export const collections = { services, locations, posts, testimonials, projects, faqs };
+export const collections = { services, locations, posts, projects, faqs };

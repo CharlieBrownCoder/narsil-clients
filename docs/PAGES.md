@@ -12,7 +12,7 @@ Every page type, what it is for, which query it targets, and what structured dat
 | Service × City | `/service-areas/<city>/<service>/` | "[service] [other city]" | LocalBusiness, WebSite, ItemPage, BreadcrumbList, Service (areaServed = city), FAQPage | `src/views/ServiceLocation.astro` |
 | About | `/about/` | brand, E-E-A-T | LocalBusiness (full), WebSite, AboutPage, BreadcrumbList | `src/views/About.astro` |
 | Contact | `/contact/` | "[brand] phone" | LocalBusiness (full), WebSite, ContactPage, BreadcrumbList | `src/views/Contact.astro` |
-| Reviews | `/reviews/` | "[brand] reviews" | LocalBusiness + Review[] + AggregateRating, WebSite, CollectionPage, BreadcrumbList | `src/views/Reviews.astro` |
+| Reviews | `/reviews/` | "[brand] reviews" | LocalBusiness (full, with AggregateRating from `trust.rating`), WebSite, CollectionPage, BreadcrumbList. Reviews themselves render in the Trustindex widget. | `src/views/Reviews.astro` |
 | Gallery | `/gallery/` | "[vertical] before and after" | LocalBusiness, WebSite, CollectionPage, BreadcrumbList, ImageGallery | `src/views/GalleryPage.astro` |
 | FAQ | `/faq/` | question queries | LocalBusiness, WebSite, FAQPage (page type) + FAQPage (entity), BreadcrumbList | `src/views/FaqPage.astro` |
 | Blog index | `/blog/` | topical authority | LocalBusiness, WebSite, CollectionPage, BreadcrumbList, Blog | `src/views/BlogIndex.astro` |

@@ -4,7 +4,7 @@ import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
 import ServiceGrid from '@/components/sections/ServiceGrid.astro';
-import Testimonials from '@/components/sections/Testimonials.astro';
+import Trustindex from '@/components/Trustindex.astro';
 import Cta from '@/components/sections/Cta.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import { buildTitle, buildDescription } from '@/lib/seo';
@@ -33,6 +33,6 @@ const schema = S.graph(
   <Hero compact title={`${bt.label} Services`} subtitle={`Everything we do in ${business.address.city} and the surrounding area, backed by ${siteConfig.trust.guarantees[0]?.toLowerCase() ?? 'our guarantee'}.`} />
   <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
   <ServiceGrid title="All services" />
-  <Testimonials />
+  <Trustindex placement="compact" title="What customers say" />
   <Cta />
 </BaseLayout>

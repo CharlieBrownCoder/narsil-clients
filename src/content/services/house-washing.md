@@ -3,7 +3,7 @@ title: House Washing & Soft Washing
 shortTitle: House Washing
 excerpt: Low-pressure soft washing that removes algae, mold, and grime from siding, brick, and stucco without damaging your home.
 icon: home
-image: /images/service-house-washing.jpg
+image: ../../assets/images/service-house-washing.jpg
 imageAlt: Technician soft washing the siding of a two-story brick home
 featured: true
 order: 1

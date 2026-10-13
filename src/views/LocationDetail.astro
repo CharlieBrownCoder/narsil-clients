@@ -1,12 +1,13 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
 import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
 import TrustBar from '@/components/sections/TrustBar.astro';
 import ServiceGrid from '@/components/sections/ServiceGrid.astro';
 import WhyUs from '@/components/sections/WhyUs.astro';
-import Testimonials from '@/components/sections/Testimonials.astro';
+import Trustindex from '@/components/Trustindex.astro';
 import Faq from '@/components/sections/Faq.astro';
 import Cta from '@/components/sections/Cta.astro';
 import ContactForm from '@/components/sections/ContactForm.astro';
@@ -22,7 +23,8 @@ const d = location.data;
 const { business, pages } = siteConfig;
 const bt = getBusinessType(siteConfig.businessType);
 const path = `/service-areas/${location.id}/`;
-const meta = { ...locationMeta(d.city, d.state, location.id, bt.label), ...(d.seo?.title ? { title: d.seo.title } : {}), ...(d.seo?.description ? { description: d.seo.description } : {}), ogImage: d.image };
+const og = d.image ? (await getImage({ src: d.image, width: 1200, height: 630, format: 'jpg' })).src : undefined;
+const meta = { ...locationMeta(d.city, d.state, location.id, bt.label), ...(d.seo?.title ? { title: d.seo.title } : {}), ...(d.seo?.description ? { description: d.seo.description } : {}), ogImage: og };
 const services = (await getCollection('services')).filter((s) => !d.services.length || d.services.includes(s.id));
 const faqs = [
   { question: `Do you offer ${bt.label.toLowerCase()} in ${d.city}, ${d.state}?`, answer: `Yes. ${business.name} serves all of ${d.city}${d.neighborhoods.length ? `, including ${d.neighborhoods.slice(0, 4).join(', ')}` : ''}. Call ${business.phone} to schedule.` },
@@ -33,7 +35,7 @@ const crumbs = [{ name: 'Home', path: '/' }, { name: 'Service Areas', path: '/se
 const schema = S.graph(
   S.localBusiness({ full: true, areas: [{ city: d.city, state: d.state, cityUrl: d.cityUrl }], services: services.map((s) => ({ name: s.data.title, url: pages.serviceAreaCombos ? `${path}${s.id}/` : `/services/${s.id}/` })) }),
   S.webSite(),
-  S.webPage({ path, title: meta.title, description: meta.description, image: d.image }),
+  S.webPage({ path, title: meta.title, description: meta.description, image: og }),
   S.breadcrumbList(path, crumbs),
   S.faqPage(path, faqs),
 );
@@ -59,7 +61,7 @@ const schema = S.graph(
   </section>
   <ServiceGrid title={`${bt.label} services in ${d.city}`} only={services.map((s) => s.id)} citySlug={pages.serviceAreaCombos ? location.id : undefined} cityName={pages.serviceAreaCombos ? d.city : undefined} />
   <WhyUs city={d.city} />
-  <Testimonials />
+  <Trustindex placement="compact" title="What customers say" />
   <Faq faqs={faqs} title={`${d.city} FAQs`} />
   <Cta title={`Serving ${d.city}. Ready when you are.`} />
 </BaseLayout>

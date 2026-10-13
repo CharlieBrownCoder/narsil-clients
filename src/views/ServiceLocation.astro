@@ -6,12 +6,13 @@
  * If no note exists, the page still builds but you should add one before launch.
  */
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
 import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
 import TrustBar from '@/components/sections/TrustBar.astro';
 import ProcessSteps from '@/components/sections/ProcessSteps.astro';
-import Testimonials from '@/components/sections/Testimonials.astro';
+import Trustindex from '@/components/Trustindex.astro';
 import Gallery from '@/components/sections/Gallery.astro';
 import Faq from '@/components/sections/Faq.astro';
 import Cta from '@/components/sections/Cta.astro';
@@ -28,7 +29,8 @@ const Sv = service.data;
 const { business, pages } = siteConfig;
 const short = Sv.shortTitle ?? Sv.title;
 const path = `/service-areas/${location.id}/${service.id}/`;
-const meta = { ...comboMeta(short, L.city, L.state, location.id, service.id), ogImage: Sv.image };
+const og = Sv.image ? (await getImage({ src: Sv.image, width: 1200, height: 630, format: 'jpg' })).src : undefined;
+const meta = { ...comboMeta(short, L.city, L.state, location.id, service.id), ogImage: og };
 const note = L.serviceNotes[service.id];
 const otherServices = (await getCollection('services')).filter((s) => s.id !== service.id && (!L.services.length || L.services.includes(s.id)));
 const faqs = [
@@ -40,9 +42,9 @@ const crumbs = [{ name: 'Home', path: '/' }, { name: 'Service Areas', path: '/se
 const schema = S.graph(
   S.localBusiness(),
   S.webSite(),
-  S.webPage({ path, title: meta.title, description: meta.description, type: 'ItemPage', image: Sv.image }),
+  S.webPage({ path, title: meta.title, description: meta.description, type: 'ItemPage', image: og }),
   S.breadcrumbList(path, crumbs),
-  S.service({ path, name: `${Sv.title} in ${L.city}, ${L.state}`, description: meta.description, serviceType: Sv.serviceType ?? Sv.title, image: Sv.image, startingPrice: Sv.startingPrice, priceUnit: Sv.priceUnit, areas: [{ city: L.city, state: L.state, cityUrl: L.cityUrl }] }),
+  S.service({ path, name: `${Sv.title} in ${L.city}, ${L.state}`, description: meta.description, serviceType: Sv.serviceType ?? Sv.title, image: og, startingPrice: Sv.startingPrice, priceUnit: Sv.priceUnit, areas: [{ city: L.city, state: L.state, cityUrl: L.cityUrl }] }),
   S.faqPage(path, faqs),
 );
 ---
@@ -75,7 +77,7 @@ const schema = S.graph(
   </section>
   <ProcessSteps steps={Sv.process} title={`How ${short.toLowerCase()} works in ${L.city}`} />
   {pages.gallery && <Gallery limit={3} service={service.id} title={`Recent ${short.toLowerCase()} work`} />}
-  <Testimonials service={service.id} />
+  <Trustindex placement="compact" title="What customers say" />
   <Faq faqs={faqs} title={`${short} in ${L.city}: FAQs`} />
   <Cta title={`${short} in ${L.city}? Get a free quote today.`} />
 </BaseLayout>

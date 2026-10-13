@@ -4,7 +4,7 @@ import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
 import LocationGrid from '@/components/sections/LocationGrid.astro';
-import Testimonials from '@/components/sections/Testimonials.astro';
+import Trustindex from '@/components/Trustindex.astro';
 import Cta from '@/components/sections/Cta.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import { buildTitle, buildDescription } from '@/lib/seo';
@@ -32,6 +32,6 @@ const schema = S.graph(
   <Hero compact title="Areas We Serve" subtitle={`Proudly serving ${business.address.city} and communities within ${business.serviceRadiusMiles ?? 25} miles. Don’t see your city? Call us, we may still be able to help.`} />
   <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
   <LocationGrid title="Cities and towns we serve" />
-  <Testimonials />
+  <Trustindex placement="compact" title="What customers say" />
   <Cta />
 </BaseLayout>

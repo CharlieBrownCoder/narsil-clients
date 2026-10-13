@@ -5,7 +5,7 @@
  *   npm run new-client -- --name "Acme Roofing" --type roofing --city Austin --state TX
  *
  * What it does:
- *  - Deletes demo services, locations, posts, testimonials, projects, faqs
+ *  - Deletes demo services, locations, posts, projects, faqs
  *  - Writes empty collections and one starter service + location
  *  - Rewrites the business basics in src/site.config.ts
  * It does NOT touch images, theme colors, or hosting config. Edit those by hand.
@@ -30,7 +30,7 @@ for (const dir of ['services', 'locations', 'posts']) {
   rmSync(resolve(content, dir), { recursive: true, force: true });
   mkdirSync(resolve(content, dir), { recursive: true });
 }
-for (const f of ['testimonials.json', 'projects.json', 'faqs.json']) writeFileSync(resolve(content, f), '[]\n');
+for (const f of ['projects.json', 'faqs.json']) writeFileSync(resolve(content, f), '[]\n');
 
 writeFileSync(
   resolve(content, 'services/example-service.md'),
@@ -39,8 +39,8 @@ title: Example Service
 shortTitle: Example
 excerpt: One sentence that says what this service is and who it is for.
 icon: spark
-image: /images/service-example.jpg
-imageAlt: Describe the image
+# image: ../../assets/images/service-example.jpg   (uncomment once the file exists)
+# imageAlt: Describe the image
 order: 1
 benefits:
   - Benefit one

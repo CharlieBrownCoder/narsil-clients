@@ -6,13 +6,14 @@ import Hero from '@/components/sections/Hero.astro';
 import TrustBar from '@/components/sections/TrustBar.astro';
 import ServiceGrid from '@/components/sections/ServiceGrid.astro';
 import WhyUs from '@/components/sections/WhyUs.astro';
-import Testimonials from '@/components/sections/Testimonials.astro';
+import Trustindex from '@/components/Trustindex.astro';
 import Gallery from '@/components/sections/Gallery.astro';
 import LocationGrid from '@/components/sections/LocationGrid.astro';
 import Faq from '@/components/sections/Faq.astro';
 import Cta from '@/components/sections/Cta.astro';
 import ContactForm from '@/components/sections/ContactForm.astro';
 import { homeMeta } from '@/lib/seo';
+import heroImage from '@/assets/images/hero.jpg';
 import { getBusinessType } from '@/lib/business-types';
 import * as S from '@/lib/schema';
 
@@ -40,14 +41,14 @@ const schema = S.graph(
     eyebrow={`${bt.label} in ${business.address.city}, ${business.address.state}`}
     title={business.tagline}
     subtitle={bt.defaultTagline}
-    image="/images/hero.jpg"
+    image={heroImage}
     imageAlt={`${business.name} crew at work in ${business.address.city}`}
   />
   <TrustBar />
   {pages.services && <ServiceGrid intro={`Professional ${bt.label.toLowerCase()} services for homes and businesses in ${business.address.city} and surrounding communities.`} />}
   <WhyUs />
   {pages.gallery && <Gallery limit={3} />}
-  <Testimonials />
+  <Trustindex placement="home" title="What our customers say" dark />
   {pages.serviceAreas && <LocationGrid limit={8} />}
   <Faq faqs={faqs} />
   <section class="section bg-neutral" id="get-a-quote">

@@ -1,5 +1,7 @@
 ---
 import { siteConfig } from '@config';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import Icon from '@/components/Icon.astro';
 import Stars from '@/components/Stars.astro';
 import { telHref } from '@/lib/utils';
@@ -7,7 +9,7 @@ interface Props {
   eyebrow?: string;
   title: string;
   subtitle: string;
-  image?: string;
+  image?: ImageMetadata;
   imageAlt?: string;
   /** override theme.heroStyle */
   style?: 'split' | 'centered' | 'image-bg';
@@ -20,7 +22,7 @@ const layout = hasImage ? style : 'centered';
 ---
 {layout === 'image-bg' ? (
   <section class="relative isolate overflow-hidden bg-secondary text-white">
-    <img src={image} alt={imageAlt} class="absolute inset-0 w-full h-full object-cover opacity-40" fetchpriority="high" />
+    <Image src={image!} alt={imageAlt} widths={[640, 1024, 1600]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover opacity-40" loading="eager" fetchpriority="high" />
     <div class="absolute inset-0 bg-gradient-to-r from-secondary via-secondary/80 to-transparent"></div>
     <div class:list={['container-x relative', compact ? 'py-20' : 'py-28 md:py-40']}>
       <div class="max-w-2xl">
@@ -49,7 +51,7 @@ const layout = hasImage ? style : 'centered';
         {trust.rating && <p class="mt-6 flex items-center gap-2 text-sm text-slate-600"><Stars rating={trust.rating.value} class="w-4 h-4" /> <strong>{trust.rating.value}</strong> from {trust.rating.count}+ {trust.rating.source} reviews</p>}
       </div>
       <div class="relative">
-        <img src={image} alt={imageAlt} width="800" height="600" class="w-full h-auto object-cover rounded-[var(--radius-brand)] shadow-2xl" fetchpriority="high" />
+        <Image src={image!} alt={imageAlt} widths={[480, 800, 1200]} sizes="(min-width: 1024px) 50vw, 100vw" class="w-full h-auto object-cover rounded-[var(--radius-brand)] shadow-2xl" loading="eager" fetchpriority="high" />
         {trust.guarantees[0] && <div class="absolute -bottom-5 left-6 card px-5 py-3 flex items-center gap-2 font-semibold text-secondary"><Icon name="shield" class="w-5 h-5 text-primary" />{trust.guarantees[0]}</div>}
       </div>
     </div>

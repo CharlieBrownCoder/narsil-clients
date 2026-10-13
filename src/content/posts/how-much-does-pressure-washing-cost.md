@@ -3,7 +3,7 @@ title: "How Much Does Pressure Washing Cost in North Texas? (2026 Pricing Guide)
 description: Real price ranges for house washing, driveway cleaning, roof cleaning, and deck restoration in the Plano and Frisco area, and what drives the cost up or down.
 pubDate: 2026-03-02
 author: ClearShine Team
-image: /images/blog-pricing.jpg
+image: ../../assets/images/blog-pricing.jpg
 imageAlt: Pressure washing technician cleaning a driveway in front of a brick home
 tags: ["pricing", "house washing", "driveway cleaning"]
 service: house-washing

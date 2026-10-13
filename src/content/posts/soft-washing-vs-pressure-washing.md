@@ -3,7 +3,7 @@ title: "Soft Washing vs. Pressure Washing: Which Does Your Home Need?"
 description: The difference between soft washing and pressure washing, which surfaces need which, and why using the wrong one can cost you a siding repair.
 pubDate: 2026-04-14
 author: ClearShine Team
-image: /images/blog-soft-wash.jpg
+image: ../../assets/images/blog-soft-wash.jpg
 imageAlt: Close-up of a soft wash nozzle rinsing vinyl siding
 tags: ["soft washing", "house washing", "how it works"]
 service: house-washing

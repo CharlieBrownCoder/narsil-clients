@@ -1,5 +1,6 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
 import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Cta from '@/components/sections/Cta.astro';
@@ -14,15 +15,16 @@ const { Content } = await render(post);
 const d = post.data;
 const { business } = siteConfig;
 const path = `/blog/${post.id}/`;
-const meta = { title: d.seo?.title ?? buildTitle(d.title), description: d.seo?.description ?? d.description, canonical: path, ogImage: d.image, type: 'article' as const };
+const og = d.image ? (await getImage({ src: d.image, width: 1200, height: 630, format: 'jpg' })).src : undefined;
+const meta = { title: d.seo?.title ?? buildTitle(d.title), description: d.seo?.description ?? d.description, canonical: path, ogImage: og, type: 'article' as const };
 const relatedService = d.service ? (await getCollection('services')).find((s) => s.id === d.service) : undefined;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog/' }, { name: d.title, path }];
 const schema = S.graph(
   S.localBusiness(),
   S.webSite(),
-  S.webPage({ path, title: meta.title, description: meta.description, image: d.image, datePublished: d.pubDate, dateModified: d.updatedDate }),
+  S.webPage({ path, title: meta.title, description: meta.description, image: og, datePublished: d.pubDate, dateModified: d.updatedDate }),
   S.breadcrumbList(path, crumbs),
-  S.blogPosting({ path, title: d.title, description: d.description, image: d.image, datePublished: d.pubDate, dateModified: d.updatedDate, author: d.author, tags: d.tags }),
+  S.blogPosting({ path, title: d.title, description: d.description, image: og, datePublished: d.pubDate, dateModified: d.updatedDate, author: d.author, tags: d.tags }),
 );
 ---
 <BaseLayout meta={meta} schema={schema}>
@@ -36,7 +38,7 @@ const schema = S.graph(
         {d.author && <> · By {d.author}</>}
       </p>
     </header>
-    {d.image && <img src={d.image} alt={d.imageAlt ?? d.title} width="1200" height="630" class="mt-8 w-full rounded-[var(--radius-brand)]" />}
+    {d.image && <Image src={d.image} alt={d.imageAlt ?? d.title} widths={[640, 1200]} sizes="(min-width: 768px) 768px, 100vw" loading="eager" class="mt-8 w-full rounded-[var(--radius-brand)]" />}
     <div class="prose prose-site mt-10"><Content /></div>
     {d.tags.length > 0 && <ul class="mt-8 flex flex-wrap gap-2">{d.tags.map((t) => <li class="text-xs font-medium bg-neutral border border-slate-200 px-3 py-1 rounded-full">{t}</li>)}</ul>}
     {relatedService && (

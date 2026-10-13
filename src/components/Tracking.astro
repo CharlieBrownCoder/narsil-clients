@@ -1,6 +1,6 @@
 ---
 import { siteConfig } from '@config';
-const { ga4, gtm, metaPixel, callRail } = siteConfig.tracking;
+const { ga4, gtm, metaPixel } = siteConfig.tracking;
 ---
 {gtm && (
   <script is:inline define:vars={{ gtm }}>
@@ -24,4 +24,3 @@ const { ga4, gtm, metaPixel, callRail } = siteConfig.tracking;
     fbq('init', metaPixel); fbq('track', 'PageView');
   </script>
 )}
-{callRail && <script is:inline async src={callRail}></script>}

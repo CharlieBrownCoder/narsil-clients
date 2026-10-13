@@ -45,7 +45,7 @@ Override per client with `schemaTypeOverride` if a more specific type exists.
 | `breadcrumbList(path, crumbs)` | BreadcrumbList | |
 | `service({...})` | Service | `provider` → org, optional `Offer` from `startingPrice`, `areaServed` from locations |
 | `faqPage(path, faqs)` | FAQPage | returns undefined when empty |
-| `review(r)` | Review | used on /reviews/ |
+| `review(r)` | Review | available but unused; reviews are shown via the Trustindex widget. Don't mark up third-party reviews. |
 | `blogPosting({...})` | BlogPosting | author Person or org |
 | `imageGallery(path, title, images)` | ImageGallery | |
 | `graph(...things)` | wraps into `@context` + `@graph`, drops undefined | |
@@ -66,5 +66,5 @@ node -e "const h=require('fs').readFileSync('dist/index.html','utf8');const m=h.
 
 - Only claim `AggregateRating` with real, verifiable review counts. Keep `trust.rating` in sync with Google Business Profile.
 - `FAQPage` rich results are limited by Google to authoritative sites, but the markup still helps AI answer surfaces.
-- Don't add `Review` schema for reviews copied from Google; it's against their guidelines. First-party reviews are fine. The demo data is first-party style.
+- Don't add `Review` schema for reviews pulled from Google or Trustindex; it's against Google's guidelines. `AggregateRating` on the business is fine as long as the numbers match the source.
 - Keep `sameAs` complete: GBP, Facebook, Yelp, BBB, Nextdoor, Angi, HomeAdvisor. It's the strongest entity signal you control.

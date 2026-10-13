@@ -1,11 +1,12 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
 import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
 import TrustBar from '@/components/sections/TrustBar.astro';
 import ProcessSteps from '@/components/sections/ProcessSteps.astro';
-import Testimonials from '@/components/sections/Testimonials.astro';
+import Trustindex from '@/components/Trustindex.astro';
 import Gallery from '@/components/sections/Gallery.astro';
 import LocationGrid from '@/components/sections/LocationGrid.astro';
 import Faq from '@/components/sections/Faq.astro';
@@ -22,7 +23,8 @@ const { Content } = await render(service);
 const d = service.data;
 const { business, pages } = siteConfig;
 const path = `/services/${service.id}/`;
-const meta = { ...serviceMeta(d.title, d.excerpt, service.id), ...(d.seo?.title ? { title: d.seo.title } : {}), ...(d.seo?.description ? { description: d.seo.description } : {}), ogImage: d.image };
+const og = d.image ? (await getImage({ src: d.image, width: 1200, height: 630, format: 'jpg' })).src : undefined;
+const meta = { ...serviceMeta(d.title, d.excerpt, service.id), ...(d.seo?.title ? { title: d.seo.title } : {}), ...(d.seo?.description ? { description: d.seo.description } : {}), ogImage: og };
 const locations = (await getCollection('locations')).filter((l) => !l.data.services.length || l.data.services.includes(service.id));
 const collectionFaqs = (await getCollection('faqs')).filter((f) => f.data.category === service.id).map((f) => f.data);
 const faqs = [...d.faqs, ...collectionFaqs];
@@ -33,9 +35,9 @@ const short = d.shortTitle ?? d.title;
 const schema = S.graph(
   S.localBusiness(),
   S.webSite(),
-  S.webPage({ path, title: meta.title, description: meta.description, type: 'ItemPage', image: d.image }),
+  S.webPage({ path, title: meta.title, description: meta.description, type: 'ItemPage', image: og }),
   S.breadcrumbList(path, crumbs),
-  S.service({ path, name: d.title, description: d.excerpt, serviceType: d.serviceType, image: d.image, startingPrice: d.startingPrice, priceUnit: d.priceUnit, areas: locations.map((l) => ({ city: l.data.city, state: l.data.state, cityUrl: l.data.cityUrl })) }),
+  S.service({ path, name: d.title, description: d.excerpt, serviceType: d.serviceType, image: og, startingPrice: d.startingPrice, priceUnit: d.priceUnit, areas: locations.map((l) => ({ city: l.data.city, state: l.data.state, cityUrl: l.data.cityUrl })) }),
   S.faqPage(path, faqs),
 );
 ---
@@ -70,7 +72,7 @@ const schema = S.graph(
   </section>
   <ProcessSteps steps={d.process} title={`Our ${short.toLowerCase()} process`} />
   {pages.gallery && <Gallery limit={3} service={service.id} title={`${short} results`} />}
-  <Testimonials service={service.id} />
+  <Trustindex placement="compact" title="What customers say" />
   {pages.serviceAreas && <LocationGrid serviceSlug={service.id} serviceName={short} title={`${short} near you`} />}
   <Faq faqs={faqs} title={`${short} FAQs`} />
   <Cta title={`Need ${short.toLowerCase()}? Let’s talk.`} />

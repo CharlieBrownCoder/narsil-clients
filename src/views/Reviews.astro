@@ -1,40 +1,28 @@
 ---
-import { getCollection } from 'astro:content';
 import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
+import Trustindex from '@/components/Trustindex.astro';
 import Cta from '@/components/sections/Cta.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import Stars from '@/components/Stars.astro';
 import { buildTitle, buildDescription } from '@/lib/seo';
-import { formatDate } from '@/lib/utils';
 import * as S from '@/lib/schema';
 
-const { business, trust } = siteConfig;
-const items = (await getCollection('testimonials')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-const meta = { title: buildTitle(`${business.name} Reviews`), description: buildDescription(`Read ${trust.rating?.count ?? ''} verified customer reviews for ${business.name} in ${business.address.city}, ${business.address.state}. Rated ${trust.rating?.value ?? 5}/5 on ${trust.rating?.source ?? 'Google'}.`), canonical: '/reviews/' };
+const { business, trust, reviews } = siteConfig;
+const meta = { title: buildTitle(`${business.name} Reviews`), description: buildDescription(`Read verified customer reviews for ${business.name} in ${business.address.city}, ${business.address.state}.${trust.rating ? ` Rated ${trust.rating.value}/5 from ${trust.rating.count} ${trust.rating.source} reviews.` : ''}`), canonical: '/reviews/' };
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Reviews', path: '/reviews/' }];
-const schema = S.graph(
-  { ...S.localBusiness({ full: true }), review: items.slice(0, 10).map((t) => S.review({ ...t.data })) },
-  S.webSite(),
-  S.webPage({ path: '/reviews/', title: meta.title, description: meta.description, type: 'CollectionPage' }),
-  S.breadcrumbList('/reviews/', crumbs),
-);
+const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({ path: '/reviews/', title: meta.title, description: meta.description, type: 'CollectionPage' }), S.breadcrumbList('/reviews/', crumbs));
 ---
 <BaseLayout meta={meta} schema={schema}>
   <Hero compact eyebrow="Customer reviews" title={`What ${business.address.city} says about us`} subtitle={trust.rating ? `${trust.rating.value} out of 5 stars across ${trust.rating.count} ${trust.rating.source} reviews.` : 'Real reviews from real customers.'} />
   <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
-  <section class="section !pt-8">
-    <div class="container-x columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-      {items.map((t) => (
-        <blockquote class="card p-6 break-inside-avoid">
-          <Stars rating={t.data.rating} />
-          <p class="mt-3 text-slate-700">“{t.data.text}”</p>
-          <footer class="mt-4 text-sm"><p class="font-semibold text-secondary">{t.data.name}</p><p class="text-slate-500">{[t.data.location, t.data.service, formatDate(t.data.date), t.data.source].filter(Boolean).join(' · ')}</p></footer>
-        </blockquote>
-      ))}
-    </div>
-    {business.googleReviewUrl && <div class="container-x mt-12 text-center"><a href={business.googleReviewUrl} target="_blank" rel="noopener" class="btn-accent">Leave us a review</a></div>}
-  </section>
+  {reviews.trustindex.page ? (
+    <Trustindex placement="page" />
+  ) : (
+    <section class="section"><div class="container-x max-w-2xl text-center">
+      <p class="text-slate-600">Reviews widget not configured. Set <code>reviews.trustindex.page</code> in <code>site.config.ts</code>.</p>
+      {business.googleReviewUrl && <a href={business.googleReviewUrl} target="_blank" rel="noopener" class="btn-primary mt-6">Read our Google reviews</a>}
+    </div></section>
+  )}
   <Cta />
 </BaseLayout>

@@ -4,10 +4,11 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
 import TrustBar from '@/components/sections/TrustBar.astro';
 import WhyUs from '@/components/sections/WhyUs.astro';
-import Testimonials from '@/components/sections/Testimonials.astro';
+import Trustindex from '@/components/Trustindex.astro';
 import Cta from '@/components/sections/Cta.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import { buildTitle, buildDescription } from '@/lib/seo';
+import aboutImage from '@/assets/images/about.jpg';
 import { getBusinessType } from '@/lib/business-types';
 import * as S from '@/lib/schema';
 
@@ -19,7 +20,7 @@ const crumbs = [{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]
 const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({ path: '/about/', title: meta.title, description: meta.description, type: 'AboutPage' }), S.breadcrumbList('/about/', crumbs));
 ---
 <BaseLayout meta={meta} schema={schema}>
-  <Hero compact eyebrow="Our story" title={`About ${business.name}`} subtitle={business.tagline} image="/images/about.jpg" imageAlt={`The ${business.name} team`} />
+  <Hero compact eyebrow="Our story" title={`About ${business.name}`} subtitle={business.tagline} image={aboutImage} imageAlt={`The ${business.name} team`} />
   <TrustBar />
   <div class="container-x pt-8"><Breadcrumbs crumbs={crumbs} /></div>
   <section class="section !pt-8">
@@ -33,6 +34,6 @@ const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({
     </div>
   </section>
   <WhyUs />
-  <Testimonials />
+  <Trustindex placement="compact" title="What customers say" />
   <Cta />
 </BaseLayout>

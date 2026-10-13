@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
@@ -34,7 +35,7 @@ const schema = S.graph(
     <div class="container-x grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {posts.map((p) => (
         <a href={`/blog/${p.id}/`} class="card overflow-hidden group flex flex-col hover:shadow-md transition">
-          {p.data.image && <img src={p.data.image} alt={p.data.imageAlt ?? p.data.title} loading="lazy" width="600" height="400" class="w-full aspect-[3/2] object-cover" />}
+          {p.data.image && <Image src={p.data.image} alt={p.data.imageAlt ?? p.data.title} widths={[400, 800]} sizes="(min-width: 1024px) 33vw, 100vw" class="w-full aspect-[3/2] object-cover" />}
           <div class="p-6 flex-1 flex flex-col">
             <time class="text-xs text-slate-500" datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time>
             <h3 class="mt-2 group-hover:text-primary">{p.data.title}</h3>

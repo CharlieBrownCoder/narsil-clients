@@ -98,12 +98,11 @@ export interface SiteConfig {
     ogImage: string;
   };
 
-  /** Lead capture */
+  /** Lead capture via Formspree (https://formspree.io). Create one form per client. */
   forms: {
-    provider: 'netlify' | 'formspree' | 'custom';
-    /** Formspree endpoint or custom POST URL */
-    action?: string;
-    /** Where to send users after submit */
+    /** Formspree form ID, e.g. "xabcdefg". The form POSTs to https://formspree.io/f/<id>. */
+    formspreeId: string;
+    /** Where Formspree redirects after submit (set as _next). */
     thankYouPath: string;
   };
 
@@ -112,8 +111,6 @@ export interface SiteConfig {
     ga4?: string;
     gtm?: string;
     metaPixel?: string;
-    /** CallRail swap script URL */
-    callRail?: string;
   };
 
   /** Trust signals shown across the site */
@@ -122,6 +119,24 @@ export interface SiteConfig {
     guarantees: string[];
     /** Aggregate rating used in schema and UI. Keep in sync with real reviews. */
     rating?: { value: number; count: number; source: string };
+  };
+
+  /**
+   * Reviews via Trustindex (https://www.trustindex.io). Create one widget per
+   * placement and paste its ID. Blank = that placement is hidden.
+   * The widget script is loaded once per page and only when an ID is set.
+   */
+  reviews: {
+    trustindex: {
+      /** Full-width carousel or grid on the home page */
+      home?: string;
+      /** Large layout on /reviews/ */
+      page?: string;
+      /** Compact strip on service, city, and combo pages */
+      compact?: string;
+      /** Small rating badge in the footer */
+      badge?: string;
+    };
   };
 
   /** Offer / promo banner. Set enabled:false to hide. */
@@ -178,7 +193,7 @@ export const siteConfig: SiteConfig = {
     reviews: true,
     gallery: true,
     faq: true,
-    blog: true,
+    blog: false,
     financing: false,
     careers: false,
     privacyPolicy: true,
@@ -209,7 +224,7 @@ export const siteConfig: SiteConfig = {
   },
 
   forms: {
-    provider: 'netlify',
+    formspreeId: '',
     thankYouPath: '/thank-you/',
   },
 
@@ -217,7 +232,6 @@ export const siteConfig: SiteConfig = {
     ga4: '',
     gtm: '',
     metaPixel: '',
-    callRail: '',
   },
 
   trust: {
@@ -229,6 +243,15 @@ export const siteConfig: SiteConfig = {
     ],
     guarantees: ['100% satisfaction guarantee', 'Free, no-pressure quotes', 'Fully insured crews'],
     rating: { value: 4.9, count: 212, source: 'Google' },
+  },
+
+  reviews: {
+    trustindex: {
+      home: '',
+      page: '',
+      compact: '',
+      badge: '',
+    },
   },
 
   promo: { enabled: true, text: '$50 off house + driveway bundle this month', href: '/contact/' },

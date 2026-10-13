@@ -2,6 +2,7 @@
 import { siteConfig } from '@config';
 import { getCollection } from 'astro:content';
 import Icon from './Icon.astro';
+import Trustindex from './Trustindex.astro';
 import { telHref } from '@/lib/utils';
 const { business, pages, nav } = siteConfig;
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
@@ -20,6 +21,7 @@ const a = business.address;
         <li class="flex items-start gap-2"><Icon name="pin" class="w-4 h-4 mt-0.5" /><address class="not-italic">{a.showStreet && a.street && <>{a.street}<br /></>}{a.city}, {a.state} {a.zip}</address></li>
       </ul>
       {business.licenseNumber && <p class="mt-3 text-xs text-slate-400">License #{business.licenseNumber}</p>}
+      <div class="mt-5"><Trustindex placement="badge" section={false} /></div>
     </div>
     {pages.services && (
       <div>
