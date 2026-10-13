@@ -169,7 +169,7 @@ CTA colors are read from the live DOM; dominant and dark colors from the reviewe
 | 1-2-3 process band | `process` | built this pass |
 | Comparison table, our column highlighted | `trust.comparison` | built this pass |
 | Guarantee band | `trust.guarantee` | built this pass |
-| Angled / curved / wave section edges | `theme.dividers` | built this pass |
+| Angled / curved / wave / cloud / mountain section edges | `theme.dividers` | built this pass |
 | Sticker buttons | `theme.buttonStyle: 'sticker'` | built this pass |
 | Sticky side quote tab | `theme.stickyQuoteTab` | built, off by default |
 | Sticky mobile call bar | `MobileCallBar` | already built |
@@ -177,7 +177,7 @@ CTA colors are read from the live DOM; dominant and dark colors from the reviewe
 | Before/after grid, case studies | `Gallery`, `/gallery/<slug>/` | already built |
 | Service areas list / map | `LocationGrid`, branches | already built |
 | Two-step quote form with progress bar | `forms.steps: 2` | built this pass |
-| Cloud-shaped and mountain-shaped edges | not built | add as `dividers` shapes if a client wants one |
+| Cloud-shaped and mountain-shaped edges | `theme.dividers: 'cloud' \| 'mountain'` | built this pass |
 | Mascot / illustrated services | content, not template | commission per client |
 
 ## Deliberately not adopted

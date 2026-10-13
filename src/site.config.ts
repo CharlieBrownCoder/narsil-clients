@@ -163,8 +163,8 @@ export interface SiteConfig {
     buttonStyle: 'flat' | 'sticker';
     /** Display headings (h1, h2) in uppercase with tight tracking. Body and h3 unaffected. */
     headingCase: 'normal' | 'uppercase';
-    /** Shaped edge between the hero and the next section, and above the CTA band. */
-    dividers: 'none' | 'angle' | 'curve' | 'wave';
+    /** Shaped edge between the hero and the next section, and above the CTA band. cloud suits playful brands; mountain suits outdoor and regional brands. */
+    dividers: 'none' | 'angle' | 'curve' | 'wave' | 'cloud' | 'mountain';
     /** Service cards show the service photo (needs `image` on each service) or an icon tile. */
     serviceCards: 'photo' | 'icon';
     /** Row of service icon tiles overlapping the bottom edge of the home hero. */

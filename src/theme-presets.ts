@@ -19,7 +19,7 @@ export interface ThemePreset {
   radius: 'sharp' | 'rounded' | 'pill';
   heroStyle: 'photo' | 'cutout' | 'split' | 'centered';
   headingCase: 'normal' | 'uppercase';
-  dividers: 'none' | 'angle' | 'curve' | 'wave';
+  dividers: 'none' | 'angle' | 'curve' | 'wave' | 'cloud' | 'mountain';
   heroScrim: 'dark' | 'brand' | 'duotone';
   buttonStyle: 'flat' | 'sticker';
 }

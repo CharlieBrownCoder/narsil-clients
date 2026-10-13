@@ -5,13 +5,18 @@
  * Parent must be `relative`. Shape comes from theme.dividers unless overridden.
  */
 import { siteConfig } from '@config';
-interface Props { shape?: 'none' | 'angle' | 'curve' | 'wave'; fill?: string; position?: 'bottom' | 'top'; flip?: boolean }
+interface Props { shape?: 'none' | 'angle' | 'curve' | 'wave' | 'cloud' | 'mountain'; fill?: string; position?: 'bottom' | 'top'; flip?: boolean }
 const { shape = siteConfig.theme.dividers, fill = '#ffffff', position = 'bottom', flip = false } = Astro.props;
 const paths: Record<string, string> = {
   angle: 'M0,64 L1440,0 L1440,64 Z',
   curve: 'M0,64 C480,0 960,0 1440,64 L1440,64 L0,64 Z',
   wave: 'M0,32 C240,64 480,0 720,32 C960,64 1200,0 1440,32 L1440,64 L0,64 Z',
+  // Overlapping bumps, like the cloud edge on Big Foam. Taller so the bumps read.
+  cloud: 'M0,64 L0,44 C40,44 60,22 110,24 C140,26 160,40 200,36 C230,8 300,6 340,30 C370,10 440,12 470,34 C500,20 560,16 600,34 C640,4 720,6 760,30 C790,14 860,10 900,34 C930,20 990,18 1030,36 C1060,8 1130,6 1170,30 C1200,14 1270,12 1310,34 C1340,28 1400,30 1440,44 L1440,64 Z',
+  // Two ridgelines, like Mt. Baker's divider. Fill is the next section's color.
+  mountain: 'M0,64 L0,50 L90,30 L170,42 L260,18 L340,38 L430,10 L520,36 L600,22 L690,44 L780,14 L870,34 L960,26 L1050,40 L1140,12 L1230,36 L1320,24 L1440,46 L1440,64 Z',
 };
+const tall = shape === 'cloud' || shape === 'mountain';
 const d = paths[shape];
 ---
 {d && (
@@ -19,7 +24,7 @@ const d = paths[shape];
     aria-hidden="true"
     viewBox="0 0 1440 64"
     preserveAspectRatio="none"
-    class:list={['absolute left-0 w-full h-8 md:h-14 pointer-events-none', position === 'bottom' ? 'bottom-0' : 'top-0 rotate-180', flip && 'scale-x-[-1]']}
+    class:list={['absolute left-0 w-full pointer-events-none', tall ? 'h-10 md:h-20' : 'h-8 md:h-14', position === 'bottom' ? 'bottom-0' : 'top-0 rotate-180', flip && 'scale-x-[-1]']}
     style={`color:${fill}`}
   ><path d={d} fill="currentColor" /></svg>
 )}

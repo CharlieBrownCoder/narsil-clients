@@ -108,7 +108,7 @@ Every page emits a single `@graph` with the `LocalBusiness` subtype for the vert
 | `heroScrim` | `dark`, `brand`, `duotone` | photo treatment: dark scrim, brand-color scrim, or duotone tint |
 | `buttonStyle` | `flat`, `sticker` | sticker adds a hard offset shadow |
 | `headingCase` | `uppercase`, `normal` | h1/h2 only |
-| `dividers` | `angle`, `curve`, `wave`, `none` | shaped edge under the hero and above the CTA band |
+| `dividers` | `angle`, `curve`, `wave`, `cloud`, `mountain`, `none` | shaped edge under the hero and above the CTA band |
 | `serviceCards` | `photo`, `icon` | service photo cards or icon tiles |
 | `serviceStrip` | true/false | icon tiles overlapping the hero's bottom edge |
 | `stickyQuoteTab` | true/false | desktop side tab, off by default |
