@@ -19,6 +19,7 @@ const { business, trust, theme } = siteConfig;
 const bt = getBusinessType(siteConfig.businessType);
 
 export const ORG_ID = abs('/#organization');
+const ALL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 export const WEBSITE_ID = abs('/#website');
 
 type Thing = Record<string, unknown>;
@@ -108,6 +109,7 @@ export function localBusiness(opts: { areas?: AreaInput[]; services?: { name: st
       ? { geo: { '@type': 'GeoCoordinates', latitude: business.geo.lat, longitude: business.geo.lng } }
       : {}),
     openingHoursSpecification: openingHours(),
+    contactPoint: contactPoints(opts.areas),
     ...(business.paymentAccepted ? { paymentAccepted: business.paymentAccepted.join(', ') } : {}),
     sameAs: business.sameAs,
     ...(opts.areas?.length ? { areaServed: areaServed(opts.areas) } : {}),
@@ -129,6 +131,30 @@ export function localBusiness(opts: { areas?: AreaInput[]; services?: { name: st
         }
       : {}),
   };
+}
+
+/** Customer service contact points. Adds an emergency point when business.emergency.available. */
+export function contactPoints(areas?: AreaInput[]): Thing[] {
+  const base = {
+    '@type': 'ContactPoint',
+    telephone: business.phoneE164,
+    email: business.email,
+    availableLanguage: 'English',
+    ...(areas?.length ? { areaServed: areas.map((a) => `${a.city}, ${a.state}`) } : {}),
+  };
+  const points: Thing[] = [
+    { ...base, contactType: 'customer service', hoursAvailable: openingHours() },
+    { ...base, contactType: 'sales', hoursAvailable: openingHours() },
+  ];
+  if (business.emergency?.available) {
+    points.push({
+      ...base,
+      telephone: business.emergency.phoneE164 ?? business.phoneE164,
+      contactType: 'emergency',
+      hoursAvailable: { '@type': 'OpeningHoursSpecification', dayOfWeek: ALL_DAYS, opens: '00:00', closes: '23:59' },
+    });
+  }
+  return points;
 }
 
 export function credentials(): Thing[] {
@@ -178,8 +204,6 @@ export function person(m: { name: string; role: string; bio: string; photo?: str
       : {}),
   };
 }
-
-const ALL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 export function webSite(): Thing {
   return {
