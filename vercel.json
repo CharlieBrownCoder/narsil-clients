@@ -3,6 +3,7 @@
   "framework": "astro",
   "cleanUrls": false,
   "trailingSlash": true,
+  "redirects": [],
   "headers": [
     {
       "source": "/(.*)",

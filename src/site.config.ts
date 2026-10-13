@@ -17,9 +17,47 @@ export type PageKey =
   | 'gallery'
   | 'faq'
   | 'blog'
+  | 'locations'
+  | 'team'
+  | 'emergency'
+  | 'licensesInsurance'
+  | 'terms'
   | 'financing'
   | 'careers'
   | 'privacyPolicy';
+
+/** A real, staffed office or branch. Never a service-area city. */
+export interface Branch {
+  /** URL slug, e.g. "plano" → /locations/plano/ */
+  slug: string;
+  name: string; // "ClearShine Plano"
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  phone?: string;
+  phoneE164?: string;
+  email?: string;
+  hours?: OpeningHours[];
+  geo?: { lat: number; lng: number };
+  mapEmbedUrl?: string;
+  /** Google Maps "directions" link or Business Profile URL */
+  mapUrl?: string;
+  directions?: string;
+  parking?: string;
+  /** Service-area location slugs this branch covers (empty = all) */
+  serves?: string[];
+}
+
+export interface Credential {
+  type: 'license' | 'insurance' | 'certification' | 'affiliation' | 'award';
+  label: string; // "Texas Residential Contractor License"
+  number?: string;
+  issuer?: string;
+  url?: string;
+  /** ISO date; shown as "valid through" when set */
+  expires?: string;
+}
 
 export interface OpeningHours {
   /** schema.org day names */
@@ -72,6 +110,20 @@ export interface SiteConfig {
     mapEmbedUrl?: string;
     /** Service radius in miles, used in copy and schema areaServed GeoCircle. */
     serviceRadiusMiles?: number;
+    /**
+     * Physical branches. Leave empty for a single service-area business that
+     * hides its address. Each entry gets /locations/<slug>/ when pages.locations is on.
+     */
+    locations: Branch[];
+    /**
+     * Emergency / after-hours service. Only set available:true if someone really
+     * answers the phone. Adds a 24/7 CTA and marks `emergency: true` services.
+     */
+    emergency?: { available: boolean; phone?: string; phoneE164?: string; text: string };
+    /** Shown next to CTAs when set, e.g. "We reply within 1 business hour". Blank = hidden. */
+    responseTimePromise?: string;
+    /** Licenses, insurance, certifications. Rendered on /licenses-insurance/ and About. */
+    credentials: Credential[];
   };
 
   /** Which page types are enabled for this client. */
@@ -111,6 +163,8 @@ export interface SiteConfig {
     ga4?: string;
     gtm?: string;
     metaPixel?: string;
+    /** Content of the google-site-verification meta tag */
+    searchConsoleVerification?: string;
   };
 
   /** Trust signals shown across the site */
@@ -182,6 +236,32 @@ export const siteConfig: SiteConfig = {
     googleReviewUrl: 'https://g.page/r/example/review',
     mapEmbedUrl: '',
     serviceRadiusMiles: 30,
+    locations: [
+      {
+        slug: 'plano',
+        name: 'ClearShine Plano (Main Office)',
+        street: '1234 Legacy Dr Suite 100',
+        city: 'Plano',
+        state: 'TX',
+        zip: '75024',
+        phone: '(972) 555-0123',
+        phoneE164: '+19725550123',
+        geo: { lat: 33.0754, lng: -96.8245 },
+        mapUrl: 'https://maps.google.com/?q=1234+Legacy+Dr+Plano+TX+75024',
+        directions: 'On Legacy Dr just east of the Dallas North Tollway, in the office park behind the Legacy West garage.',
+        parking: 'Free surface parking in front of Suite 100.',
+      },
+    ],
+    emergency: {
+      available: false,
+      text: '24/7 emergency service available',
+    },
+    responseTimePromise: 'Quotes back within one business hour, 7am to 7pm',
+    credentials: [
+      { type: 'insurance', label: 'General liability insurance', issuer: 'Demo Mutual', number: 'GL-000000 (placeholder)' },
+      { type: 'certification', label: 'Soft Wash Systems certified technician', issuer: 'SoftWash Systems' },
+      { type: 'affiliation', label: 'Plano Chamber of Commerce member' },
+    ],
   },
 
   pages: {
@@ -194,6 +274,11 @@ export const siteConfig: SiteConfig = {
     gallery: true,
     faq: true,
     blog: false,
+    locations: true,
+    team: true,
+    emergency: false,
+    licensesInsurance: true,
+    terms: true,
     financing: false,
     careers: false,
     privacyPolicy: true,
@@ -232,6 +317,7 @@ export const siteConfig: SiteConfig = {
     ga4: '',
     gtm: '',
     metaPixel: '',
+    searchConsoleVerification: '',
   },
 
   trust: {

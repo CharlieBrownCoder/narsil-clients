@@ -20,6 +20,7 @@ is Markdown and JSON under `src/content/`. Read `README.md` first, then
 - No client-side JS unless a component needs it. No scroll animation on the LCP element.
 - Never invent business facts (years, review counts, prices). They come from `site.config.ts` or the client.
 - Quote YAML strings that contain a colon.
+- Every trust claim (rating, promise, credential, emergency line, team member) renders from a config or content value that defaults to blank. Blank means hidden. Never hardcode one in a view.
 
 ## Skills and agents in this repo (`.claude/`)
 

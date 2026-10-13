@@ -24,7 +24,7 @@ export function buildDescription(desc: string) {
 }
 
 export const homeMeta = (): PageMeta => ({
-  title: `${business.name} | ${business.tagline}`,
+  title: buildTitle(business.tagline),
   description: buildDescription(business.description),
   canonical: '/',
 });

@@ -1,0 +1,24 @@
+---
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import * as S from '@/lib/schema';
+const { business } = siteConfig;
+const meta = { title: `Terms & Conditions | ${business.name}`, description: `Terms for estimates, scheduling, payment, and guarantees at ${business.name}.`, canonical: '/terms/', noindex: true };
+---
+<BaseLayout meta={meta} schema={S.graph(S.localBusiness(), S.webSite())}>
+  <article class="container-x max-w-3xl py-16 prose prose-site">
+    <h1>Terms & Conditions</h1>
+    <p>Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}</p>
+    <h2>Estimates</h2>
+    <p>Prices shown on this website are starting points and typical ranges, not binding quotes. A written quote is provided before work begins and is valid for 30 days.</p>
+    <h2>Scheduling and access</h2>
+    <p>We need access to exterior water and any gated areas on the scheduled day. Weather may require rescheduling; we'll contact you as early as we can.</p>
+    <h2>Payment</h2>
+    <p>Payment is due on completion unless otherwise agreed in writing. We accept {business.paymentAccepted?.join(', ') ?? 'the payment methods listed on our contact page'}.</p>
+    <h2>Guarantee</h2>
+    <ul>{siteConfig.trust.guarantees.map((g) => <li>{g}</li>)}</ul>
+    <h2>Contact</h2>
+    <p>Questions about these terms: <a href={`mailto:${business.email}`}>{business.email}</a> or {business.phone}.</p>
+    <p><em>Starter terms. Have them reviewed for your state before launch.</em></p>
+  </article>
+</BaseLayout>

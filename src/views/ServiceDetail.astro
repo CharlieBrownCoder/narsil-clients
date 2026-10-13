@@ -5,6 +5,7 @@ import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
 import TrustBar from '@/components/sections/TrustBar.astro';
+import EmergencyCta from '@/components/sections/EmergencyCta.astro';
 import ProcessSteps from '@/components/sections/ProcessSteps.astro';
 import Trustindex from '@/components/Trustindex.astro';
 import Gallery from '@/components/sections/Gallery.astro';
@@ -29,7 +30,8 @@ const locations = (await getCollection('locations')).filter((l) => !l.data.servi
 const collectionFaqs = (await getCollection('faqs')).filter((f) => f.data.category === service.id).map((f) => f.data);
 const faqs = [...d.faqs, ...collectionFaqs];
 const related = (await getCollection('services')).filter((s) => d.related.includes(s.id));
-const crumbs = [{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }, { name: d.title, path }];
+const cat = d.category ? (await getCollection('categories')).find((c) => c.id === d.category) : undefined;
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }, ...(cat ? [{ name: cat.data.title, path: `/services/${cat.id}/` }] : []), { name: d.title, path }];
 const short = d.shortTitle ?? d.title;
 
 const schema = S.graph(
@@ -37,13 +39,14 @@ const schema = S.graph(
   S.webSite(),
   S.webPage({ path, title: meta.title, description: meta.description, type: 'ItemPage', image: og }),
   S.breadcrumbList(path, crumbs),
-  S.service({ path, name: d.title, description: d.excerpt, serviceType: d.serviceType, image: og, startingPrice: d.startingPrice, priceUnit: d.priceUnit, areas: locations.map((l) => ({ city: l.data.city, state: l.data.state, cityUrl: l.data.cityUrl })) }),
+  S.service({ path, name: d.title, description: d.excerpt, serviceType: d.serviceType, image: og, startingPrice: d.startingPrice, priceUnit: d.priceUnit, emergency: d.emergency, areas: locations.map((l) => ({ city: l.data.city, state: l.data.state, cityUrl: l.data.cityUrl })) }),
   S.faqPage(path, faqs),
 );
 ---
 <BaseLayout meta={meta} schema={schema}>
   <Hero compact eyebrow={`${business.address.city}, ${business.address.state}`} title={d.title} subtitle={d.excerpt} image={d.image} imageAlt={d.imageAlt ?? d.title} />
   <TrustBar />
+  {d.emergency && <EmergencyCta compact />}
   <div class="container-x pt-8"><Breadcrumbs crumbs={crumbs} /></div>
   <section class="section !pt-8">
     <div class="container-x grid lg:grid-cols-3 gap-12">

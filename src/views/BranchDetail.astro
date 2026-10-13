@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import { siteConfig, type Branch } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import TrustBar from '@/components/sections/TrustBar.astro';
+import ServiceGrid from '@/components/sections/ServiceGrid.astro';
+import LocationGrid from '@/components/sections/LocationGrid.astro';
+import Trustindex from '@/components/Trustindex.astro';
+import Cta from '@/components/sections/Cta.astro';
+import ContactForm from '@/components/sections/ContactForm.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { getBusinessType } from '@/lib/business-types';
+import * as S from '@/lib/schema';
+
+interface Props { branch: Branch }
+const { branch: b } = Astro.props;
+const { business, pages } = siteConfig;
+const bt = getBusinessType(siteConfig.businessType);
+const path = `/locations/${b.slug}/`;
+const hours = b.hours ?? business.hours;
+const phone = b.phone ?? business.phone;
+const tel = `tel:${b.phoneE164 ?? business.phoneE164}`;
+const served = (await getCollection('locations')).filter((l) => !b.serves?.length || b.serves.includes(l.id));
+const meta = { title: buildTitle(`${b.name} | ${bt.label} in ${b.city}, ${b.state}`), description: buildDescription(`${b.name} at ${b.street}, ${b.city}, ${b.state}. Hours, directions, parking, and phone. ${bt.label} for ${served.slice(0, 4).map((l) => l.data.city).join(', ')} and nearby.`), canonical: path };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Locations', path: '/locations/' }, { name: b.city, path }];
+const schema = S.graph(S.localBusiness(), S.webSite(), S.webPage({ path, title: meta.title, description: meta.description }), S.breadcrumbList(path, crumbs), S.branch(b));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Location" title={b.name} subtitle={`${bt.label} from our ${b.city} office. Walk-ins welcome during business hours.`} />
+  <TrustBar />
+  <div class="container-x pt-8"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="section !pt-8">
+    <div class="container-x grid lg:grid-cols-3 gap-12">
+      <div class="lg:col-span-2 space-y-8">
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div class="card p-5">
+            <p class="font-semibold flex items-center gap-2"><Icon name="pin" class="w-5 h-5 text-primary" /> Address</p>
+            <address class="not-italic mt-2 text-slate-600">{b.street}<br />{b.city}, {b.state} {b.zip}</address>
+            {b.mapUrl && <a href={b.mapUrl} target="_blank" rel="noopener" class="mt-3 inline-flex font-semibold text-primary">Get directions →</a>}
+          </div>
+          <div class="card p-5">
+            <p class="font-semibold flex items-center gap-2"><Icon name="clock" class="w-5 h-5 text-primary" /> Hours</p>
+            <ul class="mt-2 text-slate-600 text-sm">{hours.map((h) => <li>{h.days.length > 2 ? `${h.days[0]}–${h.days[h.days.length - 1]}` : h.days.join(', ')}: {h.opens}–{h.closes}</li>)}</ul>
+            <a href={tel} class="mt-3 inline-flex items-center gap-2 font-semibold text-primary"><Icon name="phone" class="w-4 h-4" /> {phone}</a>
+          </div>
+        </div>
+        {(b.directions || b.parking) && (
+          <div class="prose prose-site">
+            {b.directions && <><h2>Directions</h2><p>{b.directions}</p></>}
+            {b.parking && <><h2>Parking</h2><p>{b.parking}</p></>}
+          </div>
+        )}
+        {b.mapEmbedUrl && <iframe src={b.mapEmbedUrl} title={`Map of ${b.name}`} loading="lazy" class="w-full h-80 rounded-[var(--radius-brand)] border border-slate-200" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>}
+      </div>
+      <aside class="lg:sticky lg:top-24 self-start"><ContactForm city={b.city} compact /></aside>
+    </div>
+  </section>
+  {pages.services && <ServiceGrid title={`Services from our ${b.city} office`} />}
+  {pages.serviceAreas && served.length > 0 && <LocationGrid title={`Areas this office serves`} />}
+  <Trustindex placement="compact" title="What customers say" />
+  <Cta />
+</BaseLayout>

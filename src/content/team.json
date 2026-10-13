@@ -1,0 +1,4 @@
+[
+  { "id": "owner", "name": "Demo Owner (placeholder)", "role": "Owner & Lead Technician", "bio": "Replace with the real owner's story: how they started, what they did before, and what they personally check on every job.", "yearsExperience": 10, "certifications": ["SoftWash Systems certified"], "order": 1 },
+  { "id": "crew-lead", "name": "Demo Crew Lead (placeholder)", "role": "Crew Lead", "bio": "Replace with a real team member. Photos of real people are one of the strongest trust signals on the site.", "yearsExperience": 4, "order": 2 }
+]

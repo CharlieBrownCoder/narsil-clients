@@ -4,6 +4,8 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
 import TrustBar from '@/components/sections/TrustBar.astro';
 import WhyUs from '@/components/sections/WhyUs.astro';
+import TeamGrid from '@/components/sections/TeamGrid.astro';
+import Credentials from '@/components/sections/Credentials.astro';
 import Trustindex from '@/components/Trustindex.astro';
 import Cta from '@/components/sections/Cta.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
@@ -33,6 +35,8 @@ const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({
       <p><em>Edit this page in <code>src/views/About.astro</code> to add your team, photos, and story. A real story with real names and photos is one of the strongest trust signals you can add.</em></p>
     </div>
   </section>
+  <TeamGrid limit={6} />
+  <Credentials />
   <WhyUs />
   <Trustindex placement="compact" title="What customers say" />
   <Cta />

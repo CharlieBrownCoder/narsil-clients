@@ -1,6 +1,7 @@
 ---
 import { siteConfig } from '@config';
 import { getCollection } from 'astro:content';
+import ResponsePromise from '@/components/ResponsePromise.astro';
 interface Props { service?: string; city?: string; compact?: boolean }
 const { service, city, compact = false } = Astro.props;
 const { forms } = siteConfig;
@@ -32,5 +33,6 @@ const inputCls = 'w-full border border-slate-300 rounded-[var(--radius-brand)] p
   <label class="grid gap-1 text-sm font-medium">Tell us about the job<textarea class={inputCls} name="message" rows={compact ? 3 : 4}></textarea></label>
   <input type="hidden" name="source_page" value={Astro.url.pathname} />
   <button type="submit" class="btn-primary w-full" disabled={!forms.formspreeId}>Get My Free Quote</button>
+  <ResponsePromise class="justify-center" />
   <p class="text-xs text-slate-500 text-center">{forms.formspreeId ? 'No spam, ever. We’ll reply within one business day.' : 'Form inactive: set forms.formspreeId in site.config.ts'}</p>
 </form>

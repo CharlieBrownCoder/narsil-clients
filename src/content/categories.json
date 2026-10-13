@@ -1,0 +1,4 @@
+[
+  { "id": "residential", "title": "Residential Pressure Washing", "description": "Everything we clean on a home: siding, roofs, driveways, decks, and fences.", "order": 1 },
+  { "id": "commercial", "title": "Commercial Pressure Washing", "description": "Storefronts, parking lots, HOA common areas, and recurring maintenance plans.", "order": 2 }
+]

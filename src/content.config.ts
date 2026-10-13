@@ -21,6 +21,10 @@ const services = defineCollection({
     shortTitle: z.string().optional(),
     excerpt: z.string(),
     icon: z.string().default('spark'),
+    /** Category id from categories.json. Optional; enables /services/<category>/ hubs. */
+    category: z.string().optional(),
+    /** Offered 24/7. Needs business.emergency.available in config to show the CTA. */
+    emergency: z.boolean().default(false),
     /** Relative to this file, e.g. ../../assets/images/service-x.jpg. Optimized at build. */
     image: image().optional(),
     imageAlt: z.string().optional(),
@@ -78,6 +82,8 @@ const posts = defineCollection({
     image: image().optional(),
     imageAlt: z.string().optional(),
     tags: z.array(z.string()).default([]),
+    /** "article" | "seasonal-guide" | "how-to" | "pricing" | "news". Drives the blog filter and label. */
+    category: z.string().default('article'),
     /** Related service slug for internal linking */
     service: z.string().optional(),
     draft: z.boolean().default(false),
@@ -100,6 +106,33 @@ const projects = defineCollection({
   }),
 });
 
+/** Service categories (optional hubs): src/content/categories.json */
+const categories = defineCollection({
+  loader: file('./src/content/categories.json'),
+  schema: z.object({
+    id: z.string(),
+    title: z.string(),
+    description: z.string(),
+    order: z.number().default(100),
+  }),
+});
+
+/** Team members: src/content/team.json. Real people only. */
+const team = defineCollection({
+  loader: file('./src/content/team.json'),
+  schema: ({ image }: SchemaContext) => z.object({
+    id: z.string(),
+    name: z.string(),
+    role: z.string(),
+    bio: z.string(),
+    photo: image().optional(),
+    yearsExperience: z.number().optional(),
+    certifications: z.array(z.string()).default([]),
+    sameAs: z.array(z.url()).default([]),
+    order: z.number().default(100),
+  }),
+});
+
 const faqs = defineCollection({
   loader: file('./src/content/faqs.json'),
   schema: z.object({
@@ -112,4 +145,4 @@ const faqs = defineCollection({
   }),
 });
 
-export const collections = { services, locations, posts, projects, faqs };
+export const collections = { services, locations, posts, projects, faqs, categories, team };

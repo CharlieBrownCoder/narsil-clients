@@ -13,6 +13,11 @@
 - [ ] `hours`, `priceRange`, `paymentAccepted`
 - [ ] `sameAs` (GBP, Facebook, Instagram, Yelp, BBB, Nextdoor, Angi, etc.)
 - [ ] `googleReviewUrl`, `mapEmbedUrl`
+- [ ] `business.locations[]`: real offices only, with street, hours, directions, parking. Empty for service-area-only businesses.
+- [ ] `business.emergency`: `available: true` only if a human answers after hours. Set phone if different.
+- [ ] `business.responseTimePromise`: only a promise they keep. Blank hides it.
+- [ ] `business.credentials[]`: license numbers, insurance carrier, certifications, memberships. Nothing unverifiable.
+- [ ] `tracking.searchConsoleVerification` once the property is added
 - [ ] `pages` toggles
 - [ ] `theme` colors, fonts, radius, heroStyle
 - [ ] `trust.badges`, `guarantees`, `rating` (must match real review count)
@@ -47,19 +52,23 @@ Upload originals at those sizes; the build handles compression and formats.
 - [ ] **If `serviceAreaCombos` is on:** add a `serviceNotes.<service-slug>` paragraph for every service in every city. This is what makes the combo pages unique. Skip cities you can't write real copy for, or restrict them with `services: [...]`.
 - [ ] `projects.json`: 3+ before/after pairs.
 - [ ] `faqs.json`: 6+ general questions, plus per-service ones keyed by slug.
-- [ ] `posts/`: 2+ posts or set `pages.blog: false`.
+- [ ] `team.json`: real names, roles, photos. Or set `pages.team: false`.
+- [ ] `categories.json` + `category` on each service when there are more than ~6 services.
+- [ ] Mark `emergency: true` on services offered 24/7.
+- [ ] `posts/`: 2+ posts with a `category` (article, seasonal-guide, how-to, pricing) or leave `pages.blog: false`.
 - [ ] Rewrite the About page copy in `src/views/About.astro`.
 - [ ] Run the `content-humanizer` agent over every file in `src/content/` and review the diff.
 - [ ] Fill `DESIGN.md` for this client (or run gstack `/design-consultation`).
 
 ## 6. Build and verify
-- [ ] `npm run check && npm run build`
+- [ ] `npm run test` (check + build + validate). Fix every ERROR; read every warn. `THIN_COMBOS=fail npm run validate` before launch to force a note on every combo page.
 - [ ] Open `dist/` pages, check titles and descriptions (`grep -o '<title>[^<]*' dist/**/index.html`)
 - [ ] Validate 3 pages at https://validator.schema.org (home, a service, a combo)
 - [ ] Lighthouse on home and a service page: aim for 95+ across the board
 
 ## 7. Deploy
 - [ ] Import the repo in Vercel (framework preset Astro, output `dist`)
+- [ ] Old URLs from a previous site go in `vercel.json` → `redirects` (301s)
 - [ ] Custom domain + HTTPS
 - [ ] Submit a test quote and confirm Formspree delivers it
 - [ ] Submit `https://<domain>/sitemap-index.xml` in Google Search Console

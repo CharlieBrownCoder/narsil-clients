@@ -1,0 +1,30 @@
+---
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import Credentials from '@/components/sections/Credentials.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import * as S from '@/lib/schema';
+
+const { business, trust } = siteConfig;
+const meta = { title: buildTitle('Licenses & Insurance'), description: buildDescription(`${business.name} is ${business.insured ? 'fully insured' : 'a licensed contractor'} in ${business.address.state}. See our license, insurance, and certification details, and request a certificate of insurance.`), canonical: '/licenses-insurance/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Licenses & Insurance', path: '/licenses-insurance/' }];
+const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({ path: '/licenses-insurance/', title: meta.title, description: meta.description }), S.breadcrumbList('/licenses-insurance/', crumbs));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Trust" title="Licenses & Insurance" subtitle="What protects you when we work on your property, and how to verify it." />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <Credentials title="Our credentials" />
+  <section class="section">
+    <div class="container-x max-w-3xl prose prose-site">
+      <h2>Certificate of insurance</h2>
+      <p>HOAs, property managers, and commercial clients can request a current certificate of insurance naming them as certificate holder. Email <a href={`mailto:${business.email}`}>{business.email}</a> with the property address and we'll send it the same business day.</p>
+      <h2>Our guarantees</h2>
+      <ul>{trust.guarantees.map((g) => <li>{g}</li>)}</ul>
+      {siteConfig.pages.terms && <p>Full details are in our <a href="/terms/">terms and conditions</a>.</p>}
+    </div>
+  </section>
+  <Cta />
+</BaseLayout>

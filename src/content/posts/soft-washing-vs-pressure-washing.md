@@ -5,6 +5,7 @@ pubDate: 2026-04-14
 author: ClearShine Team
 image: ../../assets/images/blog-soft-wash.jpg
 imageAlt: Close-up of a soft wash nozzle rinsing vinyl siding
+category: how-to
 tags: ["soft washing", "house washing", "how it works"]
 service: house-washing
 ---

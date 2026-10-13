@@ -1,0 +1,13 @@
+---
+/** Renders only when business.responseTimePromise is set. */
+import { siteConfig } from '@config';
+import Icon from './Icon.astro';
+interface Props { class?: string; light?: boolean }
+const { class: cls = '', light = false } = Astro.props;
+const promise = siteConfig.business.responseTimePromise;
+---
+{promise && (
+  <p class:list={['inline-flex items-center gap-2 text-sm font-medium', light ? 'text-white/90' : 'text-slate-700', cls]}>
+    <Icon name="clock" class={`w-4 h-4 ${light ? 'text-accent' : 'text-primary'}`} />{promise}
+  </p>
+)}

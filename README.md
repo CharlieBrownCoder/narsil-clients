@@ -19,6 +19,8 @@ npm install
 npm run dev        # http://localhost:4321
 npm run build      # outputs to dist/
 npm run check      # type-check Astro + TS
+npm run validate   # post-build: broken links, titles, JSON-LD, alt text, thin combo pages
+npm run test       # check + build + validate (what CI runs)
 ```
 
 ## Spinning up a new client
@@ -73,11 +75,13 @@ scripts/
 | --- | --- | --- |
 | Home | `/` | always |
 | Services index + detail | `/services/`, `/services/<slug>/` | `pages.services` |
+| Service category hubs | `/services/<category>/` | `categories.json` + `category` on services |
 | Service areas index + city | `/service-areas/`, `/service-areas/<city>/` | `pages.serviceAreas` |
+| Physical branches | `/locations/`, `/locations/<slug>/` | `pages.locations` + `business.locations[]` |
 | Service × City combo | `/service-areas/<city>/<service>/` | `pages.serviceAreaCombos` |
-| About, Contact, Reviews, Gallery, FAQ | `/about/` etc. | `pages.<key>` |
+| About, Contact, Reviews, Gallery, FAQ, Team, Emergency, Licenses & Insurance | `/about/` etc. | `pages.<key>` |
 | Blog index + post | `/blog/`, `/blog/<slug>/` | `pages.blog` |
-| Privacy, Thank-you, 404 | | always / `pages.privacyPolicy` |
+| Privacy, Terms, Thank-you, 404 | | `pages.privacyPolicy`, `pages.terms`, always |
 
 Disabled pages are not built, not in the nav, and not in the sitemap.
 
@@ -99,5 +103,6 @@ Reviews render through Trustindex. Create a widget per placement (home, reviews 
 
 - Programmatic service-area pages are **on**. Each location file has a `serviceNotes` map so combo pages carry unique copy. Add a note per service per city before launch to avoid thin content.
 - Blog code is included but `pages.blog` defaults to **false**. Turn it on once a client has posts.
-- Tracking supports GTM, GA4, and Meta Pixel, all off until IDs are added.
+- Tracking supports GTM, GA4, and Meta Pixel, all off until IDs are added. Phone clicks and CTA clicks fire `phone_call` and `cta_click` events once a tracker is set.
+- Every trust claim (rating, response promise, credentials, emergency line, team) comes from config or content and is hidden when blank.
 - Hosting is Vercel. `netlify.toml` was removed on purpose.

@@ -1,0 +1,33 @@
+---
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import * as S from '@/lib/schema';
+
+const { business } = siteConfig;
+const branches = business.locations;
+const meta = { title: buildTitle(`${business.name} Locations`), description: buildDescription(`${business.name} offices in ${branches.map((b) => b.city).join(', ')}. Addresses, hours, directions, and phone numbers for each location.`), canonical: '/locations/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Locations', path: '/locations/' }];
+const schema = S.graph(S.localBusiness({ full: true }), S.webSite(), S.webPage({ path: '/locations/', title: meta.title, description: meta.description, type: 'CollectionPage' }), S.breadcrumbList('/locations/', crumbs), ...branches.map(S.branch));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Find us" title="Our locations" subtitle={`${branches.length === 1 ? 'One office' : `${branches.length} offices`} serving ${business.address.city} and the surrounding area.`} />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="section !pt-8">
+    <div class="container-x grid md:grid-cols-2 gap-6">
+      {branches.map((b) => (
+        <a href={`/locations/${b.slug}/`} class="card p-6 hover:border-primary group">
+          <h2 class="text-xl group-hover:text-primary">{b.name}</h2>
+          <address class="not-italic mt-2 text-slate-600 flex gap-2"><Icon name="pin" class="w-5 h-5 text-primary shrink-0" /><span>{b.street}<br />{b.city}, {b.state} {b.zip}</span></address>
+          <p class="mt-2 text-slate-600 flex gap-2"><Icon name="phone" class="w-5 h-5 text-primary shrink-0" />{b.phone ?? business.phone}</p>
+          <span class="mt-4 inline-flex items-center gap-1 font-semibold text-primary">Details & directions <Icon name="arrow" class="w-4 h-4" /></span>
+        </a>
+      ))}
+    </div>
+  </section>
+  <Cta />
+</BaseLayout>

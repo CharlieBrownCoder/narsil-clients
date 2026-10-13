@@ -5,6 +5,7 @@ pubDate: 2026-03-02
 author: ClearShine Team
 image: ../../assets/images/blog-pricing.jpg
 imageAlt: Pressure washing technician cleaning a driveway in front of a brick home
+category: pricing
 tags: ["pricing", "house washing", "driveway cleaning"]
 service: house-washing
 ---

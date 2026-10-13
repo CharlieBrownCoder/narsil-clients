@@ -1,0 +1,20 @@
+---
+/**
+ * /locations/            → BranchesIndex (physical offices, not service areas)
+ * /locations/<slug>/     → BranchDetail
+ * Built only when pages.locations is true AND business.locations has entries.
+ */
+import { siteConfig } from '@config';
+import BranchesIndex from '@/views/BranchesIndex.astro';
+import BranchDetail from '@/views/BranchDetail.astro';
+
+export function getStaticPaths() {
+  if (!siteConfig.pages.locations || siteConfig.business.locations.length === 0) return [];
+  return [
+    { params: { slug: undefined }, props: { branch: null } },
+    ...siteConfig.business.locations.map((b) => ({ params: { slug: b.slug }, props: { branch: b } })),
+  ];
+}
+const { branch } = Astro.props;
+---
+{branch ? <BranchDetail branch={branch} /> : <BranchesIndex />}

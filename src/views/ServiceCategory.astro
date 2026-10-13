@@ -1,0 +1,36 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import ServiceGrid from '@/components/sections/ServiceGrid.astro';
+import Trustindex from '@/components/Trustindex.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { abs } from '@/lib/utils';
+import * as S from '@/lib/schema';
+
+interface Props { category: CollectionEntry<'categories'> }
+const { category } = Astro.props;
+const d = category.data;
+const { business } = siteConfig;
+const path = `/services/${category.id}/`;
+const services = (await getCollection('services')).filter((s) => s.data.category === category.id).sort((a, b) => a.data.order - b.data.order);
+const meta = { title: buildTitle(`${d.title} in ${business.address.city}, ${business.address.state}`), description: buildDescription(`${d.description} ${business.name} offers ${services.map((s) => s.data.shortTitle ?? s.data.title).join(', ')}.`), canonical: path };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }, { name: d.title, path }];
+const schema = S.graph(
+  S.localBusiness(),
+  S.webSite(),
+  S.webPage({ path, title: meta.title, description: meta.description, type: 'CollectionPage' }),
+  S.breadcrumbList(path, crumbs),
+  { '@type': 'ItemList', '@id': abs(`${path}#list`), name: d.title, itemListElement: services.map((s, i) => ({ '@type': 'ListItem', position: i + 1, name: s.data.title, url: abs(`/services/${s.id}/`) })) },
+);
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Services" title={d.title} subtitle={d.description} />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <ServiceGrid title={d.title} only={services.map((s) => s.id)} />
+  <Trustindex placement="compact" title="What customers say" />
+  <Cta />
+</BaseLayout>

@@ -23,5 +23,6 @@ const og = abs(meta.ogImage ?? siteConfig.theme.ogImage);
 <meta name="twitter:title" content={meta.title} />
 <meta name="twitter:description" content={meta.description} />
 <meta name="twitter:image" content={og} />
+{siteConfig.tracking.searchConsoleVerification && <meta name="google-site-verification" content={siteConfig.tracking.searchConsoleVerification} />}
 <meta name="geo.region" content={`${siteConfig.business.address.country}-${siteConfig.business.address.state}`} />
 <meta name="geo.placename" content={siteConfig.business.address.city} />

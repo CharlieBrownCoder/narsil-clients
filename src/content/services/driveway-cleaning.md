@@ -2,6 +2,7 @@
 title: Driveway & Concrete Cleaning
 shortTitle: Driveway Cleaning
 excerpt: Surface cleaning for driveways, sidewalks, patios, and pool decks that strips years of grime, oil, and tire marks.
+category: residential
 icon: droplet
 image: ../../assets/images/service-driveway.jpg
 imageAlt: Half-cleaned concrete driveway showing the before and after contrast

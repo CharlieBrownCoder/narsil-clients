@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import TeamGrid from '@/components/sections/TeamGrid.astro';
+import Credentials from '@/components/sections/Credentials.astro';
+import Cta from '@/components/sections/Cta.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import * as S from '@/lib/schema';
+
+const { business } = siteConfig;
+const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+const meta = { title: buildTitle(`Meet the ${business.name} Team`), description: buildDescription(`The people behind ${business.name} in ${business.address.city}, ${business.address.state}: who shows up to your door, their experience, and their certifications.`), canonical: '/team/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Team', path: '/team/' }];
+const schema = S.graph(
+  S.localBusiness(),
+  S.webSite(),
+  S.webPage({ path: '/team/', title: meta.title, description: meta.description, type: 'AboutPage' }),
+  S.breadcrumbList('/team/', crumbs),
+  ...team.map((m) => S.person({ name: m.data.name, role: m.data.role, bio: m.data.bio, photo: m.data.photo?.src, sameAs: m.data.sameAs, certifications: m.data.certifications })),
+);
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact eyebrow="Our people" title="Meet the team" subtitle={`The crew that answers the phone and shows up on time in ${business.address.city}.`} />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <TeamGrid title="Who you'll meet" />
+  <Credentials compact />
+  <Cta />
+</BaseLayout>

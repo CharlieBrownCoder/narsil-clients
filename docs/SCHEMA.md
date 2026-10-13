@@ -43,11 +43,14 @@ Override per client with `schemaTypeOverride` if a more specific type exists.
 | `webSite()` | WebSite | |
 | `webPage({ path, title, description, type })` | WebPage / AboutPage / ContactPage / CollectionPage / ItemPage / FAQPage | |
 | `breadcrumbList(path, crumbs)` | BreadcrumbList | |
-| `service({...})` | Service | `provider` → org, optional `Offer` from `startingPrice`, `areaServed` from locations |
+| `service({...})` | Service | `provider` → org, optional `Offer` from `startingPrice`, `areaServed` from locations, `hoursAvailable` 24/7 when `emergency` and `business.emergency.available` |
 | `faqPage(path, faqs)` | FAQPage | returns undefined when empty |
 | `review(r)` | Review | available but unused; reviews are shown via the Trustindex widget. Don't mark up third-party reviews. |
 | `blogPosting({...})` | BlogPosting | author Person or org |
 | `imageGallery(path, title, images)` | ImageGallery | |
+| `branch(b)` | LocalBusiness subtype | one per `business.locations[]` entry, `parentOrganization` → org; the org lists them as `subOrganization` when there is more than one |
+| `person(m)` | Person | team members, `worksFor` → org |
+| `credentials()` | EducationalOccupationalCredential[] | from `business.credentials` (license and certification types) as `hasCredential` on the full org |
 | `graph(...things)` | wraps into `@context` + `@graph`, drops undefined | |
 
 ## areaServed

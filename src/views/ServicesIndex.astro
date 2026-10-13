@@ -15,6 +15,8 @@ import * as S from '@/lib/schema';
 const { business } = siteConfig;
 const bt = getBusinessType(siteConfig.businessType);
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const categories = (await getCollection('categories')).sort((a, b) => a.data.order - b.data.order).filter((c) => services.some((s) => s.data.category === c.id));
+const uncategorized = services.filter((s) => !s.data.category || !categories.some((c) => c.id === s.data.category));
 const meta = {
   title: buildTitle(`${bt.label} Services in ${business.address.city}, ${business.address.state}`),
   description: buildDescription(`Explore every ${bt.label.toLowerCase()} service ${business.name} offers in ${business.address.city} and nearby: ${services.map((s) => s.data.shortTitle ?? s.data.title).join(', ')}. Free quotes.`),
@@ -32,7 +34,14 @@ const schema = S.graph(
 <BaseLayout meta={meta} schema={schema}>
   <Hero compact title={`${bt.label} Services`} subtitle={`Everything we do in ${business.address.city} and the surrounding area, backed by ${siteConfig.trust.guarantees[0]?.toLowerCase() ?? 'our guarantee'}.`} />
   <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
-  <ServiceGrid title="All services" />
+  {categories.length > 0 ? (
+    <>
+      {categories.map((c) => <ServiceGrid title={c.data.title} intro={c.data.description} only={services.filter((s) => s.data.category === c.id).map((s) => s.id)} moreHref={`/services/${c.id}/`} />)}
+      {uncategorized.length > 0 && <ServiceGrid title="More services" only={uncategorized.map((s) => s.id)} />}
+    </>
+  ) : (
+    <ServiceGrid title="All services" />
+  )}
   <Trustindex placement="compact" title="What customers say" />
   <Cta />
 </BaseLayout>

@@ -112,6 +112,10 @@ export function localBusiness(opts: { areas?: AreaInput[]; services?: { name: st
     sameAs: business.sameAs,
     ...(opts.areas?.length ? { areaServed: areaServed(opts.areas) } : {}),
     ...(aggregateRating() ? { aggregateRating: aggregateRating() } : {}),
+    ...(business.credentials.length ? { hasCredential: credentials() } : {}),
+    ...(business.locations.length > 1
+      ? { subOrganization: business.locations.map((b) => ({ '@id': branchId(b.slug) })) }
+      : {}),
     ...(opts.services?.length
       ? {
           hasOfferCatalog: {
@@ -126,6 +130,56 @@ export function localBusiness(opts: { areas?: AreaInput[]; services?: { name: st
       : {}),
   };
 }
+
+export function credentials(): Thing[] {
+  return business.credentials
+    .filter((c) => c.type === 'license' || c.type === 'certification')
+    .map((c) => ({
+      '@type': 'EducationalOccupationalCredential',
+      name: c.label,
+      credentialCategory: c.type,
+      ...(c.number ? { identifier: c.number } : {}),
+      ...(c.issuer ? { recognizedBy: { '@type': 'Organization', name: c.issuer } } : {}),
+      ...(c.url ? { url: c.url } : {}),
+    }));
+}
+
+export const branchId = (slug: string) => abs(`/locations/${slug}/#branch`);
+
+/** A physical branch as its own LocalBusiness, linked to the parent org. */
+export function branch(b: (typeof business.locations)[number]): Thing {
+  return {
+    '@type': schemaTypes(),
+    '@id': branchId(b.slug),
+    name: b.name,
+    url: abs(`/locations/${b.slug}/`),
+    telephone: b.phoneE164 ?? business.phoneE164,
+    ...(b.email ? { email: b.email } : {}),
+    image: abs(theme.ogImage),
+    address: { '@type': 'PostalAddress', streetAddress: b.street, addressLocality: b.city, addressRegion: b.state, postalCode: b.zip, addressCountry: business.address.country },
+    ...(b.geo ? { geo: { '@type': 'GeoCoordinates', latitude: b.geo.lat, longitude: b.geo.lng } } : {}),
+    ...(b.mapUrl ? { hasMap: b.mapUrl } : {}),
+    openingHoursSpecification: (b.hours ?? business.hours).map((h) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: h.days, opens: h.opens, closes: h.closes })),
+    parentOrganization: { '@id': ORG_ID },
+  };
+}
+
+export function person(m: { name: string; role: string; bio: string; photo?: string; sameAs?: string[]; certifications?: string[] }): Thing {
+  return {
+    '@type': 'Person',
+    name: m.name,
+    jobTitle: m.role,
+    description: m.bio,
+    worksFor: { '@id': ORG_ID },
+    ...(m.photo ? { image: abs(m.photo) } : {}),
+    ...(m.sameAs?.length ? { sameAs: m.sameAs } : {}),
+    ...(m.certifications?.length
+      ? { hasCredential: m.certifications.map((c) => ({ '@type': 'EducationalOccupationalCredential', name: c })) }
+      : {}),
+  };
+}
+
+const ALL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 export function webSite(): Thing {
   return {
@@ -191,10 +245,14 @@ export function service(opts: {
   areas?: AreaInput[];
   startingPrice?: number;
   priceUnit?: string;
+  emergency?: boolean;
 }): Thing {
   const url = abs(opts.path);
   return {
     '@type': 'Service',
+    ...(opts.emergency && business.emergency?.available
+      ? { hoursAvailable: { '@type': 'OpeningHoursSpecification', dayOfWeek: ALL_DAYS, opens: '00:00', closes: '23:59' } }
+      : {}),
     '@id': `${url}#service`,
     name: opts.name,
     serviceType: opts.serviceType ?? opts.name,

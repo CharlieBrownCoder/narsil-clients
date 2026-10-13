@@ -14,6 +14,8 @@ import * as S from '@/lib/schema';
 const { business } = siteConfig;
 const bt = getBusinessType(siteConfig.businessType);
 const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+const label = (c: string) => c.replace(/-/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
+const cats = [...new Set(posts.map((p) => p.data.category))];
 const meta = {
   title: buildTitle(`${bt.label} Tips & Advice`),
   description: buildDescription(`Expert ${bt.label.toLowerCase()} tips, pricing guides, and maintenance advice from the team at ${business.name} in ${business.address.city}, ${business.address.state}.`),
@@ -31,13 +33,14 @@ const schema = S.graph(
 <BaseLayout meta={meta} schema={schema}>
   <Hero compact title={`${bt.label} Tips & Advice`} subtitle={`Straight answers from the pros at ${business.name}.`} />
   <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  {cats.length > 1 && <div class="container-x pt-6 flex flex-wrap gap-2">{cats.map((c) => <span class="text-xs font-medium bg-neutral border border-slate-200 px-3 py-1 rounded-full">{label(c)}</span>)}</div>}
   <section class="section !pt-8">
     <div class="container-x grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {posts.map((p) => (
         <a href={`/blog/${p.id}/`} class="card overflow-hidden group flex flex-col hover:shadow-md transition">
           {p.data.image && <Image src={p.data.image} alt={p.data.imageAlt ?? p.data.title} widths={[400, 800]} sizes="(min-width: 1024px) 33vw, 100vw" class="w-full aspect-[3/2] object-cover" />}
           <div class="p-6 flex-1 flex flex-col">
-            <time class="text-xs text-slate-500" datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time>
+            <p class="text-xs text-slate-500"><span class="font-semibold text-primary">{label(p.data.category)}</span> · <time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate)}</time></p>
             <h3 class="mt-2 group-hover:text-primary">{p.data.title}</h3>
             <p class="mt-2 text-slate-600 flex-1">{p.data.description}</p>
             <span class="mt-4 font-semibold text-primary">Read more →</span>

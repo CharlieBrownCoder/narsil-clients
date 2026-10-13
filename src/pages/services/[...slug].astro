@@ -1,22 +1,28 @@
 ---
 /**
- * /services/            → ServicesIndex
- * /services/<slug>/     → ServiceDetail
+ * /services/              → ServicesIndex
+ * /services/<category>/   → ServiceCategory (hub, when categories.json has entries)
+ * /services/<slug>/       → ServiceDetail
+ * Category ids and service slugs share one namespace; scripts/validate.mjs rejects collisions.
  * Built only when siteConfig.pages.services is true.
  */
 import { getCollection } from 'astro:content';
 import { siteConfig } from '@config';
 import ServicesIndex from '@/views/ServicesIndex.astro';
 import ServiceDetail from '@/views/ServiceDetail.astro';
+import ServiceCategory from '@/views/ServiceCategory.astro';
 
 export async function getStaticPaths() {
   if (!siteConfig.pages.services) return [];
   const services = await getCollection('services');
+  const categories = await getCollection('categories');
+  const used = new Set(services.map((s) => s.data.category).filter(Boolean));
   return [
-    { params: { slug: undefined }, props: { service: null } },
-    ...services.map((s) => ({ params: { slug: s.id }, props: { service: s } })),
+    { params: { slug: undefined }, props: { service: null, category: null } },
+    ...categories.filter((c) => used.has(c.id)).map((c) => ({ params: { slug: c.id }, props: { service: null, category: c } })),
+    ...services.map((s) => ({ params: { slug: s.id }, props: { service: s, category: null } })),
   ];
 }
-const { service } = Astro.props;
+const { service, category } = Astro.props;
 ---
-{service ? <ServiceDetail service={service} /> : <ServicesIndex />}
+{service ? <ServiceDetail service={service} /> : category ? <ServiceCategory category={category} /> : <ServicesIndex />}

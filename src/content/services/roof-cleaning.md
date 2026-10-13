@@ -2,6 +2,7 @@
 title: Roof Cleaning
 shortTitle: Roof Cleaning
 excerpt: No-pressure roof washing that removes black streaks and moss from asphalt shingles without voiding your warranty.
+category: residential
 icon: roof
 image: ../../assets/images/service-roof.jpg
 imageAlt: Asphalt shingle roof half cleaned showing black streak removal

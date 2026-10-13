@@ -2,6 +2,7 @@
 title: Deck & Fence Cleaning
 shortTitle: Deck & Fence Cleaning
 excerpt: Gentle wood cleaning and brightening for decks, fences, and pergolas, with optional staining and sealing.
+category: residential
 icon: spark
 image: ../../assets/images/service-deck.jpg
 imageAlt: Cedar fence being cleaned, with weathered gray on one side and restored wood on the other

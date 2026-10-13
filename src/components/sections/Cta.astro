@@ -14,7 +14,7 @@ const { title = 'Ready for a free quote?', text = `Call ${business.phone} or sen
     </div>
     <div class="flex flex-wrap gap-3 shrink-0">
       <a href={telHref()} class="btn-accent"><Icon name="phone" class="w-5 h-5" /> {business.phone}</a>
-      {pages.contact && <a href="/contact/" class="btn-ghost">Request a Quote</a>}
+      {pages.contact && <a href="/contact/" data-cta="band-quote" class="btn-ghost">Request a Quote</a>}
     </div>
   </div>
 </section>

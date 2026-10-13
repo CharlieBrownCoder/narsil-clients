@@ -8,6 +8,10 @@ export const OPTIONAL_PAGES: Record<string, PageKey | null> = {
   gallery: 'gallery',
   faq: 'faq',
   'privacy-policy': 'privacyPolicy',
+  terms: 'terms',
+  team: 'team',
+  emergency: 'emergency',
+  'licenses-insurance': 'licensesInsurance',
   'thank-you': null,
 };
 

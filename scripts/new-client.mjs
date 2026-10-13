@@ -30,7 +30,7 @@ for (const dir of ['services', 'locations', 'posts']) {
   rmSync(resolve(content, dir), { recursive: true, force: true });
   mkdirSync(resolve(content, dir), { recursive: true });
 }
-for (const f of ['projects.json', 'faqs.json']) writeFileSync(resolve(content, f), '[]\n');
+for (const f of ['projects.json', 'faqs.json', 'categories.json', 'team.json']) writeFileSync(resolve(content, f), '[]\n');
 
 writeFileSync(
   resolve(content, 'services/example-service.md'),
@@ -96,6 +96,9 @@ cfg = cfg.replace(/city: '[^']*'/, `city: '${city}'`).replace(/state: '[^']*'/, 
 cfg = cfg.replace(/foundingYear: \d+/, 'foundingYear: undefined');
 cfg = cfg.replace(/rating: \{[^}]*\}/, 'rating: undefined');
 cfg = cfg.replace(/promo: \{ enabled: true/, 'promo: { enabled: false');
+cfg = cfg.replace(/locations: \[[\s\S]*?\n    \],/, 'locations: [],');
+cfg = cfg.replace(/credentials: \[[\s\S]*?\n    \],/, 'credentials: [],');
+cfg = cfg.replace(/responseTimePromise: '[^']*'/, "responseTimePromise: ''");
 writeFileSync(cfgPath, head + cfg);
 
 console.log(`\nReset for ${name} (${type}) in ${city}, ${state}.\nNext:\n  1. Edit src/site.config.ts (url, phone, email, address, hours, sameAs, theme)\n  2. Replace public/images/*\n  3. Fill src/content/\n  4. npm run build\n`);

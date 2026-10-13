@@ -1,0 +1,34 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { siteConfig } from '@config';
+interface Props { limit?: number; title?: string }
+const { limit, title = 'Meet the team' } = Astro.props;
+let team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+if (limit) team = team.slice(0, limit);
+const initials = (n: string) => n.split(' ').map((w) => w[0]).slice(0, 2).join('');
+---
+{siteConfig.pages.team && team.length > 0 && (
+  <section class="section">
+    <div class="container-x">
+      <p class="eyebrow">Our people</p>
+      <h2 class="mt-2">{title}</h2>
+      <ul class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {team.map((m) => (
+          <li class="flex gap-5">
+            {m.data.photo
+              ? <Image src={m.data.photo} alt={m.data.name} width={160} height={160} class="w-24 h-24 rounded-full object-cover shrink-0" />
+              : <span class="w-24 h-24 rounded-full bg-primary/10 text-primary font-heading font-bold text-2xl flex items-center justify-center shrink-0" aria-hidden="true">{initials(m.data.name)}</span>}
+            <div>
+              <h3 class="text-lg">{m.data.name}</h3>
+              <p class="text-sm font-medium text-primary">{m.data.role}{m.data.yearsExperience ? ` · ${m.data.yearsExperience} yrs` : ''}</p>
+              <p class="mt-2 text-slate-600 text-sm">{m.data.bio}</p>
+              {m.data.certifications.length > 0 && <p class="mt-2 text-xs text-slate-500">{m.data.certifications.join(' · ')}</p>}
+            </div>
+          </li>
+        ))}
+      </ul>
+      {limit && <a href="/team/" class="mt-8 inline-flex font-semibold text-primary">Meet everyone →</a>}
+    </div>
+  </section>
+)}

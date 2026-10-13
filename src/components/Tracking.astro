@@ -1,6 +1,7 @@
 ---
 import { siteConfig } from '@config';
 const { ga4, gtm, metaPixel } = siteConfig.tracking;
+const anyTracker = Boolean(ga4 || gtm || metaPixel);
 ---
 {gtm && (
   <script is:inline define:vars={{ gtm }}>
@@ -22,5 +23,21 @@ const { ga4, gtm, metaPixel } = siteConfig.tracking;
   <script is:inline define:vars={{ metaPixel }}>
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', metaPixel); fbq('track', 'PageView');
+  </script>
+)}
+{anyTracker && (
+  <script is:inline>
+    // Phone-click and CTA-click conversions. One event per click, no duplicates on the thank-you page.
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a') : null;
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      var ev = href.indexOf('tel:') === 0 ? 'phone_call' : a.hasAttribute('data-cta') ? 'cta_click' : null;
+      if (!ev) return;
+      var payload = { event_category: 'conversion', event_label: a.getAttribute('data-cta') || href, page_path: location.pathname };
+      if (window.dataLayer) window.dataLayer.push(Object.assign({ event: ev }, payload));
+      if (window.gtag) window.gtag('event', ev, payload);
+      if (ev === 'phone_call' && window.fbq) window.fbq('track', 'Contact');
+    }, { passive: true });
   </script>
 )}

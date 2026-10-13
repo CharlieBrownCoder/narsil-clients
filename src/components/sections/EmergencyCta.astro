@@ -1,0 +1,20 @@
+---
+/** 24/7 band. Renders only when business.emergency.available is true. */
+import { siteConfig } from '@config';
+import Icon from '@/components/Icon.astro';
+const e = siteConfig.business.emergency;
+const phone = e?.phone ?? siteConfig.business.phone;
+const tel = `tel:${e?.phoneE164 ?? siteConfig.business.phoneE164}`;
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+---
+{e?.available && (
+  <section class:list={['bg-accent text-secondary', compact ? 'py-3' : 'py-6']}>
+    <div class="container-x flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class:list={['font-heading font-bold flex items-center gap-2', compact ? 'text-base' : 'text-xl']}>
+        <Icon name="clock" class="w-5 h-5" /> {e.text}
+      </p>
+      <a href={tel} data-cta="emergency-call" class="btn bg-secondary text-white hover:bg-primary-dark"><Icon name="phone" class="w-5 h-5" /> {phone}</a>
+    </div>
+  </section>
+)}

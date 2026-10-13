@@ -8,7 +8,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "new-client": "node scripts/new-client.mjs"
+    "new-client": "node scripts/new-client.mjs",
+    "validate": "node scripts/validate.mjs",
+    "test": "npm run check && npm run build && npm run validate"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
@@ -18,7 +20,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "typescript": "^5.9.0"
+    "typescript": "^5.9.0",
+    "yaml": "^2.9.1"
   },
   "engines": {
     "node": ">=22.12.0"

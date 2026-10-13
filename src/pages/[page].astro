@@ -12,6 +12,10 @@ import GalleryPage from '@/views/GalleryPage.astro';
 import FaqPage from '@/views/FaqPage.astro';
 import PrivacyPolicy from '@/views/PrivacyPolicy.astro';
 import ThankYou from '@/views/ThankYou.astro';
+import Terms from '@/views/Terms.astro';
+import Team from '@/views/Team.astro';
+import Emergency from '@/views/Emergency.astro';
+import LicensesInsurance from '@/views/LicensesInsurance.astro';
 
 export function getStaticPaths() {
   return enabledOptionalPages().map((page) => ({ params: { page } }));
@@ -25,6 +29,10 @@ const views: Record<string, any> = {
   faq: FaqPage,
   'privacy-policy': PrivacyPolicy,
   'thank-you': ThankYou,
+  terms: Terms,
+  team: Team,
+  emergency: Emergency,
+  'licenses-insurance': LicensesInsurance,
 };
 const View = views[Astro.params.page!];
 ---
