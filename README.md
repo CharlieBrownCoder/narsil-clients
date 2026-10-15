@@ -2,7 +2,7 @@
 
 A production-ready Astro template for local service companies (pressure washing, painting, junk removal, roofing, plumbing, electrical, HVAC, and more). One config file drives the whole site: business type, enabled pages, schema.org markup, theme, and tracking.
 
-Built for SEO: static HTML, zero JS by default, JSON-LD on every page, programmatic service-area pages, sitemap, robots, canonical tags, Open Graph, and Core Web Vitals friendly markup.
+Built for SEO: static HTML, zero JS by default, JSON-LD on every page, programmatic service-area pages, XML and HTML sitemaps, robots, canonical tags, Open Graph, and Core Web Vitals friendly markup.
 
 ## Stack
 

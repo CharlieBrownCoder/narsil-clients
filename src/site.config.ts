@@ -28,7 +28,8 @@ export type PageKey =
   | 'quoteCalculator'
   | 'financing'
   | 'careers'
-  | 'privacyPolicy';
+  | 'privacyPolicy'
+  | 'sitemap';
 
 /** A real, staffed office or branch. Never a service-area city. */
 export interface Branch {
@@ -390,6 +391,8 @@ export const siteConfig: SiteConfig = {
     financing: false,
     careers: false,
     privacyPolicy: true,
+    /** Visitor-facing HTML sitemap at /sitemap/. The XML sitemap is always generated. */
+    sitemap: true,
   },
 
   nav: [

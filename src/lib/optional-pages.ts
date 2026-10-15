@@ -14,6 +14,7 @@ export const OPTIONAL_PAGES: Record<string, PageKey | null> = {
   pricing: 'pricingGuide',
   book: 'booking',
   'quote-calculator': 'quoteCalculator',
+  sitemap: 'sitemap',
   'thank-you': null,
 };
 

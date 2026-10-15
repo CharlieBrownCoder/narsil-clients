@@ -18,6 +18,7 @@ import LicensesInsurance from '@/views/LicensesInsurance.astro';
 import PricingGuide from '@/views/PricingGuide.astro';
 import Booking from '@/views/Booking.astro';
 import QuoteCalculatorPage from '@/views/QuoteCalculatorPage.astro';
+import SitemapPage from '@/views/SitemapPage.astro';
 
 export function getStaticPaths() {
   return enabledOptionalPages().map((page) => ({ params: { page } }));
@@ -37,6 +38,7 @@ const views: Record<string, any> = {
   pricing: PricingGuide,
   book: Booking,
   'quote-calculator': QuoteCalculatorPage,
+  sitemap: SitemapPage,
 };
 const View = views[Astro.params.page!];
 ---

@@ -1,0 +1,91 @@
+---
+/**
+ * Visitor-facing HTML sitemap at /sitemap/. Lists every page the build
+ * produces, grouped the way the site is organized. The XML sitemap for
+ * crawlers is generated separately by @astrojs/sitemap.
+ */
+import { getCollection } from 'astro:content';
+import { siteConfig } from '@config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { buildTitle, buildDescription } from '@/lib/seo';
+import { getBusinessType } from '@/lib/business-types';
+import { OPTIONAL_PAGES } from '@/lib/optional-pages';
+import * as S from '@/lib/schema';
+
+const { business, pages, nav } = siteConfig;
+const bt = getBusinessType(siteConfig.businessType);
+const byOrder = (a: any, b: any) => a.data.order - b.data.order;
+
+const services = pages.services ? (await getCollection('services')).sort(byOrder) : [];
+const categories = pages.services ? (await getCollection('categories')).sort(byOrder).filter((c) => services.some((s) => s.data.category === c.id)) : [];
+const locations = pages.serviceAreas ? (await getCollection('locations')).sort(byOrder) : [];
+const projects = pages.gallery ? (await getCollection('projects')).sort(byOrder).filter((p) => (p.body ?? '').trim().length > 0) : [];
+const resources = pages.resources ? (await getCollection('resources')).sort(byOrder) : [];
+const posts = pages.blog ? (await getCollection('posts', ({ data }) => !data.draft)).sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()) : [];
+const branches = pages.locations ? business.locations : [];
+
+type Link = { href: string; label: string };
+type Group = { title: string; links: Link[] };
+
+const optionalLabels: Record<string, string> = {
+  about: 'About', contact: 'Contact', reviews: 'Reviews', faq: 'FAQ', team: 'Meet the Team', emergency: '24/7 Emergency',
+  'licenses-insurance': 'Licenses & Insurance', pricing: 'Pricing Guide', book: 'Book Online', 'quote-calculator': 'Quote Calculator',
+  'privacy-policy': 'Privacy Policy', terms: 'Terms', sitemap: 'Sitemap',
+};
+const optional: Link[] = Object.entries(OPTIONAL_PAGES)
+  .filter(([slug, key]) => slug !== 'thank-you' && (key === null || pages[key]) && !(slug === 'emergency' && !business.emergency?.available))
+  .map(([slug]) => ({ href: `/${slug}/`, label: optionalLabels[slug] ?? slug }))
+  .sort((x, y) => Number(['/privacy-policy/', '/terms/', '/sitemap/'].includes(x.href)) - Number(['/privacy-policy/', '/terms/', '/sitemap/'].includes(y.href)));
+
+const groups: Group[] = [
+  { title: 'Main pages', links: [{ href: '/', label: 'Home' }, ...nav.filter((n) => (!n.page || pages[n.page]) && !n.href.startsWith('/services') && !n.href.startsWith('/service-areas')).map((n) => ({ href: n.href, label: n.label })), ...optional.filter((o) => !nav.some((n) => n.href === o.href))] },
+  { title: 'Services', links: [...(services.length ? [{ href: '/services/', label: 'All services' }] : []), ...categories.map((c) => ({ href: `/services/${c.id}/`, label: c.data.title })), ...services.map((s) => ({ href: `/services/${s.id}/`, label: s.data.title }))] },
+  { title: 'Service areas', links: [...(locations.length ? [{ href: '/service-areas/', label: 'All service areas' }] : []), ...locations.map((l) => ({ href: `/service-areas/${l.id}/`, label: `${l.data.city}, ${l.data.state}` }))] },
+  { title: 'Locations', links: branches.map((b) => ({ href: `/locations/${b.slug}/`, label: b.name })) },
+  { title: 'Case studies', links: projects.map((p) => ({ href: `/gallery/${p.id}/`, label: p.data.title })) },
+  { title: 'Resources', links: [...(resources.length ? [{ href: '/resources/', label: 'All resources' }] : []), ...resources.map((r) => ({ href: `/resources/${r.id}/`, label: r.data.title }))] },
+  { title: 'Blog', links: [...(posts.length ? [{ href: '/blog/', label: 'All posts' }] : []), ...posts.map((p) => ({ href: `/blog/${p.id}/`, label: p.data.title }))] },
+].filter((g) => g.links.length);
+
+/** Service + city pages, grouped under each city. */
+const combos = pages.serviceAreaCombos
+  ? locations.map((l) => ({ city: `${l.data.city}, ${l.data.state}`, links: services.filter((s) => !l.data.services.length || l.data.services.includes(s.id)).map((s) => ({ href: `/service-areas/${l.id}/${s.id}/`, label: s.data.shortTitle ?? s.data.title })) })).filter((c) => c.links.length)
+  : [];
+
+const meta = { title: buildTitle('Sitemap'), description: buildDescription(`Every page on the ${business.name} website: ${bt.label.toLowerCase()} services, service areas, and company information.`), canonical: '/sitemap/' };
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Sitemap', path: '/sitemap/' }];
+const schema = S.graph(S.localBusiness(), S.webSite(), S.webPage({ path: '/sitemap/', title: meta.title, description: meta.description, type: 'CollectionPage' }), S.breadcrumbList('/sitemap/', crumbs));
+---
+<BaseLayout meta={meta} schema={schema}>
+  <Hero compact title="Sitemap" subtitle={`Every page on the ${business.name} website, in one place.`} />
+  <div class="container-x pt-6"><Breadcrumbs crumbs={crumbs} /></div>
+  <section class="container-x py-12">
+    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+      {groups.map((g) => (
+        <div>
+          <h2 class="font-heading text-xl text-primary">{g.title}</h2>
+          <ul class="mt-4 space-y-2 text-slate-700">
+            {g.links.map((l) => <li><a href={l.href} class="hover:text-primary hover:underline">{l.label}</a></li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+    {combos.length > 0 && (
+      <div class="mt-14">
+        <h2 class="font-heading text-xl text-primary">Services by city</h2>
+        <div class="mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {combos.map((c) => (
+            <div>
+              <h3 class="font-semibold text-slate-900">{c.city}</h3>
+              <ul class="mt-2 space-y-1 text-sm text-slate-700">
+                {c.links.map((l) => <li><a href={l.href} class="hover:text-primary hover:underline">{l.label}</a></li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </section>
+</BaseLayout>
