@@ -41,7 +41,7 @@ const optional: Link[] = Object.entries(OPTIONAL_PAGES)
 
 const groups: Group[] = [
   { title: 'Main pages', links: [{ href: '/', label: 'Home' }, ...nav.filter((n) => (!n.page || pages[n.page]) && !n.href.startsWith('/services') && !n.href.startsWith('/service-areas')).map((n) => ({ href: n.href, label: n.label })), ...optional.filter((o) => !nav.some((n) => n.href === o.href))] },
-  { title: 'Services', links: [...(services.length ? [{ href: '/services/', label: 'All services' }] : []), ...categories.map((c) => ({ href: `/services/${c.id}/`, label: c.data.title })), ...services.map((s) => ({ href: `/services/${s.id}/`, label: s.data.title }))] },
+  { title: 'Services', links: [...(services.length ? [{ href: '/services/', label: 'All services' }] : []), ...categories.map((c) => ({ href: `/services/${c.id}/`, label: `All ${c.data.title.toLowerCase()}` })), ...services.map((s) => ({ href: `/services/${s.id}/`, label: s.data.title }))] },
   { title: 'Service areas', links: [...(locations.length ? [{ href: '/service-areas/', label: 'All service areas' }] : []), ...locations.map((l) => ({ href: `/service-areas/${l.id}/`, label: `${l.data.city}, ${l.data.state}` }))] },
   { title: 'Locations', links: branches.map((b) => ({ href: `/locations/${b.slug}/`, label: b.name })) },
   { title: 'Case studies', links: projects.map((p) => ({ href: `/gallery/${p.id}/`, label: p.data.title })) },
