@@ -52,6 +52,7 @@ Repo and hosting
 - GitHub repo (narsil-clients/<slug>-site), created from the template: yes/no
 - Vercel connected: yes/no
 - Production domain and current DNS host:
+- HTML sitemap page on (default yes):
 ```
 
 ## Part 2: Kickoff prompt (paste into the new session)
