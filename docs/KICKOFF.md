@@ -87,6 +87,9 @@ Rules for this build
   one service page, and one city page at 1366 and 390 wide and send them.
 - Old-site URLs: map each to its new page as a permanent redirect in
   vercel.json. Keep unchanged paths unchanged.
+- Keep the HTML sitemap page on (pages.sitemap) and, before reporting,
+  fetch every link on /sitemap/ from the preview and confirm each returns
+  200. The XML sitemap is what gets submitted to Search Console.
 - Commit in logical steps on main and push. No PR unless asked.
 
 Ask me only for decisions that change the work: replacing an existing repo's
