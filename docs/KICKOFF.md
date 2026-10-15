@@ -6,6 +6,11 @@ follows `docs/NEW-CLIENT.md` and the skill order in `CLAUDE.md`.
 
 ## Part 1: Intake (collect before starting)
 
+The fill-in version of this form, with file uploads and one saved record per
+client, is at https://claude.ai/artifact/HfXXCVhxeVWGZAfHFV9VJb. Share it from
+the page's Share menu with edit access when a client fills it in. The text
+block below is the same intake for pasting into chat.
+
 Blank is fine. Blank means the claim is hidden, never invented.
 
 ```
