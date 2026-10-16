@@ -54,6 +54,7 @@ Integrations
 - Search Console verification token:
 
 Repo and hosting
+- Stack: Astro service template (default; do not change)
 - GitHub repo (narsil-clients/<slug>-site), created from the template: yes/no
 - Vercel connected: yes/no
 - Production domain and current DNS host:
@@ -65,9 +66,18 @@ Repo and hosting
 Replace the bracketed values. Leave a line blank rather than guessing.
 
 ```
-Build the client site for [Business Name] in this repo, which was created from
-the narsil-clients service template. Read README.md, CLAUDE.md, and
-docs/NEW-CLIENT.md first, then follow the skill order in CLAUDE.md.
+Build the client site for [Business Name] in this repo.
+
+Stack: Astro 7 static site from the narsil-clients/narsil-clients service
+template (Tailwind 4, Markdown content, Vercel). This is the default for
+every client site. First confirm this repo is that template: astro.config.mjs,
+src/site.config.ts, and src/views/ exist. If the repo holds anything else
+(a Next.js starter, an empty repo, another template), stop and say so; the
+fix is to copy the template's files in with one normal commit on main, not
+to build in whatever is there.
+
+Read README.md, CLAUDE.md, and docs/NEW-CLIENT.md first, then follow the
+skill order in CLAUDE.md.
 
 Intake:
 [paste the completed intake block]
