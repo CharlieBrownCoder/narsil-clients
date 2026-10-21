@@ -6,6 +6,7 @@
  *   node scripts/hero-mobile-crop.mjs                 # hero.jpg -> hero-mobile.jpg, centered
  *   node scripts/hero-mobile-crop.mjs --focus right   # left | center | right | top | bottom
  *   node scripts/hero-mobile-crop.mjs --src hero.jpg --out hero-mobile.jpg --focus "60% 40%"
+ *   node scripts/hero-mobile-crop.mjs --size 800x800     # square, when the subject is wide
  *
  * Then set hero.imageMobile: 'hero-mobile.jpg' in src/site.config.ts.
  */
@@ -16,7 +17,7 @@ const args = Object.fromEntries(process.argv.slice(2).map((a, i, all) => (a.star
 const src = resolve('src/assets/images', String(args.src ?? 'hero.jpg'));
 const out = resolve('src/assets/images', String(args.out ?? 'hero-mobile.jpg'));
 const focus = String(args.focus ?? 'center');
-const W = 800, H = 1000;
+const [W, H] = String(args.size ?? '800x1000').split('x').map(Number);
 
 const img = sharp(src);
 const meta = await img.metadata();
