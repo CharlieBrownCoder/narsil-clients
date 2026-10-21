@@ -2,8 +2,9 @@
 /**
  * Trustindex review widget. One placement = one widget ID from the Trustindex
  * dashboard. Renders nothing when the ID is blank, so pages stay clean for
- * clients who haven't set it up yet. The loader script is deferred and only
- * added when a widget renders.
+ * clients who haven't set it up yet. The loader script is injected after the
+ * page has loaded and the widget is near the viewport, so it never competes
+ * with the hero image for bandwidth (it was the main cause of a 3 s mobile LCP).
  */
 import { siteConfig } from '@config';
 interface Props {
@@ -30,15 +31,30 @@ const { trust, business } = siteConfig;
             {trust.rating && <p class:list={['text-sm', dark ? 'text-slate-300' : 'text-slate-600']}><strong>{trust.rating.value}</strong> from {trust.rating.count} {trust.rating.source} reviews</p>}
           </div>
         )}
-        <div class="ti-widget" data-ti-widget={id}></div>
-        <script is:inline defer async src={`https://cdn.trustindex.io/loader.js?${id}`}></script>
+        <div class="ti-widget" data-ti-widget={id} data-ti-loader={`https://cdn.trustindex.io/loader.js?${id}`}></div>
         {business.googleReviewUrl && <a href={business.googleReviewUrl} target="_blank" rel="noopener" class:list={['mt-8', dark ? 'btn-accent' : 'btn-outline']}>Leave a review</a>}
       </div>
     </section>
   ) : (
     <div>
-      <div class="ti-widget" data-ti-widget={id}></div>
-      <script is:inline defer async src={`https://cdn.trustindex.io/loader.js?${id}`}></script>
+      <div class="ti-widget" data-ti-widget={id} data-ti-loader={`https://cdn.trustindex.io/loader.js?${id}`}></div>
     </div>
   )
+)}
+{id && (
+  <script is:inline>
+    (function () {
+      if (window.__tiDeferred) return; window.__tiDeferred = true;
+      var loaded = {};
+      function inject(el) { var src = el.getAttribute('data-ti-loader'); if (!src || loaded[src]) return; loaded[src] = true; var s = document.createElement('script'); s.async = true; s.defer = true; s.src = src; document.body.appendChild(s); }
+      function arm() {
+        var els = document.querySelectorAll('[data-ti-loader]');
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) { entries.forEach(function (e) { if (e.isIntersecting) { inject(e.target); io.unobserve(e.target); } }); }, { rootMargin: '600px 0px' });
+          els.forEach(function (el) { io.observe(el); });
+        } else { els.forEach(inject); }
+      }
+      if (document.readyState === 'complete') arm(); else window.addEventListener('load', function () { (window.requestIdleCallback || function (cb) { setTimeout(cb, 200); })(arm); });
+    })();
+  </script>
 )}
