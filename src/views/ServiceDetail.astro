@@ -70,7 +70,7 @@ const schema = S.graph(
         {related.length > 0 && (
           <div class="card p-5">
             <p class="font-semibold text-secondary">Related services</p>
-            <ul class="mt-3 space-y-2">{related.map((r) => <li><a href={`/services/${r.id}/`} class="text-primary font-medium hover:underline">{r.data.title}</a></li>)}</ul>
+            <ul class="mt-3 space-y-2">{related.map((r) => <li><a href={`/services/${r.id}/`} class="inline-block py-1 text-primary font-medium hover:underline">{r.data.title}</a></li>)}</ul>
           </div>
         )}
       </aside>

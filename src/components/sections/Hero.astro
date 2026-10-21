@@ -44,7 +44,7 @@ const ratingLine = trust.rating ? `${trust.rating.value} stars from ${trust.rati
 <section class:list={['relative isolate overflow-hidden', dark ? (theme.heroScrim === 'brand' ? 'bg-primary-dark text-white' : 'bg-secondary text-white') : 'bg-neutral']} data-hero={layout}>
   {layout === 'photo' && image && (
     <>
-      <Image src={image} alt={imageAlt} widths={[640, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
+      <Image src={image} alt={imageAlt} widths={[480, 800, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
       {theme.heroScrim === 'duotone' && <div class="absolute inset-0 bg-primary mix-blend-color" aria-hidden="true"></div>}
       <div class:list={['absolute inset-0 bg-gradient-to-r', theme.heroScrim === 'brand' ? 'from-primary-dark via-primary-dark/85 to-primary-dark/30' : 'from-secondary via-secondary/85 to-secondary/30']} aria-hidden="true"></div>
       <div class:list={['absolute inset-0 bg-gradient-to-t via-transparent to-transparent', theme.heroScrim === 'brand' ? 'from-primary-dark/70' : 'from-secondary/70']} aria-hidden="true"></div>
@@ -52,7 +52,7 @@ const ratingLine = trust.rating ? `${trust.rating.value} stars from ${trust.rati
   )}
   {layout === 'centered' && image && (
     <>
-      <Image src={image} alt={imageAlt} widths={[640, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
+      <Image src={image} alt={imageAlt} widths={[480, 800, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
       {theme.heroScrim === 'duotone' && <div class="absolute inset-0 bg-primary mix-blend-color" aria-hidden="true"></div>}
       <div class:list={['absolute inset-0', theme.heroScrim === 'brand' ? 'bg-primary-dark/75' : 'bg-secondary/75']} aria-hidden="true"></div>
     </>
