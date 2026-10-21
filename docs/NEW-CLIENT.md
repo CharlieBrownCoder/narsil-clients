@@ -20,7 +20,7 @@
 - [ ] `tracking.searchConsoleVerification` once the property is added
 - [ ] `pages` toggles
 - [ ] `theme`: start from a preset (`node scripts/apply-preset.mjs <id>`), then adjust colors, fonts, radius, `heroStyle`, `heroForm`, `headingCase`, `dividers`, `serviceCards`
-- [ ] `hero`: headline in the "[City]'s Top-Rated *[Service]* Company" shape or the client's own, under 8 words; subheadline under 20 words; `image` (real job photo, 2000×1250) and optional `cutout` (transparent PNG of the owner or truck)
+- [ ] `hero`: headline in the "[City]'s Top-Rated *[Service]* Company" shape or the client's own, under 8 words; subheadline under 20 words; `image` (real job photo, 2000×1250), `imageMobile` (4:5 crop for phones, `node scripts/hero-mobile-crop.mjs`), and optional `cutout` (transparent PNG of the owner or truck)
 - [ ] `trust.stats`: 2 to 4 real numbers (reviews, years, jobs). Blank if unverifiable.
 - [ ] `process`: three real steps in the client's words, or `[]`
 - [ ] `trust.guarantee`: the written guarantee, or blank
@@ -47,6 +47,7 @@ Source images live in `src/assets/images/` and are optimized at build (WebP, res
 | `og-default.jpg` | `public/images/` | 1200×630 | social share default |
 | `favicon.svg` | `public/` | square | tab icon |
 | `hero.jpg` | `src/assets/images/` | 2000×1250 | home hero (full-bleed; keep the subject right of center so copy sits on the left) |
+| `hero-mobile.jpg` | `src/assets/images/` | 800×1000 (4:5) | phones only; `node scripts/hero-mobile-crop.mjs` makes it from `hero.jpg`, or supply a hand-picked crop |
 | `hero-cutout.png` | `src/assets/images/` | ~900×1100, transparent | cutout hero style only |
 | `badges/*.svg\|png` | `public/images/badges/` | ~200×60 | trust logo row |
 | `about.jpg` | `src/assets/images/` | 1600×1200 | about hero |

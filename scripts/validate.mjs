@@ -136,6 +136,7 @@ for (const key of ['fontHeading', 'fontBody']) {
 }
 // hero assets and badge logos must exist
 const heroImg = config.match(/\n\s*image:\s*'([^']+)'/); if (heroImg && !existsSync(join(root, 'src/assets/images', heroImg[1]))) err(`hero.image "${heroImg[1]}" not found in src/assets/images/`);
+const heroMob = config.match(/\n\s*imageMobile:\s*'([^']+)'/); if (heroMob && !existsSync(join(root, 'src/assets/images', heroMob[1]))) err(`hero.imageMobile "${heroMob[1]}" not found in src/assets/images/`);
 const cut = config.match(/\n\s*cutout:\s*'([^']+)'/); if (cut && !existsSync(join(root, 'src/assets/images', cut[1]))) err(`hero.cutout "${cut[1]}" not found in src/assets/images/`);
 for (const m of config.matchAll(/src:\s*'(\/images\/badges\/[^']+)'/g)) if (!existsSync(join(root, 'public', m[1]))) err(`trust.logos file ${m[1]} not found in public/`);
 const headline = config.match(/\n\s*headline:\s*'([^']*)'/); if (headline && (headline[1].split('*').length - 1) % 2) err('hero.headline has an unmatched * accent marker');
