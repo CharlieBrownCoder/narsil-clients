@@ -191,6 +191,13 @@ export interface SiteConfig {
     /** Background / side photo, e.g. "hero.jpg" */
     image: string;
     imageAlt: string;
+    /**
+     * Portrait crop of the hero photo for phones, e.g. "hero-mobile.jpg" (800x1000).
+     * Phones then download a 4:5 image sized for their screen instead of the
+     * wide desktop photo. Generate it with `node scripts/hero-mobile-crop.mjs`.
+     * Blank = phones use `image`.
+     */
+    imageMobile?: string;
     /** Transparent PNG of a person or truck for the cutout style, e.g. "hero-cutout.png" */
     cutout?: string;
     /** 2×2 checkmark bullets. [] = use trust.badges labels. */
@@ -431,6 +438,7 @@ export const siteConfig: SiteConfig = {
     headline: 'Plano’s Top-Rated *Pressure Washing* Company',
     subheadline: 'Soft washing, driveways, roofs, and decks. Insured crews and a written quote before we start.',
     image: 'hero.jpg',
+    imageMobile: 'hero-mobile.jpg',
     imageAlt: 'ClearShine technician soft washing a two-story brick home in Plano',
     cutout: 'hero-cutout.png',
     bullets: [],

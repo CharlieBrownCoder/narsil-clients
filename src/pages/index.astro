@@ -53,6 +53,7 @@ const schema = S.graph(
     subtitle={hero.subheadline}
     image={requireAsset(hero.image)}
     imageAlt={hero.imageAlt}
+    imageMobile={asset(hero.imageMobile)}
     cutout={asset(hero.cutout)}
     bullets={hero.bullets.length ? hero.bullets : trust.badges.map((b) => b.label)}
     form={theme.heroForm}

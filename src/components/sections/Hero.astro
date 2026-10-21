@@ -5,7 +5,7 @@
  * at a smaller height, without the form.
  */
 import { siteConfig } from '@config';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Icon from '@/components/Icon.astro';
 import Headline from '@/components/Headline.astro';
@@ -21,6 +21,8 @@ interface Props {
   subtitle: string;
   image?: ImageMetadata;
   imageAlt?: string;
+  /** portrait crop served to phones (max-width 767px) in the photo and centered layouts */
+  imageMobile?: ImageMetadata;
   cutout?: ImageMetadata;
   bullets?: string[];
   /** override theme.heroStyle */
@@ -32,19 +34,24 @@ interface Props {
   nextBg?: string;
 }
 const { theme, business, trust, pages } = siteConfig;
-const { eyebrow, title, subtitle, image, imageAlt = '', cutout, bullets = [], style = theme.heroStyle, form = false, compact = false, nextBg = '#ffffff' } = Astro.props;
+const { eyebrow, title, subtitle, image, imageAlt = '', imageMobile, cutout, bullets = [], style = theme.heroStyle, form = false, compact = false, nextBg = '#ffffff' } = Astro.props;
 const layout: 'photo' | 'cutout' | 'split' | 'centered' = style === 'photo' && !image ? 'cutout' : style === 'split' && !image && !form ? 'centered' : style === 'cutout' && !cutout ? (image ? 'photo' : 'centered') : style;
 const dark = layout === 'photo' || layout === 'cutout' || (layout === 'centered' && !!image);
 const showForm = form && pages.contact;
 const showBullets = !compact && bullets.length > 0;
 const pad = compact ? 'py-14 md:py-20' : showForm ? 'py-16 md:py-24' : 'py-20 md:py-32';
 const headingCls = `mt-3 ${dark ? '!text-white' : ''} ${compact ? '!text-3xl md:!text-5xl' : ''}`;
+/** Art-directed mobile source: phones get the 4:5 crop at 480 to 960 wide. */
+const mobileSrc = imageMobile ? await getImage({ src: imageMobile, widths: [480, 640, 800, 960], format: 'webp' }) : null;
 const ratingLine = trust.rating ? `${trust.rating.value} stars from ${trust.rating.count}+ ${trust.rating.source} reviews` : '';
 ---
 <section class:list={['relative isolate overflow-hidden', dark ? (theme.heroScrim === 'brand' ? 'bg-primary-dark text-white' : 'bg-secondary text-white') : 'bg-neutral']} data-hero={layout}>
   {layout === 'photo' && image && (
     <>
-      <Image src={image} alt={imageAlt} widths={[480, 800, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
+      <picture>
+        {mobileSrc && <source media="(max-width: 767px)" srcset={mobileSrc.srcSet.attribute} sizes="100vw" type="image/webp" />}
+        <Image src={image} alt={imageAlt} widths={[480, 800, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
+      </picture>
       {theme.heroScrim === 'duotone' && <div class="absolute inset-0 bg-primary mix-blend-color" aria-hidden="true"></div>}
       <div class:list={['absolute inset-0 bg-gradient-to-r', theme.heroScrim === 'brand' ? 'from-primary-dark via-primary-dark/85 to-primary-dark/30' : 'from-secondary via-secondary/85 to-secondary/30']} aria-hidden="true"></div>
       <div class:list={['absolute inset-0 bg-gradient-to-t via-transparent to-transparent', theme.heroScrim === 'brand' ? 'from-primary-dark/70' : 'from-secondary/70']} aria-hidden="true"></div>
@@ -52,7 +59,10 @@ const ratingLine = trust.rating ? `${trust.rating.value} stars from ${trust.rati
   )}
   {layout === 'centered' && image && (
     <>
-      <Image src={image} alt={imageAlt} widths={[480, 800, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
+      <picture>
+        {mobileSrc && <source media="(max-width: 767px)" srcset={mobileSrc.srcSet.attribute} sizes="100vw" type="image/webp" />}
+        <Image src={image} alt={imageAlt} widths={[480, 800, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
+      </picture>
       {theme.heroScrim === 'duotone' && <div class="absolute inset-0 bg-primary mix-blend-color" aria-hidden="true"></div>}
       <div class:list={['absolute inset-0', theme.heroScrim === 'brand' ? 'bg-primary-dark/75' : 'bg-secondary/75']} aria-hidden="true"></div>
     </>
