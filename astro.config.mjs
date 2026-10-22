@@ -19,6 +19,9 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   build: {
-    inlineStylesheets: 'auto',
+    // The main stylesheet is about 10 KB compressed; inlining it removes the one
+    // render-blocking request on every page, which is the remaining lever for
+    // first paint and LCP on text-first pages (audit 2026-10-21).
+    inlineStylesheets: 'always',
   },
 });
