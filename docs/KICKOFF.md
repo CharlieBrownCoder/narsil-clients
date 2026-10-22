@@ -9,7 +9,9 @@ follows `docs/NEW-CLIENT.md` and the skill order in `CLAUDE.md`.
 The fill-in version of this form, with file uploads and one saved record per
 client, is at https://claude.ai/artifact/HfXXCVhxeVWGZAfHFV9VJb. Share it from
 the page's Share menu with edit access when a client fills it in. The text
-block below is the same intake for pasting into chat.
+block below is the same intake for pasting into chat. The same form has an
+Audit mode (Mode: "Audit a site") for narsil-clients/site-audit-template;
+an audit record is saved with an `-audit` suffix beside the build record.
 
 Blank is fine. Blank means the claim is hidden, never invented.
 
@@ -80,7 +82,13 @@ Read README.md, CLAUDE.md, and docs/NEW-CLIENT.md first, then follow the
 skill order in CLAUDE.md.
 
 Intake:
-[paste the completed intake block]
+[paste the completed intake block: the form's "Copy as text" output in Build
+mode, or the text block above filled in]
+
+If this client already has an audit (a record in the intake form's Audit
+mode, or a narsil-clients/<slug>-audit repo), read its AUDIT.md first and
+carry its fix list and confirmed facts into the build; cite the audit repo
+in the first commit.
 
 Rules for this build
 - Facts come only from the intake, the current site, and the Google listing.
