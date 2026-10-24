@@ -1,14 +1,18 @@
 ---
 import { siteConfig } from '@config';
 import { abs } from '@/lib/utils';
-import type { PageMeta } from '@/lib/seo';
+import { socialMeta, type PageMeta } from '@/lib/seo';
 import { ogPages, ogSlug } from '@/lib/og-pages';
 
 interface Props { meta: PageMeta }
 const { meta } = Astro.props;
 const canonical = abs(meta.canonical);
 const generated = (await ogPages()).some((p) => p.path === meta.canonical) ? `/og/${ogSlug(meta.canonical)}.png` : undefined;
-const og = abs(meta.ogImage ?? generated ?? siteConfig.theme.ogImage);
+const ogPath = meta.ogImage ?? generated ?? siteConfig.theme.ogImage;
+const og = abs(ogPath);
+// Every share image is 1200x630 (generated, getImage(1200x630), or theme.ogImage, which validate.mjs measures).
+const ogType = /\.png(\?|$)/i.test(ogPath) ? 'image/png' : 'image/jpeg';
+const { ogTitle, ogDescription } = socialMeta(meta);
 ---
 <title>{meta.title}</title>
 <meta name="description" content={meta.description} />
@@ -16,15 +20,20 @@ const og = abs(meta.ogImage ?? generated ?? siteConfig.theme.ogImage);
 {meta.noindex ? <meta name="robots" content="noindex, follow" /> : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
 <meta property="og:type" content={meta.type ?? 'website'} />
 <meta property="og:site_name" content={siteConfig.business.name} />
-<meta property="og:title" content={meta.title} />
-<meta property="og:description" content={meta.description} />
+<meta property="og:title" content={ogTitle} />
+<meta property="og:description" content={ogDescription} />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={og} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content={ogType} />
+<meta property="og:image:alt" content={`${ogTitle} · ${siteConfig.business.name}`} />
 <meta property="og:locale" content="en_US" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={meta.title} />
-<meta name="twitter:description" content={meta.description} />
+<meta name="twitter:title" content={ogTitle} />
+<meta name="twitter:description" content={ogDescription} />
 <meta name="twitter:image" content={og} />
+<meta name="twitter:image:alt" content={`${ogTitle} · ${siteConfig.business.name}`} />
 {siteConfig.tracking.searchConsoleVerification && <meta name="google-site-verification" content={siteConfig.tracking.searchConsoleVerification} />}
 <meta name="geo.region" content={`${siteConfig.business.address.country}-${siteConfig.business.address.state}`} />
 <meta name="geo.placename" content={siteConfig.business.address.city} />

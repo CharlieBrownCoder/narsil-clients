@@ -32,6 +32,7 @@
 - [ ] `forms.formspreeId` (create the form at formspree.io, set the notification email there)
 - [ ] `reviews.trustindex` widget IDs: home, page, compact, badge
 - [ ] `promo`
+- [ ] `social.lead` (home share headline, 60 chars or fewer, the result) and `social.valueLine` (under 50 chars, only what the business keeps). See docs/PAGES.md "Share previews".
 
 ## 3. Fonts (`public/fonts/`)
 - [ ] Variable latin woff2 for the heading and body family, named `<slug>.woff2` (see `public/fonts/README.md`)
@@ -44,7 +45,7 @@ Source images live in `src/assets/images/` and are optimized at build (WebP, res
 | File | Where | Size | Used on |
 | --- | --- | --- | --- |
 | `logo.svg` | `public/images/` | ~180×40 | header |
-| `og-default.jpg` | `public/images/` | 1200×630 | social share default |
+| `og-default.jpg` | `public/images/` | 1200×630, PNG or JPG, under 5 MB | social share default (pages the generator does not cover) |
 | `favicon.svg` | `public/` | square | tab icon |
 | `hero.jpg` | `src/assets/images/` | 2000×1250 | home hero (full-bleed; keep the subject right of center so copy sits on the left) |
 | `hero-mobile.jpg` | `src/assets/images/` | 800×1000 (4:5) | phones only; `node scripts/hero-mobile-crop.mjs` makes it from `hero.jpg`, or supply a hand-picked crop |

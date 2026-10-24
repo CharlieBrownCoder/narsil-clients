@@ -1,6 +1,7 @@
 ---
+import { shareImage } from '@/lib/images';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
-import { Image, getImage } from 'astro:assets';
+import { Image } from 'astro:assets';
 import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Cta from '@/components/sections/Cta.astro';
@@ -16,7 +17,7 @@ const { Content } = await render(project);
 const d = project.data;
 const { business } = siteConfig;
 const path = `/gallery/${project.id}/`;
-const og = (await getImage({ src: d.after, width: 1200, height: 630, format: 'jpg' })).src;
+const og = await shareImage(d.after);
 const service = d.service ? (await getCollection('services')).find((s) => s.id === d.service) : undefined;
 const meta = { title: buildTitle(`${d.title}${d.location ? ` in ${d.location.split(',').pop()?.trim()}` : ''}`), description: buildDescription(`${d.description} A ${business.name} project${d.location ? ` in ${d.location}` : ''}: what we found, what we did, and the result.`), canonical: path, ogImage: og, type: 'article' as const };
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Gallery', path: '/gallery/' }, { name: d.title, path }];
@@ -30,7 +31,7 @@ const schema = S.graph(
     '@id': `${abs(path)}#article`,
     headline: d.title,
     description: d.description,
-    image: abs(og),
+    image: abs(d.after.src),
     ...(d.date ? { datePublished: d.date.toISOString() } : {}),
     author: { '@id': S.ORG_ID },
     publisher: { '@id': S.ORG_ID },

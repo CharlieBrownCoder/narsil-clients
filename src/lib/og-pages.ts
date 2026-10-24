@@ -2,6 +2,13 @@
  * Pages that get a generated social share image at /og/<slug>.png.
  * Seo.astro looks up the current canonical path here; anything not listed
  * falls back to theme.ogImage. Add a row to cover a new page type.
+ *
+ * This is the template engine: one layout in og-image.ts, and a row here per
+ * page with the variables it prints (title, subtitle). A site with hundreds of
+ * service-area pages gets a distinct image for each from the same template,
+ * so nobody designs share images by hand. Titles here are what the image
+ * shows, so write the outcome or the offer ("Get a free quote", "Before &
+ * after"), not a keyword string.
  */
 import { getCollection } from 'astro:content';
 import { siteConfig } from '@config';
@@ -27,7 +34,7 @@ async function buildOgPages(): Promise<OgPage[]> {
   const { business, pages } = siteConfig;
   const bt = getBusinessType(siteConfig.businessType);
   const city = `${business.address.city}, ${business.address.state}`;
-  const list: OgPage[] = [{ slug: 'home', path: '/', title: siteConfig.hero.headline.replace(/\*/g, ''), subtitle: `${bt.label} · ${city}` }];
+  const list: OgPage[] = [{ slug: 'home', path: '/', title: siteConfig.social?.lead || siteConfig.hero.headline.replace(/\*/g, ''), subtitle: `${bt.label} · ${city}` }];
   const add = (path: string, title: string, subtitle?: string) => list.push({ slug: ogSlug(path), path, title, subtitle });
 
   if (pages.services) {
@@ -44,7 +51,10 @@ async function buildOgPages(): Promise<OgPage[]> {
         for (const s of services) if (!l.data.services.length || l.data.services.includes(s.id)) add(`/service-areas/${l.id}/${s.id}/`, `${s.data.shortTitle ?? s.data.title} in ${l.data.city}, ${l.data.state}`, business.name);
     }
   }
-  if (pages.locations) for (const b of business.locations) add(`/locations/${b.slug}/`, b.name, `${b.street}, ${b.city}`);
+  if (pages.locations) {
+    add('/locations/', `${business.name} locations`, business.locations.map((b) => b.city).join(' · '));
+    for (const b of business.locations) add(`/locations/${b.slug}/`, b.name, `${b.street}, ${b.city}`);
+  }
   if (pages.blog) for (const p of await getCollection('posts', ({ data }) => !data.draft)) add(`/blog/${p.id}/`, p.data.title, `${business.name} blog`);
   if (pages.gallery) for (const p of await getCollection('projects')) if ((p.body ?? '').trim()) add(`/gallery/${p.id}/`, p.data.title, p.data.location ?? 'Case study');
   if (pages.resources) for (const r of await getCollection('resources')) add(`/resources/${r.id}/`, r.data.title, `Free ${r.data.fileType} download`);

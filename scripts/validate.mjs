@@ -11,10 +11,14 @@
  *  4. Content: service×city combo pages without a serviceNotes entry (thin) are
  *     reported, and fail when THIN_COMBOS=fail. Category ids never collide with service slugs.
  *  5. Config: trust.rating requires a non-zero count; emergency.available requires phone or main phone.
+ *  6. Share preview: one og:title of 60 chars or fewer, one og:description of 50 to 125
+ *     (under 80 warns), twitter:title matching og:title, and one og:image that exists
+ *     in dist/, measures 1200×630, is PNG or JPEG, and is under 5 MB.
  */
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { parse as parseYaml } from 'yaml';
+import sharp from 'sharp';
 
 const root = resolve(import.meta.dirname, '..');
 const dist = join(root, 'dist');
@@ -35,6 +39,37 @@ const files = new Set();
     else { files.add(p.slice(dist.length).replace(/\\/g, '/')); if (e === 'index.html' || e === '404.html') pages.push(p); }
   }
 })(dist);
+
+// Share preview limits (the same numbers as OG_* in src/lib/seo.ts).
+const OG_TITLE_MAX = 60;
+const OG_DESCRIPTION_MIN = 80;
+const OG_DESCRIPTION_MAX = 125;
+const OG_DESCRIPTION_FLOOR = 50;
+const OG_IMAGE = { width: 1200, height: 630, maxBytes: 5 * 1024 * 1024, formats: ['png', 'jpeg'] };
+const unescape = (s) => s.replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+const metaContent = (html, attr, name) => [...html.matchAll(new RegExp(`<meta ${attr}="${name}" content="([^"]*)"`, 'g'))].map((m) => unescape(m[1]));
+const imageChecks = new Map();
+/** Measure a share image once per path; returns a list of problems. */
+async function checkShareImage(src) {
+  if (imageChecks.has(src)) return imageChecks.get(src);
+  const run = (async () => {
+    let path;
+    try { path = decodeURIComponent(new URL(src).pathname); } catch { return [`og:image is not an absolute URL: ${src}`]; }
+    const file = join(dist, path);
+    if (!files.has(path) || !existsSync(file)) return [`og:image ${path} is not in dist/`];
+    const bytes = statSync(file).size;
+    const problems = [];
+    if (bytes > OG_IMAGE.maxBytes) problems.push(`og:image ${path} is ${(bytes / 1024 / 1024).toFixed(1)} MB (limit 5 MB)`);
+    try {
+      const m = await sharp(file).metadata();
+      if (!OG_IMAGE.formats.includes(m.format)) problems.push(`og:image ${path} is ${m.format}; use PNG or JPG`);
+      if (m.width !== OG_IMAGE.width || m.height !== OG_IMAGE.height) problems.push(`og:image ${path} is ${m.width}×${m.height}; share images are 1200×630`);
+    } catch (e) { problems.push(`og:image ${path} could not be read: ${e.message}`); }
+    return problems;
+  })();
+  imageChecks.set(src, run);
+  return run;
+}
 
 const resolvesTo = (href) => {
   let path = href.split('#')[0].split('?')[0];
@@ -88,6 +123,26 @@ for (const file of pages) {
     if (href.startsWith('//') || href.startsWith('/fonts/')) continue;
     if (!resolvesTo(href)) err(`${rel}: broken internal link ${href}`);
   }
+
+  // ---------- share preview ----------
+  const ogTitles = metaContent(html, 'property', 'og:title');
+  if (ogTitles.length !== 1) err(`${rel}: expected 1 og:title, found ${ogTitles.length}`);
+  else {
+    if (ogTitles[0].length > OG_TITLE_MAX) err(`${rel}: og:title is ${ogTitles[0].length} chars, over ${OG_TITLE_MAX} ("${ogTitles[0]}")`);
+    const tw = metaContent(html, 'name', 'twitter:title');
+    if (tw[0] !== ogTitles[0]) err(`${rel}: twitter:title differs from og:title`);
+  }
+  const ogDescs = metaContent(html, 'property', 'og:description');
+  if (ogDescs.length !== 1) err(`${rel}: expected 1 og:description, found ${ogDescs.length}`);
+  else {
+    const n = ogDescs[0].length;
+    if (n > OG_DESCRIPTION_MAX) err(`${rel}: og:description is ${n} chars, over ${OG_DESCRIPTION_MAX}`);
+    else if (n < OG_DESCRIPTION_FLOOR) err(`${rel}: og:description is ${n} chars, under ${OG_DESCRIPTION_FLOOR} ("${ogDescs[0]}")`);
+    else if (n < OG_DESCRIPTION_MIN && !noindex) warn(`${rel}: og:description is ${n} chars, under ${OG_DESCRIPTION_MIN}; add social.valueLine or a longer description`);
+  }
+  const ogImages = metaContent(html, 'property', 'og:image');
+  if (ogImages.length !== 1) err(`${rel}: expected 1 og:image, found ${ogImages.length}`);
+  else for (const problem of await checkShareImage(ogImages[0])) err(`${rel}: ${problem}`);
 }
 
 // ---------- content checks ----------

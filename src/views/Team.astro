@@ -7,12 +7,12 @@ import TeamGrid from '@/components/sections/TeamGrid.astro';
 import Credentials from '@/components/sections/Credentials.astro';
 import Cta from '@/components/sections/Cta.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import { buildTitle, buildDescription } from '@/lib/seo';
+import { buildTitle, buildDescription, buildOgDescription } from '@/lib/seo';
 import * as S from '@/lib/schema';
 
 const { business } = siteConfig;
 const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
-const meta = { title: buildTitle(`Meet the ${business.name} Team`), description: buildDescription(`The people behind ${business.name} in ${business.address.city}, ${business.address.state}: who shows up to your door, their experience, and their certifications.`), canonical: '/team/' };
+const meta = { title: buildTitle(`Meet the ${business.name} Team`), description: buildDescription(`The people behind ${business.name} in ${business.address.city}, ${business.address.state}: who shows up to your door, their experience, and their certifications.`), canonical: '/team/', ogDescription: buildOgDescription(`Who shows up to your door from ${business.name}, and what they bring. ${siteConfig.social?.valueLine ?? ''}`.trim()) };
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Team', path: '/team/' }];
 const schema = S.graph(
   S.localBusiness(),

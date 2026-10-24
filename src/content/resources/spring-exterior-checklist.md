@@ -1,6 +1,6 @@
 ---
 title: "Spring Exterior Maintenance Checklist"
-description: "A one-page checklist of the 12 things to inspect on a North Texas home every spring, from roof algae to sprinkler overspray stains."
+description: "The 12 things to inspect on a North Texas home every spring, on one page. From roof algae to sprinkler overspray stains, with what to do about each."
 file: /downloads/spring-exterior-checklist.pdf
 fileType: PDF
 gated: true

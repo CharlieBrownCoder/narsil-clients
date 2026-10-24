@@ -173,8 +173,23 @@ export interface SiteConfig {
     /** Desktop-only sticky "Get a Quote" tab on the right edge. Off by default; one CTA per screen is the rule. */
     stickyQuoteTab: boolean;
     logo: { src: string; alt: string; width: number; height: number };
-    /** Default social share image (1200x630) */
+    /** Default social share image: 1200x630, PNG or JPG, under 5 MB. Used where no generated or page image applies. */
     ogImage: string;
+  };
+
+  /**
+   * Share previews (Open Graph, X, LinkedIn, iMessage). Lead with the result
+   * the customer gets, not the service name. Blank = not used.
+   */
+  social?: {
+    /** Home page og:title, 60 characters or fewer, e.g. "Your home looking new again, in one visit". Blank = the tagline. */
+    lead?: string;
+    /**
+     * One short value line, under 50 characters, e.g. "Written quote first. Insured crews."
+     * Appended to share descriptions that run under 80 characters and printed on
+     * every generated share image. Only promise what the business keeps.
+     */
+    valueLine?: string;
   };
 
   /**
@@ -432,6 +447,11 @@ export const siteConfig: SiteConfig = {
     stickyQuoteTab: false,
     logo: { src: '/images/logo.svg', alt: 'ClearShine Pressure Washing', width: 180, height: 40 },
     ogImage: '/images/og-default.jpg',
+  },
+
+  social: {
+    lead: 'Your home looking new again, in one visit',
+    valueLine: 'Written quote first. Insured crews.',
   },
 
   hero: {
