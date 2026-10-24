@@ -5,8 +5,8 @@
  * each location's `serviceNotes[serviceSlug]` is rendered as a unique paragraph.
  * If no note exists, the page still builds but you should add one before launch.
  */
+import { shareImage } from '@/lib/images';
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { getImage } from 'astro:assets';
 import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
@@ -29,8 +29,8 @@ const Sv = service.data;
 const { business, pages } = siteConfig;
 const short = Sv.shortTitle ?? Sv.title;
 const path = `/service-areas/${location.id}/${service.id}/`;
-const og = Sv.image ? (await getImage({ src: Sv.image, width: 1200, height: 630, format: 'jpg' })).src : undefined;
-const meta = { ...comboMeta(short, L.city, L.state, location.id, service.id), ogImage: og };
+const og = await shareImage(Sv.image);
+const meta = { ...comboMeta(short, L.city, L.state, location.id, service.id, Sv.excerpt), ogImage: og };
 const note = L.serviceNotes[service.id];
 const otherServices = (await getCollection('services')).filter((s) => s.id !== service.id && (!L.services.length || L.services.includes(s.id)));
 const faqs = [

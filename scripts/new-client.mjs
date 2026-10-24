@@ -98,6 +98,8 @@ cfg = cfg.replace(/foundingYear: \d+/, 'foundingYear: undefined');
 cfg = cfg.replace(/(\n\s*headline:\s*)'[^']*'/, `$1${q(`${city}’s Top-Rated *${type.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}* Company`)}`);
 cfg = cfg.replace(/(\n\s*subheadline:\s*)'[^']*'/, `$1'One sentence on what you do, for whom, and the guarantee behind it.'`);
 cfg = cfg.replace(/(\n\s*imageAlt:\s*)'[^']*'/, `$1'Describe the hero photo'`);
+// Share copy is the client's own result and value line; blank until kickoff supplies them (blank = tagline, no value line).
+cfg = cfg.replace(/(\n\s*lead:\s*)'[^']*'/, `$1''`).replace(/(\n\s*valueLine:\s*)'[^']*'/, `$1''`);
 cfg = cfg.replace(/stats: \[[\s\S]*?\n    \],/, 'stats: [],');
 cfg = cfg.replace(/logos: \[[\s\S]*?\n    \],/, 'logos: [],');
 cfg = cfg.replace(/clients: \[[\s\S]*?\],/, 'clients: [],');

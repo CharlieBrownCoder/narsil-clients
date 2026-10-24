@@ -7,7 +7,7 @@ import ServiceGrid from '@/components/sections/ServiceGrid.astro';
 import Trustindex from '@/components/Trustindex.astro';
 import Cta from '@/components/sections/Cta.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import { buildTitle, buildDescription } from '@/lib/seo';
+import { buildTitle, buildDescription, buildOgDescription } from '@/lib/seo';
 import { getBusinessType } from '@/lib/business-types';
 import { abs } from '@/lib/utils';
 import * as S from '@/lib/schema';
@@ -21,6 +21,8 @@ const meta = {
   title: buildTitle(`${bt.label} Services in ${business.address.city}, ${business.address.state}`),
   description: buildDescription(`Explore every ${bt.label.toLowerCase()} service ${business.name} offers in ${business.address.city} and nearby: ${services.map((s) => s.data.shortTitle ?? s.data.title).join(', ')}. Free quotes.`),
   canonical: '/services/',
+  // The share names what the services do, not the list of them, which runs past 125 characters.
+  ogDescription: buildOgDescription(`Every ${bt.label.toLowerCase()} service for ${business.address.city} homes and businesses, from ${business.name}. ${siteConfig.social?.valueLine ?? ''}`.trim()),
 };
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }];
 const schema = S.graph(

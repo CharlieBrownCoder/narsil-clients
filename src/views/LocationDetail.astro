@@ -1,6 +1,6 @@
 ---
+import { shareImage } from '@/lib/images';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
-import { getImage } from 'astro:assets';
 import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/sections/Hero.astro';
@@ -12,7 +12,7 @@ import Faq from '@/components/sections/Faq.astro';
 import Cta from '@/components/sections/Cta.astro';
 import ContactForm from '@/components/sections/ContactForm.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import { locationMeta } from '@/lib/seo';
+import { locationMeta, seoOverrides } from '@/lib/seo';
 import { getBusinessType } from '@/lib/business-types';
 import * as S from '@/lib/schema';
 
@@ -23,8 +23,8 @@ const d = location.data;
 const { business, pages } = siteConfig;
 const bt = getBusinessType(siteConfig.businessType);
 const path = `/service-areas/${location.id}/`;
-const og = d.image ? (await getImage({ src: d.image, width: 1200, height: 630, format: 'jpg' })).src : undefined;
-const meta = { ...locationMeta(d.city, d.state, location.id, bt.label), ...(d.seo?.title ? { title: d.seo.title } : {}), ...(d.seo?.description ? { description: d.seo.description } : {}), ogImage: og };
+const og = await shareImage(d.image);
+const meta = { ...locationMeta(d.city, d.state, location.id, bt.label), ...seoOverrides(d.seo), ogImage: og };
 const services = (await getCollection('services')).filter((s) => !d.services.length || d.services.includes(s.id));
 const faqs = [
   { question: `Do you offer ${bt.label.toLowerCase()} in ${d.city}, ${d.state}?`, answer: `Yes. ${business.name} serves all of ${d.city}${d.neighborhoods.length ? `, including ${d.neighborhoods.slice(0, 4).join(', ')}` : ''}. Call ${business.phone} to schedule.` },

@@ -1,11 +1,12 @@
 ---
+import { shareImage } from '@/lib/images';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
-import { Image, getImage } from 'astro:assets';
+import { Image } from 'astro:assets';
 import { siteConfig } from '@config';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Cta from '@/components/sections/Cta.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import { buildTitle } from '@/lib/seo';
+import { buildTitle, seoOverrides } from '@/lib/seo';
 import { formatDate } from '@/lib/utils';
 import * as S from '@/lib/schema';
 
@@ -15,8 +16,8 @@ const { Content } = await render(post);
 const d = post.data;
 const { business } = siteConfig;
 const path = `/blog/${post.id}/`;
-const og = d.image ? (await getImage({ src: d.image, width: 1200, height: 630, format: 'jpg' })).src : undefined;
-const meta = { title: d.seo?.title ?? buildTitle(d.title), description: d.seo?.description ?? d.description, canonical: path, ogImage: og, type: 'article' as const };
+const og = await shareImage(d.image);
+const meta = { title: buildTitle(d.title), description: d.description, ...seoOverrides(d.seo), canonical: path, ogImage: og, type: 'article' as const };
 const relatedService = d.service ? (await getCollection('services')).find((s) => s.id === d.service) : undefined;
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog/' }, { name: d.title, path }];
 const schema = S.graph(

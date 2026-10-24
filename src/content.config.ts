@@ -2,10 +2,15 @@ import { defineCollection, type SchemaContext } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob, file } from 'astro/loaders';
 
+/** Per-page overrides. Share fields hold the limits scripts/validate.mjs enforces on every page. */
 const seo = z
   .object({
     title: z.string().optional(),
     description: z.string().optional(),
+    /** og:title, 60 characters or fewer. Lead with the result. */
+    ogTitle: z.string().max(60, 'seo.ogTitle must be 60 characters or fewer').optional(),
+    /** og:description, 80 to 125 characters. */
+    ogDescription: z.string().min(80, 'seo.ogDescription must be at least 80 characters').max(125, 'seo.ogDescription must be 125 characters or fewer').optional(),
     noindex: z.boolean().optional(),
   })
   .optional();

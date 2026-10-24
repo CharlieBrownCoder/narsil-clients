@@ -3,6 +3,11 @@
  * instances from public/fonts/og/ and the theme colors. satori cannot read
  * variable fonts, so these are separate from the woff2 files the site serves.
  * If the TTFs are missing, ogFontsAvailable() is false and no images are built.
+ *
+ * One template for every page (src/lib/og-pages.ts supplies the variables):
+ * brand mark, the page's headline, a context line, social.valueLine when set,
+ * then the domain and phone. 1200×630 is the 1.91:1 size every platform
+ * renders at full width; PNG keeps the type crisp and lands far under 5 MB.
  */
 import satori from 'satori';
 import sharp from 'sharp';
@@ -35,6 +40,7 @@ export async function renderOg(title: string, subtitle?: string): Promise<Buffer
   const [hData, bData, bbData] = await Promise.all([readFile(heading.path), readFile(body.path), readFile(bodyBold.path)]);
   const buf = (b: Buffer) => b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) as ArrayBuffer;
   const big = title.length > 48;
+  const valueLine = siteConfig.social?.valueLine?.trim();
   const svg = await satori(
     {
       type: 'div',
@@ -45,6 +51,7 @@ export async function renderOg(title: string, subtitle?: string): Promise<Buffer
           { type: 'div', props: { style: { display: 'flex', flexDirection: 'column', gap: 20 }, children: [
             { type: 'div', props: { style: { fontFamily: t.fontHeading, fontSize: big ? 56 : 72, fontWeight: heading.weight, lineHeight: 1.05, letterSpacing: -1.5, maxWidth: 1000 }, children: title } },
             subtitle ? { type: 'div', props: { style: { fontSize: 32, color: '#CBD5E1' }, children: subtitle } } : null,
+            valueLine ? { type: 'div', props: { style: { fontSize: 28, fontWeight: bodyBold.weight, color: t.accent, marginTop: 8 }, children: valueLine } } : null,
           ] } },
           { type: 'div', props: { style: { display: 'flex', justifyContent: 'space-between', fontSize: 26, color: '#94A3B8' }, children: [
             { type: 'div', props: { children: siteConfig.url.replace(/^https?:\/\//, '') } },
