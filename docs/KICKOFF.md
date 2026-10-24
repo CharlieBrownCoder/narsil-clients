@@ -35,6 +35,10 @@ Sources
 - Logo file (SVG or large PNG):
 - Photo folder (owner's own job photos, rights confirmed: yes/no):
 
+Share previews (what a shared link shows on Facebook, LinkedIn, X, iMessage)
+- The result a customer gets, in 60 characters or fewer (becomes the home share headline):
+- One line of value you always keep, under 50 characters (e.g. "Written quote first. Insured crews."):
+
 Trust (confirmed facts only)
 - Google rating and review count:
 - Insured (carrier) / licensed (number):

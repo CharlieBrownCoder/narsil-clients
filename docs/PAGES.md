@@ -74,9 +74,33 @@ Ideas not yet built, by vertical:
 - **Careers** (any): `pages.careers` is reserved.
 - **Coupons / Specials**: the `promo` banner covers one offer; a dedicated page could list several.
 
-## Social share images
+## Share previews (Open Graph, X, LinkedIn, iMessage)
 
-Every page listed in `src/lib/og-pages.ts` gets a generated 1200×630 PNG at `/og/<slug>.png` (satori + sharp, brand colors and fonts). Pages not listed, and all pages when `public/fonts/og/` has no TTFs, fall back to `theme.ogImage`. Posts, service pages, and case studies that set their own image use that instead.
+Every page ships `og:title`, `og:description`, `og:image` (with width, height, type and alt) and the matching `twitter:*` tags from `src/components/Seo.astro`. The copy comes from `src/lib/seo.ts`, never from a view. `npm run validate` fails the build on any page outside these limits.
+
+| Tag | Limit | Why | Where it comes from |
+| --- | --- | --- | --- |
+| `og:title` | 60 characters or fewer | X and LinkedIn truncate past 60 | `meta.ogTitle`, else `buildOgTitle(title)`: the page title without the brand suffix (`og:site_name` carries the brand), then without its last ` \| ` segment while still over 60 |
+| `og:description` | 80 to 125 characters (under 50 fails, 50 to 79 warns) | under 80 reads empty; past 125 mobile previews cut it with an ellipsis where the value proposition sits | `meta.ogDescription`, else `buildOgDescription(description)`: cut at the last sentence end inside 125, then `social.valueLine` appended when the result is under 80 and the line fits |
+| `og:image` | 1200×630 (1.91:1), PNG or JPG, under 5 MB | the one size every platform renders at full width; WebP is not universal | the page photo through `shareImage()` when it is at least 1200×630, else the generated image, else `theme.ogImage` |
+
+### Results first, values second
+
+A share is read by someone who did not search for the service, so it has to say what they get, not what we are called.
+
+- **Title**: the outcome or the offer. The home page uses `social.lead` ("Your home looking new again, in one visit"); a service or city page says the service and the place, because that is what the link is about; a case study says what changed. Hand-write `seo.ogTitle` in frontmatter when a page's `<title>` is a keyword string.
+- **Description**: a service page shares its `excerpt` (write excerpts as outcomes: "removes algae, mold, and grime from siding without damaging your home"); a combo page shares the excerpt plus "Serving City, ST"; a city page says who it serves and then the value line; the home page shares `hero.subheadline`. Every one ends on `social.valueLine` when there is room.
+- **`social.valueLine`** is the one line of value the business keeps ("Written quote first. Insured crews."), under 50 characters. It is appended to short descriptions and printed in the accent color on every generated image. Like every trust claim it defaults blank and blank means hidden. Never put a price, a rating, or a guarantee in it that the config does not already carry.
+- Write content descriptions so the first sentence lands under 125 characters. The cut never breaks a sentence shorter than 40 characters, and a first sentence longer than 125 is cut at a word with an ellipsis, which is the thing to avoid.
+- Per-page overrides: `seo.ogTitle` (max 60) and `seo.ogDescription` (80 to 125) in service, location and post frontmatter; the schema refuses values outside the limits.
+
+### Generated images
+
+One template, `src/lib/og-image.ts`, renders every image: brand mark, the page's headline, a context line, `social.valueLine`, the domain and phone, in the theme's colors and fonts. `src/lib/og-pages.ts` is the variable map: one row per page (title, subtitle), so a site with hundreds of service-area pages gets a distinct image for each with no design work. Add a row to cover a new page type. Titles there are what the image shows, so write the offer or the outcome ("Get a free quote", "Before & after"), not a keyword string.
+
+Pages not listed, and all pages when `public/fonts/og/` has no TTFs, fall back to `theme.ogImage` (`public/images/og-default.jpg`, 1200×630). Posts, service pages, and case studies that set their own image use a 1200×630 crop of it, but only when the source is at least that size: a smaller photo falls back to the generated image because Astro never enlarges and the validator measures every share image.
+
+To check a preview: `npm run build && npm run validate`, then open `dist/og/home.png`. The validator reports every page's share problem by path.
 
 ## Internal linking map
 

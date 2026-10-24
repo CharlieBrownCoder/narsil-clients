@@ -133,4 +133,4 @@ Reviews render through Trustindex. Create a widget per placement (home, reviews 
 - Every trust claim (rating, response promise, credentials, emergency line, team) comes from config or content and is hidden when blank.
 - Hosting is Vercel. `netlify.toml` was removed on purpose.
 - The quote calculator shows a range, never a single price, and sends its inputs with the lead. Rules live in `src/calculator.config.ts` and are off after `new-client`.
-- Social share images are generated at build from brand fonts and colors. Static TTFs go in `public/fonts/og/` (see `public/fonts/README.md`).
+- Social share images are generated at build from brand fonts and colors. Static TTFs go in `public/fonts/og/` (see `public/fonts/README.md`). Share copy is held to og:title ≤ 60 and og:description 80–125 characters, images to 1200×630 under 5 MB, by `npm run validate` (docs/PAGES.md "Share previews").
