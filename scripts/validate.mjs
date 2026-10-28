@@ -14,6 +14,11 @@
  *  6. Share preview: one og:title of 60 chars or fewer, one og:description of 50 to 125
  *     (under 80 warns), twitter:title matching og:title, and one og:image that exists
  *     in dist/, measures 1200×630, is PNG or JPEG, and is under 5 MB.
+ *  7. Sitemaps: sitemap-index.xml lists only sitemap files that exist; every indexable
+ *     page (not 404, not noindex) is in exactly one sitemap and every sitemap URL is an
+ *     indexable page; no changefreq or priority; every URL has a lastmod (warns when
+ *     missing, which a shallow clone causes); every image:loc is a file in dist/; robots.txt
+ *     names the index; the IndexNow key file exists when the key is set.
  */
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
@@ -144,6 +149,56 @@ for (const file of pages) {
   if (ogImages.length !== 1) err(`${rel}: expected 1 og:image, found ${ogImages.length}`);
   else for (const problem of await checkShareImage(ogImages[0])) err(`${rel}: ${problem}`);
 }
+
+// ---------- sitemaps ----------
+const sitemapPages = new Map(); // path -> indexable?
+for (const file of pages) {
+  const rel = file.slice(dist.length).replace(/\\/g, '/');
+  if (rel.endsWith('404.html')) continue;
+  const html = readFileSync(file, 'utf8');
+  sitemapPages.set(rel.replace(/index\.html$/, ''), !/<meta name="robots" content="noindex/.test(html));
+}
+const siteUrl = (readFileSync(join(root, 'src/site.config.ts'), 'utf8').match(/\n\s*url:\s*'(https?:\/\/[^']+)'/) ?? [])[1];
+const toPath = (loc) => { try { return decodeURIComponent(new URL(loc).pathname); } catch { return null; } };
+const indexFile = join(dist, 'sitemap-index.xml');
+if (!existsSync(indexFile)) err('sitemap-index.xml is not in dist/');
+else {
+  const index = readFileSync(indexFile, 'utf8');
+  const listed = [...index.matchAll(/<sitemap><loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  if (!listed.length) err('sitemap-index.xml lists no sitemap');
+  const seen = new Map(); // path -> sitemap file
+  for (const loc of listed) {
+    if (!loc.startsWith(siteUrl + '/')) err(`sitemap-index.xml lists ${loc}, not under ${siteUrl}`);
+    const name = toPath(loc)?.slice(1);
+    const smFile = name && join(dist, name);
+    if (!name || !existsSync(smFile)) { err(`sitemap-index.xml lists ${loc}, which is not in dist/`); continue; }
+    const xml = readFileSync(smFile, 'utf8');
+    if (/<changefreq>|<priority>/.test(xml)) err(`${name}: carries changefreq or priority; crawlers ignore both and a uniform value is noise`);
+    const urls = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) => m[1]);
+    if (!urls.length) err(`${name}: lists no URL`);
+    for (const u of urls) {
+      const loc = (u.match(/<loc>([^<]+)<\/loc>/) ?? [])[1];
+      const path = loc && loc.startsWith(siteUrl + '/') ? toPath(loc) : null;
+      if (!path) { err(`${name}: ${loc ?? '(no loc)'} is not an absolute URL under ${siteUrl}`); continue; }
+      if (!path.endsWith('/')) err(`${name}: ${path} lacks the trailing slash the canonicals use`);
+      if (seen.has(path)) err(`${name}: ${path} is also in ${seen.get(path)}`);
+      seen.set(path, name);
+      if (!sitemapPages.has(path)) err(`${name}: ${path} is not a built page`);
+      else if (!sitemapPages.get(path)) err(`${name}: ${path} is noindex and must not be in a sitemap`);
+      if (!/<lastmod>\d{4}-\d{2}-\d{2}/.test(u)) warn(`${name}: ${path} has no lastmod (uncommitted source, or a shallow clone; set VERCEL_DEEP_CLONE=true)`);
+      for (const im of u.matchAll(/<image:loc>([^<]+)<\/image:loc>/g)) {
+        const ip = toPath(im[1]);
+        if (!ip || !files.has(ip)) err(`${name}: image ${im[1]} is not a file in dist/`);
+      }
+    }
+  }
+  for (const [path, indexable] of sitemapPages) if (indexable && !seen.has(path)) err(`${path} is indexable and in no sitemap; add it to src/lib/site-pages.ts`);
+  const robots = existsSync(join(dist, 'robots.txt')) ? readFileSync(join(dist, 'robots.txt'), 'utf8') : '';
+  if (!robots.includes(`Sitemap: ${siteUrl}/sitemap-index.xml`)) err('robots.txt does not name the sitemap index');
+}
+const indexNowKey = (readFileSync(join(root, 'src/site.config.ts'), 'utf8').match(/\n\s*indexNowKey:\s*'([^']*)'/) ?? [])[1]?.trim();
+if (indexNowKey && !files.has(`/${indexNowKey}.txt`)) err(`tracking.indexNowKey is set but /${indexNowKey}.txt was not built`);
+if (indexNowKey && !/^[a-f0-9]{32}$/i.test(indexNowKey)) warn('tracking.indexNowKey is not 32 hex characters; IndexNow accepts 8 to 128 of [a-zA-Z0-9-], but 32 hex is the convention');
 
 // ---------- content checks ----------
 const fm = (src) => { const m = src.match(/^---\n([\s\S]*?)\n---/); return m ? parseYaml(m[1]) : {}; };
