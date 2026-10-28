@@ -85,8 +85,10 @@ Upload originals at those sizes; the build handles compression and formats.
 
 ## 7. Deploy
 - [ ] Import the repo in Vercel (framework preset Astro, output `dist`)
+- [ ] Vercel environment variable `VERCEL_DEEP_CLONE=true` so the build reads full git history for the sitemaps' `lastmod` (docs/PAGES.md, Sitemaps)
 - [ ] Old URLs from a previous site go in `vercel.json` → `redirects` (301s)
 - [ ] Custom domain + HTTPS
 - [ ] Submit a test quote and confirm Formspree delivers it
-- [ ] Submit `https://<domain>/sitemap-index.xml` in Google Search Console
+- [ ] Submit `https://<domain>/sitemap-index.xml` in Google Search Console (one index; coverage then reads per section file)
+- [ ] `tracking.indexNowKey`: 32 hex characters you generate; confirm `https://<domain>/<key>.txt` serves it after the deploy. Add the site in Bing Webmaster Tools and submit the same index there.
 - [ ] Add the site URL to Google Business Profile

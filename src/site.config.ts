@@ -279,6 +279,12 @@ export interface SiteConfig {
     metaPixel?: string;
     /** Content of the google-site-verification meta tag */
     searchConsoleVerification?: string;
+    /**
+     * IndexNow key (Bing, Yandex): 32 hex characters, any value you generate.
+     * Builds /<key>.txt and lets scripts/indexnow.mjs submit changed URLs after
+     * a production deploy. Blank = off.
+     */
+    indexNowKey?: string;
   };
 
   /** Trust signals shown across the site */
@@ -505,6 +511,7 @@ export const siteConfig: SiteConfig = {
     gtm: '',
     metaPixel: '',
     searchConsoleVerification: '',
+    indexNowKey: '',
   },
 
   trust: {
