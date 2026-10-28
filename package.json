@@ -13,7 +13,6 @@
     "test": "npm run check && npm run build && npm run validate"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.8",
     "satori": "^0.56.1",

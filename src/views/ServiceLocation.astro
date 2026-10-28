@@ -20,6 +20,7 @@ import ContactForm from '@/components/sections/ContactForm.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import Icon from '@/components/Icon.astro';
 import { comboMeta } from '@/lib/seo';
+import { comboIndexable } from '@/lib/site-pages';
 import * as S from '@/lib/schema';
 
 interface Props { location: CollectionEntry<'locations'>; service: CollectionEntry<'services'> }
@@ -30,8 +31,9 @@ const { business, pages } = siteConfig;
 const short = Sv.shortTitle ?? Sv.title;
 const path = `/service-areas/${location.id}/${service.id}/`;
 const og = await shareImage(Sv.image);
-const meta = { ...comboMeta(short, L.city, L.state, location.id, service.id, Sv.excerpt), ogImage: og };
 const note = L.serviceNotes[service.id];
+// A combo page with no city note reads as templated: noindex and out of the sitemap until the note exists (docs/PAGES.md, Sitemaps).
+const meta = { ...comboMeta(short, L.city, L.state, location.id, service.id, Sv.excerpt), ogImage: og, noindex: !comboIndexable(note) };
 const otherServices = (await getCollection('services')).filter((s) => s.id !== service.id && (!L.services.length || L.services.includes(s.id)));
 const faqs = [
   { question: `How much does ${short.toLowerCase()} cost in ${L.city}?`, answer: Sv.startingPrice ? `${short} in ${L.city} starts at $${Sv.startingPrice} ${Sv.priceUnit ?? ''}. Final pricing depends on size and condition. Every quote is free and written.` : `Pricing depends on the size and condition of the job. ${business.name} provides free, written quotes for every ${L.city} customer.` },
