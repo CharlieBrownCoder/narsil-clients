@@ -328,6 +328,15 @@ export interface SiteConfig {
 
   /** Offer / promo banner. Set enabled:false to hide. */
   promo?: { enabled: boolean; text: string; href?: string };
+
+  /**
+   * robots.txt stance toward AI crawlers. Search agents (Googlebot, Bingbot,
+   * OAI-SearchBot, PerplexityBot, Claude-SearchBot and the like) are always
+   * allowed. allowAiTraining: false refuses the training-only agents (GPTBot,
+   * ClaudeBot, Google-Extended, Applebot-Extended, CCBot) for a client who asks;
+   * it does not change AI Overviews, which use Googlebot. Default true.
+   */
+  crawlers?: { allowAiTraining: boolean };
 }
 
 export const siteConfig: SiteConfig = {
@@ -560,6 +569,8 @@ export const siteConfig: SiteConfig = {
   },
 
   promo: { enabled: true, text: '$50 off house + driveway bundle this month', href: '/contact/' },
+
+  crawlers: { allowAiTraining: true },
 };
 
 export default siteConfig;
