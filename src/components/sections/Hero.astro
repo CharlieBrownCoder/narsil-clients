@@ -39,7 +39,8 @@ const layout: 'photo' | 'cutout' | 'split' | 'centered' = style === 'photo' && !
 const dark = layout === 'photo' || layout === 'cutout' || (layout === 'centered' && !!image);
 const showForm = form && pages.contact;
 const showBullets = !compact && bullets.length > 0;
-const pad = compact ? 'py-14 md:py-20' : showForm ? 'py-16 md:py-24' : 'py-20 md:py-32';
+// One step under the old values so the first scroll is not the page's longest; the section rhythm is docs/PAGES.md.
+const pad = compact ? 'py-12 md:py-16' : showForm ? 'py-14 md:py-20' : 'py-16 md:py-28';
 const headingCls = `mt-3 ${dark ? '!text-white' : ''} ${compact ? '!text-3xl md:!text-5xl' : ''}`;
 /** Art-directed mobile source: phones get the 4:5 crop at 480 to 960 wide. */
 const mobileSrc = imageMobile ? await getImage({ src: imageMobile, widths: [480, 640, 800, 960], format: 'webp' }) : null;
