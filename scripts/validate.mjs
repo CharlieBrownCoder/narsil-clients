@@ -19,7 +19,14 @@
  *     indexable page; no changefreq or priority; every URL has a lastmod (warns when
  *     missing, which a shallow clone causes); every image:loc is a file in dist/; robots.txt
  *     names the index; the IndexNow key file exists when the key is set.
+ *  8. Crawlers and AI: /llms.txt exists and lists exactly the sitemap's URLs; every WebPage
+ *     node carries dateModified; every FAQPage question is visible on the page (a <summary>);
+ *     every service and city page shows at least three questions; robots.txt always allows
+ *     the search agents.
+ *  9. Scroll length: the home page warns past HOME_SECTION_CAP sections. Section padding is a
+ *     small share of a phone page; its length is the section count, a per-client config call.
  */
+const HOME_SECTION_CAP = 12;
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { parse as parseYaml } from 'yaml';
@@ -196,6 +203,59 @@ else {
   const robots = existsSync(join(dist, 'robots.txt')) ? readFileSync(join(dist, 'robots.txt'), 'utf8') : '';
   if (!robots.includes(`Sitemap: ${siteUrl}/sitemap-index.xml`)) err('robots.txt does not name the sitemap index');
 }
+// ---------- scroll length ----------
+{
+  const home = join(dist, 'index.html');
+  if (existsSync(home)) {
+    const n = (readFileSync(home, 'utf8').match(/<section\b/g) ?? []).length;
+    if (n > HOME_SECTION_CAP) warn(`home page has ${n} sections (cap ${HOME_SECTION_CAP}); on a phone each stacks to one column, so ask at kickoff which of team, plans, comparison, gallery, offers or logos this client needs on the home page (siteConfig.pages, trust, plans, offers)`);
+  }
+}
+
+// ---------- crawlers and AI ----------
+{
+  const llms = join(dist, 'llms.txt');
+  if (!existsSync(llms)) err('llms.txt is not in dist/');
+  else {
+    const text = readFileSync(llms, 'utf8');
+    const listed = new Set([...text.matchAll(/\]\((https?:\/\/[^)]+)\)/g)].map((m) => toPath(m[1])));
+    const inSitemaps = new Set();
+    for (const f of readdirSync(dist).filter((f) => /^sitemap-(?!index).*\.xml$/.test(f))) for (const m of readFileSync(join(dist, f), 'utf8').matchAll(/<url><loc>([^<]+)<\/loc>/g)) inSitemaps.add(toPath(m[1]));
+    for (const p of inSitemaps) if (!listed.has(p)) err(`llms.txt does not list ${p}, which is in a sitemap`);
+    for (const p of listed) if (!inSitemaps.has(p)) err(`llms.txt lists ${p}, which is in no sitemap`);
+    if (!text.startsWith('# ')) err('llms.txt does not open with the business name as a heading');
+  }
+  const servicesDir = join(root, 'src/content/services');
+  const serviceSlugs = existsSync(servicesDir) ? readdirSync(servicesDir).filter((f) => f.endsWith('.md')).map((f) => f.replace(/\.md$/, '')) : [];
+  for (const file of pages) {
+    const rel = file.slice(dist.length).replace(/\\/g, '/');
+    if (rel.endsWith('404.html')) continue;
+    const path = rel.replace(/index\.html$/, '');
+    const html = readFileSync(file, 'utf8');
+    if (/<meta name="robots" content="noindex/.test(html)) continue;
+    for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      let d; try { d = JSON.parse(m[1]); } catch { continue; }
+      const nodes = d['@graph'] ?? [d];
+      const page = nodes.find((n) => typeof n['@id'] === 'string' && n['@id'].endsWith('#webpage'));
+      if (page && !page.dateModified) warn(`${rel}: WebPage schema has no dateModified (no lastmod for this page; see check 7)`);
+      const questions = nodes.filter((n) => n['@type'] === 'FAQPage').flatMap((n) => n.mainEntity ?? []).map((q) => q.name);
+      const visible = (html.match(/<summary\b/g) ?? []).length;
+      if (questions.length > visible) err(`${rel}: FAQPage schema has ${questions.length} question(s) but the page shows ${visible}; every schema question must be visible`);
+    }
+    const isService = /^\/services\/([^/]+)\/$/.test(path) && serviceSlugs.includes(path.split('/')[2]);
+    const isCity = /^\/service-areas\/[^/]+\/$/.test(path);
+    if (isService || isCity) {
+      const visible = (html.match(/<summary\b/g) ?? []).length;
+      if (visible < 3) err(`${rel}: a ${isService ? 'service' : 'city'} page needs at least 3 visible FAQ questions for answer-first indexing, found ${visible}`);
+    }
+  }
+  const robots = existsSync(join(dist, 'robots.txt')) ? readFileSync(join(dist, 'robots.txt'), 'utf8') : '';
+  for (const agent of ['Googlebot', 'Bingbot', 'OAI-SearchBot', 'PerplexityBot']) {
+    const block = robots.split(/\n\s*\n/).find((b) => b.includes(`User-agent: ${agent}\n`));
+    if (!block || !/Allow: \/\n/.test(block + '\n') || /Disallow: \/\n/.test(block + '\n')) err(`robots.txt does not allow the search agent ${agent}`);
+  }
+}
+
 const indexNowKey = (readFileSync(join(root, 'src/site.config.ts'), 'utf8').match(/\n\s*indexNowKey:\s*'([^']*)'/) ?? [])[1]?.trim();
 if (indexNowKey && !files.has(`/${indexNowKey}.txt`)) err(`tracking.indexNowKey is set but /${indexNowKey}.txt was not built`);
 if (indexNowKey && !/^[a-f0-9]{32}$/i.test(indexNowKey)) warn('tracking.indexNowKey is not 32 hex characters; IndexNow accepts 8 to 128 of [a-zA-Z0-9-], but 32 hex is the convention');

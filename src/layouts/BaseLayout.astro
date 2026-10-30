@@ -9,6 +9,7 @@ import Footer from '@/components/Footer.astro';
 import MobileCallBar from '@/components/MobileCallBar.astro';
 import StickyQuoteTab from '@/components/StickyQuoteTab.astro';
 import type { PageMeta } from '@/lib/seo';
+import { lastmodForPath } from '@/lib/site-pages';
 
 interface Props {
   meta: PageMeta;
@@ -16,6 +17,14 @@ interface Props {
   schema?: Record<string, unknown>;
 }
 const { meta, schema } = Astro.props;
+// The page's WebPage node says the same date the sitemap does: the last commit touching
+// the page's sources. Views that set their own dateModified keep it.
+const lastmod = await lastmodForPath(meta.canonical);
+if (schema && lastmod) {
+  const nodes = Array.isArray((schema as { '@graph'?: unknown[] })['@graph']) ? ((schema as { '@graph': Record<string, unknown>[] })['@graph']) : [schema as Record<string, unknown>];
+  const page = nodes.find((n) => typeof n['@id'] === 'string' && (n['@id'] as string).endsWith('#webpage'));
+  if (page && !page.dateModified) page.dateModified = lastmod;
+}
 const t = siteConfig.theme;
 const radius = { sharp: '0px', rounded: '0.75rem', pill: '9999px' }[t.radius];
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');

@@ -104,6 +104,11 @@ Rules for this build
   projects. Keep source images in src/assets/images/.
 - Services: one file per real service, 300 to 600 words, benefits, process,
   FAQs, related links. Categories only if there are two or more real groups.
+  Answer first: the page opens with two sentences that answer "what is this
+  and what does it fix" before any pitch, and carries at least three FAQs
+  written as the question a customer would type (validate fails under three).
+  City pages get the same: three FAQs, the first answering whether you serve
+  that city.
 - Locations: one file per target city. Give every service listed for a city a
   specific serviceNotes line, and restrict a city's services to those with
   notes so no combo page reads as templated.

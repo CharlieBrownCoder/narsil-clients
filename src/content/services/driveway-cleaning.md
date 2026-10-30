@@ -25,6 +25,8 @@ process:
   - title: Post-treat and rinse
     description: A final treatment brightens the concrete and slows regrowth.
 faqs:
+  - question: How often should a driveway be cleaned?
+    answer: Once a year keeps most North Texas driveways looking new. Shaded or tree-lined drives that hold moisture may need it twice.
   - question: Can you remove oil stains from my driveway?
     answer: Usually, yes. Fresh oil comes out almost completely. Older stains that have soaked in will lighten significantly but may leave a faint shadow.
   - question: Will pressure washing damage my concrete?

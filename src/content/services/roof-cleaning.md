@@ -24,6 +24,8 @@ process:
   - title: Rinse and flush
     description: Landscaping is rinsed, gutters are flushed, and we photograph the results.
 faqs:
+  - question: How long does a roof cleaning take?
+    answer: Most single-family roofs take two to three hours. The treatment keeps working for days after we leave, so streaks that are still faint at the end of the visit fade on their own.
   - question: Do you walk on the roof?
     answer: We avoid it whenever possible. Most roofs are treated from a ladder at the edge or from the ground using an extended wand.
   - question: Will cleaning my roof void the shingle warranty?

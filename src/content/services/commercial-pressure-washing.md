@@ -21,6 +21,10 @@ process:
   - title: Report
     description: Before-and-after photos are sent after every visit.
 faqs:
+  - question: Can you work outside business hours?
+    answer: Yes. Nights and weekends are our normal commercial schedule, so your customers never see a hose across the entrance.
+  - question: Do you carry insurance for commercial work?
+    answer: We carry general liability coverage and can send a certificate of insurance to your property manager before the first visit.
   - question: Do you offer recurring commercial service?
     answer: Yes. Monthly, quarterly, and semi-annual plans are available with discounted rates and priority scheduling.
 related:

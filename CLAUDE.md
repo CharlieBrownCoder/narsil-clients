@@ -17,6 +17,7 @@ intake form and the paste-in prompt. Read `README.md` first, then
 - Never hand-roll `<title>` or JSON-LD in a view. Use `src/lib/seo.ts` and `src/lib/schema.ts`.
 - Share previews: og:title 60 chars or fewer, og:description 80 to 125, image 1200×630 PNG or JPG under 5 MB. Lead with the result, end on `social.valueLine`. `npm run validate` enforces it; rules in `docs/PAGES.md` "Share previews".
 - Pages are toggled in `siteConfig.pages`. A disabled page must not build, appear in nav, or be in the sitemap.
+- Service and city pages carry at least three visible FAQs and every FAQPage schema question is visible on the page; `/llms.txt` and each page's `dateModified` render from the page registry; `robots.txt` always allows the search agents. `npm run validate` holds all four; rules in `docs/PAGES.md` "Crawlers and AI".
 - Every page type has a row in `src/lib/site-pages.ts`; the XML sitemaps render from it with `lastmod` from git, never build time, and `npm run validate` holds it to the built site. A combo page with no `serviceNotes` entry is noindex and out of the sitemap.
 - Images go in `src/assets/` and render through Astro `<Image>` with width, height, and alt. Only the logo, favicon, and OG image live in `public/`.
 - Fonts are self-hosted in `public/fonts/` with `font-display: swap`. No Google Fonts CDN.

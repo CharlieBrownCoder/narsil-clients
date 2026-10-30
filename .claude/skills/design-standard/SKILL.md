@@ -47,6 +47,10 @@ em dashes as a *rule* (the humanizer skill handles dashes in copy).
    real photos. Badges without a fact behind them are removed.
 9. **Mobile is designed, not shrunk.** Check every page at 390px. The sticky
    call bar must not cover content or the form submit button.
+10. **Section rhythm is the one `.section` rule** (`docs/PAGES.md`, Section
+    rhythm): 96 / 112 / 128px per section at phone / tablet / laptop. Do not
+    add per-section padding; let the alternating backgrounds carry the break.
+    A home page past 12 sections is a content decision, not a spacing one.
 
 ## The trade-site pattern (from docs/DESIGN-REFERENCE.md)
 

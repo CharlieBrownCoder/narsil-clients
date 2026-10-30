@@ -115,6 +115,22 @@ Pages not listed, and all pages when `public/fonts/og/` has no TTFs, fall back t
 
 To check a preview: `npm run build && npm run validate`, then open `dist/og/home.png`. The validator reports every page's share problem by path.
 
+## Section rhythm
+
+One rule sets the vertical gap between sections: `.section` in `src/styles/global.css`, `py-12 md:py-14 lg:py-16`, which is 96px per section on phones, 112px on tablets and 128px on laptops and desktops (measured 2026-10-30; it was 128 / 192 with no laptop step, and section padding was 22% of a laptop home page). The hero sits one step above it. Alternating section backgrounds carry the rhythm, so the gap can be this tight without sections touching; below `py-10 md:py-14` the eyebrow-to-heading stack starts to meet the section edge, and the design standard's rule (more space above a heading than below it) stops holding.
+
+Padding is a small share of a phone page (7% of the demo home page), so a long phone page is a section-count problem: every grid stacks to one column. `npm run validate` warns when the home page passes 12 sections; the answer is to ask at kickoff which of team, plans, comparison, gallery, offers and client logos the client needs on the home page, and leave the rest to their own pages.
+
+## Crawlers and AI
+
+What a search engine, an AI Overview or an agent gets from a built page, beyond the sitemaps above. `npm run validate` check 8 holds all of it.
+
+- **`dateModified` on every page.** The layout stamps the page's WebPage schema node with the same git lastmod the sitemap carries, so the two never disagree. A view that sets its own `dateModified` keeps it. Freshness is one of the few signals an AI surface reads directly.
+- **`/llms.txt`** renders from the same registry as the sitemaps: the business (type, city, phone, email, hours, site, sitemap), then one line per indexable page with its title and a one-line summary, grouped by section. Thin combo pages stay out of it as they stay out of the sitemap, and the validator holds its URL set equal to the sitemaps'. An emerging convention rather than a standard; it costs nothing and cannot drift.
+- **`robots.txt` names the AI crawlers.** Search agents (Googlebot, Bingbot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Claude-SearchBot, Claude-User, DuckAssistBot) are always allowed: a local business gains from being cited. The training-only agents (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot, meta-externalagent, Bytespider) are allowed by default and refused when `crawlers.allowAiTraining` is false, for a client who asks. Blocking Google-Extended does not remove a site from AI Overviews, which use Googlebot; it only opts out of Gemini training. Bing matters more than it looks: ChatGPT search and Copilot run on its index.
+- **Answer first.** AI Overviews lift the paragraph that answers the question. Every service and city page carries at least three FAQ entries, every FAQPage schema question is visible on the page as a `<summary>` (Google requires it, and the validator refuses a schema-only question), and the writing rule in `docs/KICKOFF.md` is that a service or city page opens with a two-sentence direct answer before the pitch.
+- Not done, deliberately: a Markdown mirror of every page, Speakable schema (news only), hreflang (single-language sites).
+
 ## Internal linking map
 
 - Home → every service, top 8 locations, FAQ, contact
