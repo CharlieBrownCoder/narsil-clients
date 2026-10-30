@@ -8,14 +8,14 @@ const items = nav.filter((n) => !n.page || pages[n.page]);
 const current = Astro.url.pathname;
 ---
 {promo?.enabled && (
-  <div class="bg-accent text-secondary text-sm font-semibold text-center py-2 px-4">
+  <div class="bg-accent text-secondary text-xs md:text-sm font-semibold text-center py-1.5 md:py-2 px-4 truncate">
     {promo.href ? <a href={promo.href} class="hover:underline">{promo.text} →</a> : promo.text}
   </div>
 )}
 <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
-  <div class="container-x flex items-center justify-between h-18 py-3 gap-6">
+  <div class="container-x flex items-center justify-between h-16 md:h-18 py-3 gap-6">
     <a href="/" class="flex items-center shrink-0" aria-label={`${business.name} home`}>
-      <img src={theme.logo.src} alt={theme.logo.alt} width={theme.logo.width} height={theme.logo.height} class="h-9 w-auto" />
+      <img src={theme.logo.src} alt={theme.logo.alt} width={theme.logo.width} height={theme.logo.height} class="h-8 md:h-9 w-auto" />
     </a>
     <nav class="hidden lg:flex items-center gap-7" aria-label="Primary">
       {items.map((n) => (
