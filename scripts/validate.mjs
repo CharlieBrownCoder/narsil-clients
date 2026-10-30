@@ -23,7 +23,10 @@
  *     node carries dateModified; every FAQPage question is visible on the page (a <summary>);
  *     every service and city page shows at least three questions; robots.txt always allows
  *     the search agents.
+ *  9. Scroll length: the home page warns past HOME_SECTION_CAP sections. Section padding is a
+ *     small share of a phone page; its length is the section count, a per-client config call.
  */
+const HOME_SECTION_CAP = 12;
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { parse as parseYaml } from 'yaml';
@@ -200,6 +203,15 @@ else {
   const robots = existsSync(join(dist, 'robots.txt')) ? readFileSync(join(dist, 'robots.txt'), 'utf8') : '';
   if (!robots.includes(`Sitemap: ${siteUrl}/sitemap-index.xml`)) err('robots.txt does not name the sitemap index');
 }
+// ---------- scroll length ----------
+{
+  const home = join(dist, 'index.html');
+  if (existsSync(home)) {
+    const n = (readFileSync(home, 'utf8').match(/<section\b/g) ?? []).length;
+    if (n > HOME_SECTION_CAP) warn(`home page has ${n} sections (cap ${HOME_SECTION_CAP}); on a phone each stacks to one column, so ask at kickoff which of team, plans, comparison, gallery, offers or logos this client needs on the home page (siteConfig.pages, trust, plans, offers)`);
+  }
+}
+
 // ---------- crawlers and AI ----------
 {
   const llms = join(dist, 'llms.txt');
