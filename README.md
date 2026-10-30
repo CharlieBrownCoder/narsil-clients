@@ -123,7 +123,7 @@ Colors map to Tailwind utilities `bg-primary`, `text-accent`, etc. Fonts are sel
 
 Forms POST to Formspree. Create a form per client, put its ID in `forms.formspreeId`. `forms.steps: 2` (default) asks about the job first and contact details second, with a progress bar; set `1` for a single screen. Without JavaScript both steps render and the form still submits. Until it's set the button is disabled and says so. Successful submissions land on `/thank-you/`, which fires GA4 and Meta lead events if those IDs are set.
 
-Reviews render through Trustindex. Create a widget per placement (home, reviews page, compact strip for service and city pages, footer badge) and put the IDs in `reviews.trustindex`. A blank ID hides that placement.
+Reviews render through Trustindex. Create a widget per placement (home, reviews page, compact strip for service and city pages, footer badge) and put the IDs in `reviews.trustindex`. A blank ID hides that placement. The loader is deferred until the page has loaded and the widget is near the viewport (PR #2, the LCP fix), and the loader script is injected inside the widget container, not `<body>`: Trustindex renders beside its own script tag, so a body-level script rendered every widget below the footer and left the section empty (fixed after #2; client sites built before the fix need the same one-line change in `src/components/Trustindex.astro`, as Beachside did in its PR #47).
 
 ## Decisions baked in
 

@@ -5,6 +5,9 @@
  * clients who haven't set it up yet. The loader script is injected after the
  * page has loaded and the widget is near the viewport, so it never competes
  * with the hero image for bandwidth (it was the main cause of a 3 s mobile LCP).
+ * The loader script goes INSIDE the widget container, because Trustindex renders
+ * the widget beside its own script tag: appended to <body> it rendered below the
+ * footer and the container stayed 0px tall.
  */
 import { siteConfig } from '@config';
 interface Props {
@@ -46,7 +49,7 @@ const { trust, business } = siteConfig;
     (function () {
       if (window.__tiDeferred) return; window.__tiDeferred = true;
       var loaded = {};
-      function inject(el) { var src = el.getAttribute('data-ti-loader'); if (!src || loaded[src]) return; loaded[src] = true; var s = document.createElement('script'); s.async = true; s.defer = true; s.src = src; document.body.appendChild(s); }
+      function inject(el) { var src = el.getAttribute('data-ti-loader'); if (!src || loaded[src]) return; loaded[src] = true; var s = document.createElement('script'); s.async = true; s.defer = true; s.src = src; el.appendChild(s); }
       function arm() {
         var els = document.querySelectorAll('[data-ti-loader]');
         if ('IntersectionObserver' in window) {
