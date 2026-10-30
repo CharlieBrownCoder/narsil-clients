@@ -24,6 +24,10 @@ process:
   - title: Seal (optional)
     description: After 48 hours of drying, we apply a penetrating stain or sealer.
 faqs:
+  - question: How long does a deck need to dry before staining?
+    answer: Usually 48 hours of dry weather. We check the wood with a moisture meter before any stain or sealer goes on.
+  - question: Will cleaning raise the grain on my deck boards?
+    answer: A light fuzz can appear on older softwood after cleaning. A quick sanding pass before staining smooths it, and we include that when staining is part of the job.
   - question: Can you clean a composite deck?
     answer: Yes. Composite like Trex needs a different cleaner and lower pressure than wood. We adjust the process for the material.
 related:
