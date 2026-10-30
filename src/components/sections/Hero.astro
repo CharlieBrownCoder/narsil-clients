@@ -42,17 +42,18 @@ const showBullets = !compact && bullets.length > 0;
 // One step under the old values so the first scroll is not the page's longest; the section rhythm is docs/PAGES.md.
 const pad = compact ? 'py-12 md:py-16' : showForm ? 'py-14 md:py-20' : 'py-16 md:py-28';
 const headingCls = `mt-3 ${dark ? '!text-white' : ''} ${compact ? '!text-3xl md:!text-5xl' : ''}`;
-/** Art-directed mobile source: phones get the 4:5 crop at 480 to 960 wide. */
+/** Art-directed mobile source: phones get the 4:5 crop at 480 to 960 wide. On phones the picture covers the first screen only (100svh) and fades into the scrim colour, so a hero taller than a screen (the home hero with its form) shows the photo instead of stretching it under a gradient; measured 2026-10-30. */
 const mobileSrc = imageMobile ? await getImage({ src: imageMobile, widths: [480, 640, 800, 960], format: 'webp' }) : null;
 const ratingLine = trust.rating ? `${trust.rating.value} stars from ${trust.rating.count}+ ${trust.rating.source} reviews` : '';
 ---
 <section class:list={['relative isolate overflow-hidden', dark ? (theme.heroScrim === 'brand' ? 'bg-primary-dark text-white' : 'bg-secondary text-white') : 'bg-neutral']} data-hero={layout}>
   {layout === 'photo' && image && (
     <>
-      <picture>
+      <picture class="absolute inset-x-0 top-0 h-[100svh] md:inset-0 md:h-auto">
         {mobileSrc && <source media="(max-width: 767px)" srcset={mobileSrc.srcSet.attribute} sizes="100vw" type="image/webp" />}
-        <Image src={image} alt={imageAlt} widths={[480, 800, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
+        <Image src={image} alt={imageAlt} widths={[480, 800, 1024, 1600, 2000]} sizes="100vw" class="w-full h-full object-cover" loading="eager" fetchpriority="high" />
       </picture>
+      <div class:list={['absolute inset-x-0 top-[calc(100svh-10rem)] h-40 bg-gradient-to-b from-transparent md:hidden', theme.heroScrim === 'brand' ? 'to-primary-dark' : 'to-secondary']} aria-hidden="true"></div>
       {theme.heroScrim === 'duotone' && <div class="absolute inset-0 bg-primary mix-blend-color" aria-hidden="true"></div>}
       <div class:list={['absolute inset-0 bg-gradient-to-r', theme.heroScrim === 'brand' ? 'from-primary-dark via-primary-dark/85 to-primary-dark/30' : 'from-secondary via-secondary/85 to-secondary/30']} aria-hidden="true"></div>
       <div class:list={['absolute inset-0 bg-gradient-to-t via-transparent to-transparent', theme.heroScrim === 'brand' ? 'from-primary-dark/70' : 'from-secondary/70']} aria-hidden="true"></div>
@@ -60,10 +61,11 @@ const ratingLine = trust.rating ? `${trust.rating.value} stars from ${trust.rati
   )}
   {layout === 'centered' && image && (
     <>
-      <picture>
+      <picture class="absolute inset-x-0 top-0 h-[100svh] md:inset-0 md:h-auto">
         {mobileSrc && <source media="(max-width: 767px)" srcset={mobileSrc.srcSet.attribute} sizes="100vw" type="image/webp" />}
-        <Image src={image} alt={imageAlt} widths={[480, 800, 1024, 1600, 2000]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" loading="eager" fetchpriority="high" />
+        <Image src={image} alt={imageAlt} widths={[480, 800, 1024, 1600, 2000]} sizes="100vw" class="w-full h-full object-cover" loading="eager" fetchpriority="high" />
       </picture>
+      <div class:list={['absolute inset-x-0 top-[calc(100svh-10rem)] h-40 bg-gradient-to-b from-transparent md:hidden', theme.heroScrim === 'brand' ? 'to-primary-dark' : 'to-secondary']} aria-hidden="true"></div>
       {theme.heroScrim === 'duotone' && <div class="absolute inset-0 bg-primary mix-blend-color" aria-hidden="true"></div>}
       <div class:list={['absolute inset-0', theme.heroScrim === 'brand' ? 'bg-primary-dark/75' : 'bg-secondary/75']} aria-hidden="true"></div>
     </>
