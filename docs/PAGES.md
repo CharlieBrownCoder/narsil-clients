@@ -115,6 +115,12 @@ Pages not listed, and all pages when `public/fonts/og/` has no TTFs, fall back t
 
 To check a preview: `npm run build && npm run validate`, then open `dist/og/home.png`. The validator reports every page's share problem by path.
 
+## Section rhythm
+
+One rule sets the vertical gap between sections: `.section` in `src/styles/global.css`, `py-12 md:py-14 lg:py-16`, which is 96px per section on phones, 112px on tablets and 128px on laptops and desktops (measured 2026-10-30; it was 128 / 192 with no laptop step, and section padding was 22% of a laptop home page). The hero sits one step above it. Alternating section backgrounds carry the rhythm, so the gap can be this tight without sections touching; below `py-10 md:py-14` the eyebrow-to-heading stack starts to meet the section edge, and the design standard's rule (more space above a heading than below it) stops holding.
+
+Padding is a small share of a phone page (7% of the demo home page), so a long phone page is a section-count problem: every grid stacks to one column. `npm run validate` warns when the home page passes 12 sections; the answer is to ask at kickoff which of team, plans, comparison, gallery, offers and client logos the client needs on the home page, and leave the rest to their own pages.
+
 ## Crawlers and AI
 
 What a search engine, an AI Overview or an agent gets from a built page, beyond the sitemaps above. `npm run validate` check 8 holds all of it.

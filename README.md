@@ -132,6 +132,7 @@ Reviews render through Trustindex. Create a widget per placement (home, reviews 
 - Tracking supports GTM, GA4, and Meta Pixel, all off until IDs are added. Phone clicks and CTA clicks fire `phone_call` and `cta_click` events once a tracker is set.
 - Every trust claim (rating, response promise, credentials, emergency line, team) comes from config or content and is hidden when blank.
 - Hosting is Vercel. `netlify.toml` was removed on purpose.
+- Section padding is one rule, 96 / 112 / 128px per section at phone / tablet / laptop, and the validator warns past 12 home-page sections (docs/PAGES.md, Section rhythm).
 - `/llms.txt`, `dateModified` on every page's schema, named AI crawlers in `robots.txt` (training agents switchable off per client), and at least three visible FAQs on every service and city page (docs/PAGES.md, Crawlers and AI).
 - XML sitemaps are per section with `lastmod` from git and image entries; thin service-by-city pages (no `serviceNotes`) are noindex and left out until they have copy; IndexNow pings Bing on production deploys when a key is set (docs/PAGES.md, Sitemaps).
 - The quote calculator shows a range, never a single price, and sends its inputs with the lead. Rules live in `src/calculator.config.ts` and are off after `new-client`.
