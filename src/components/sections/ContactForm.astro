@@ -61,7 +61,8 @@ const inputCls = 'w-full border border-slate-300 rounded-[var(--radius-brand)] p
   </fieldset>
 
   <p data-error class="hidden text-sm text-red-600" role="alert"></p>
-  <ResponsePromise class="justify-center" />
+  {/* The hero already carries the promise when the form sits inside it (compact). */}
+  {!compact && <ResponsePromise class="justify-center" />}
   <p class="text-xs text-slate-500 text-center">{forms.formspreeId ? 'No spam, ever. We’ll reply within one business day.' : `Online form coming soon. Call ${business.phone}${business.email ? ` or email ${business.email}` : ''} for a free quote.`}</p>
 </form>
 

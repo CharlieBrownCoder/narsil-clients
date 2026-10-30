@@ -87,12 +87,13 @@ const ratingLine = trust.rating ? `${trust.rating.value} stars from ${trust.rati
             {bullets.slice(0, 4).map((b) => <li class="flex items-center gap-2"><Icon name="check" class="w-5 h-5 text-accent shrink-0" />{b}</li>)}
           </ul>
         ) : null}
-        <div class:list={['mt-8 grid grid-cols-2 sm:flex sm:flex-wrap gap-3', layout === 'centered' && 'sm:justify-center']}>
-          {pages.contact && <a href="/contact/" data-cta="hero-quote" class:list={[dark ? 'btn-accent' : 'btn-primary', '!px-4 sm:!px-6']}>Get a Free Quote</a>}
-          <a href={telHref()} class:list={[dark ? 'btn-ghost' : 'btn-outline', '!px-4 sm:!px-6']}><Icon name="phone" class="w-5 h-5 shrink-0" /> <span class="sm:hidden">Call Now</span><span class="hidden sm:inline">{business.phone}</span></a>
+        {/* Phones get the same two buttons in MobileCallBar, so the row renders from md up (measured 2026-10-30: it cost about 100px of the first screen and wrapped at 360 wide). The short label is the fallback for any width where both show. */}
+        <div class:list={['mt-8 hidden md:flex md:flex-wrap gap-3', layout === 'centered' && 'md:justify-center']}>
+          {pages.contact && <a href="/contact/" data-cta="hero-quote" class:list={[dark ? 'btn-accent' : 'btn-primary']}><span class="sm:hidden">Free Quote</span><span class="hidden sm:inline">Get a Free Quote</span></a>}
+          <a href={telHref()} class:list={[dark ? 'btn-ghost' : 'btn-outline']}><Icon name="phone" class="w-5 h-5 shrink-0" /> <span class="sm:hidden">Call Now</span><span class="hidden sm:inline">{business.phone}</span></a>
         </div>
-        {siteConfig.hero.ctaNote && !compact && <p class:list={['mt-2 text-xs', dark ? 'text-slate-300' : 'text-slate-500', layout === 'centered' && 'text-center']}>{siteConfig.hero.ctaNote}</p>}
-        <ResponsePromise class={`mt-4 ${layout === 'centered' ? 'justify-center' : ''}`} light={dark} />
+        {siteConfig.hero.ctaNote && !compact && <p class:list={['mt-2 text-xs hidden md:block', dark ? 'text-slate-300' : 'text-slate-500', layout === 'centered' && 'text-center']}>{siteConfig.hero.ctaNote}</p>}
+        <ResponsePromise class={`mt-6 md:mt-4 ${layout === 'centered' ? 'justify-center' : ''}`} light={dark} />
         {ratingLine && !compact && <p class:list={['mt-3 flex items-center gap-2 text-sm', dark ? 'text-slate-200' : 'text-slate-600', layout === 'centered' && 'justify-center']}><Stars rating={trust.rating!.value} class="w-4 h-4" /> {ratingLine}</p>}
       </div>
 
